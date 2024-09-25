@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28 FATAL_ERROR)
-project("cpp-template" C CXX)
+project("cpp-template" C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 20)
 

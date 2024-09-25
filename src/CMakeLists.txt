@@ -8,5 +8,5 @@ add_library("${CMAKE_PROJECT_NAME}_lib"
 target_link_libraries("${CMAKE_PROJECT_NAME}_lib" PRIVATE submodule)
 target_link_libraries("${CMAKE_PROJECT_NAME}_lib" PRIVATE nlohmann_json trielo)
 
-add_executable(${CMAKE_PROJECT_NAME} "main.cpp")
+add_executable(${CMAKE_PROJECT_NAME} "main.c")
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE "${CMAKE_PROJECT_NAME}_lib")
