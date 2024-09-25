@@ -4,12 +4,6 @@
 [submodule "deps/3rdparty/googletest"]
 	path = deps/3rdparty/googletest
 	url = https://github.com/google/googletest.git
-[submodule "deps/3rdparty/stm32h5xx_hal_driver"]
-	path = deps/3rdparty/stm32h5xx_hal_driver
-	url = https://github.com/STMicroelectronics/stm32h5xx_hal_driver.git
-[submodule "deps/3rdparty/cmsis_device_h5"]
-	path = deps/3rdparty/cmsis_device_h5
-	url = https://github.com/STMicroelectronics/cmsis_device_h5.git
 [submodule "deps/3rdparty/STM32CubeH5"]
 	path = deps/3rdparty/STM32CubeH5
 	url = https://github.com/STMicroelectronics/STM32CubeH5.git

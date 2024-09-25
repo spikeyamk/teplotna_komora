@@ -1,5 +1,5 @@
-#include <nlohmann/json.hpp>
 #include <trielo/trielo.hpp>
+#include "stm32h5xx_hal.h"
 #include "submodule/public.hpp"
 #include "returns_true.hpp"
 #include "app.hpp"
@@ -8,26 +8,17 @@
 int run(int width, int height) {
     (void) width;
     (void) height;
-    Trielo::trielo<submodule::foo>();
-    Trielo::trielo<returns_true>();
-    const nlohmann::json object {
-        { "pi", 3.141 },
-        { "happy", true },
-        { "name", "Niels" },
-        { "nothing", nullptr },
-        { "answer",
-            {
-                {"everything", 42}
-            }
-        },
-        { "list", {1, 0, 2} },
-        { "object",
-            {
-                {"currency", "USD"},
-                {"value", 42.99}
-            }
+    //Trielo::trielo<submodule::foo>();
+    //Trielo::trielo<returns_true>();
+    std::printf("Hello World!\n");
+
+    //HAL_Init();
+    while (1) {
+	    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+        for(int i = 0; i < 1'000'000; i++) {
+            std::printf("Hello World!\n");
         }
-    };
-    std::cout << std::setw(4) << object << std::endl;
+	    //HAL_Delay(250);
+    }
     return 0;
 }
