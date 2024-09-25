@@ -3,6 +3,9 @@ add_subdirectory("submodule")
 add_library("${CMAKE_PROJECT_NAME}_lib"
     "app.cpp"
     "returns_true.cpp"
+    "startup_stm32h503rbtx.s"
+    "syscalls.c"
+    "sysmem.c"
 )
 
 target_link_libraries("${CMAKE_PROJECT_NAME}_lib" PRIVATE submodule)
