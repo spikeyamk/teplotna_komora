@@ -1,41 +1,41 @@
 #add_subdirectory("googletest")
 
-add_library(stm32cubeh5
-    STM32CubeH5/Drivers/BSP/STM32H5xx_Nucleo/stm32h5xx_nucleo.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_cortex.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_rcc.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_rcc_ex.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_flash.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_flash_ex.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_gpio.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_dma.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_dma_ex.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_pwr.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_pwr_ex.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_exti.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_tim.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_tim_ex.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_usart.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_usart_ex.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_uart_ex.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_uart.c
+add_library(stm32cubeh7
+    STM32CubeH7/Drivers/BSP/STM32H7xx_Nucleo/stm32h7xx_nucleo.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cortex.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc_ex.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_flash.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_flash_ex.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_gpio.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dma.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dma_ex.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pwr.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pwr_ex.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_exti.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim_ex.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_usart.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_usart_ex.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.c
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.c
 )
 
-target_compile_definitions(stm32cubeh5 PUBLIC 
+target_compile_definitions(stm32cubeh7 PUBLIC 
 	USE_NUCLEO_64 
 	USE_HAL_DRIVER 
-	STM32H503xx
+	STM32H723xx
     $<$<CONFIG:Debug>:DEBUG>
 )
 
-target_include_directories(stm32cubeh5 PUBLIC
+target_include_directories(stm32cubeh7 PUBLIC
     ${CMAKE_SOURCE_DIR}/src/core/include
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Inc
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Inc/Legacy
-    STM32CubeH5/Drivers/BSP/STM32H5xx_Nucleo
-    STM32CubeH5/Drivers/CMSIS/Device/ST/STM32H5xx/Include
-    STM32CubeH5/Drivers/CMSIS/Include
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Inc
+    STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Inc/Legacy
+    STM32CubeH7/Drivers/BSP/STM32H7xx_Nucleo
+    STM32CubeH7/Drivers/CMSIS/Device/ST/STM32H7xx/Include
+    STM32CubeH7/Drivers/CMSIS/Include
 )
 
 #file(GLOB STM32H5XX_HAL_DRIVER_SRCS

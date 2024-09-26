@@ -3,21 +3,21 @@ add_subdirectory("submodule")
 set(CMAKE_EXECUTABLE_SUFFIX ".elf")
 add_executable(${CMAKE_PROJECT_NAME}
     "main.c"
-    "core/startup_stm32h503xx.s"
-    "core/stm32h5xx_hal_msp.c"
-    "core/stm32h5xx_it.c"
+    "core/startup_stm32h723xx.s"
+    "core/stm32h7xx_hal_msp.c"
+    "core/stm32h7xx_it.c"
     "core/syscalls.c"
     "core/sysmem.c"
-    "core/system_stm32h5xx.c"
+    "core/system_stm32h7xx.c"
 
     "app.cpp"
     "returns_true.cpp"
 )
 
-target_compile_definitions("${CMAKE_PROJECT_NAME}" PRIVATE STM32H503xx)
+target_compile_definitions("${CMAKE_PROJECT_NAME}" PRIVATE STM32H723xx)
 target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE submodule)
 target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE trielo)
-target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE stm32cubeh5)
+target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE stm32cubeh7)
 target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "core/include")
 
 # Define the ELF and binary file locations
