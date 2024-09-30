@@ -1,4 +1,5 @@
 add_subdirectory("submodule")
+add_subdirectory("fanctl")
 
 set(CMAKE_EXECUTABLE_SUFFIX ".elf")
 add_executable(${CMAKE_PROJECT_NAME}
@@ -15,7 +16,10 @@ add_executable(${CMAKE_PROJECT_NAME}
 )
 
 target_compile_definitions("${CMAKE_PROJECT_NAME}" PRIVATE STM32F205xx)
-target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE submodule)
+target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE
+    submodule
+    fanctl
+)
 target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE trielo)
 target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE stm32cubef2)
 target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "core/include")
