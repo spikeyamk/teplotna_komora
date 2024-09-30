@@ -12,6 +12,11 @@ extern "C" {
  */
 int run(int width, int height);
 
+/**
+ * Stops all fans
+*/
+void fan_stop();
+
 #ifdef __cplusplus
 }
 #endif
