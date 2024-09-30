@@ -1,41 +1,38 @@
 #add_subdirectory("googletest")
 
-add_library(stm32cubeh5
-    STM32CubeH5/Drivers/BSP/STM32H5xx_Nucleo/stm32h5xx_nucleo.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_cortex.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_rcc.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_rcc_ex.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_flash.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_flash_ex.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_gpio.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_dma.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_dma_ex.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_pwr.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_pwr_ex.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_exti.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_tim.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_tim_ex.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_usart.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_usart_ex.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_uart_ex.c
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_uart.c
+add_library(stm32cubef2
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_cortex.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_rcc.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_rcc_ex.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_flash.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_flash_ex.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_gpio.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_dma.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_dma_ex.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_pwr.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_pwr_ex.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_exti.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_tim.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_tim_ex.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_usart.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_uart.c
 )
 
-target_compile_definitions(stm32cubeh5 PUBLIC 
+target_compile_definitions(stm32cubef2 PUBLIC 
 	USE_NUCLEO_64 
 	USE_HAL_DRIVER 
-	STM32H503xx
+	STM32F205xx
     $<$<CONFIG:Debug>:DEBUG>
 )
 
-target_include_directories(stm32cubeh5 PUBLIC
+target_include_directories(stm32cubef2 PUBLIC
     ${CMAKE_SOURCE_DIR}/src/core/include
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Inc
-    STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Inc/Legacy
-    STM32CubeH5/Drivers/BSP/STM32H5xx_Nucleo
-    STM32CubeH5/Drivers/CMSIS/Device/ST/STM32H5xx/Include
-    STM32CubeH5/Drivers/CMSIS/Include
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Inc
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Inc/Legacy
+    STM32CubeF2/Drivers/BSP/STM32F2xx_Nucleo
+    STM32CubeF2/Drivers/CMSIS/Device/ST/STM32F2xx/Include
+    STM32CubeF2/Drivers/CMSIS/Include
 )
 
 #file(GLOB STM32H5XX_HAL_DRIVER_SRCS
