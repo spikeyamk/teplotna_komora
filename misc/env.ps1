@@ -1,2 +1,2 @@
 $env:PATH = 'C:\Program Files (x86)\Arm GNU Toolchain arm-none-eabi\13.3 rel1\bin;' + $env:PATH;
-$env:PATH = 'C:\ST\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.win32_2.1.400.202404281720\tools\bin' + $env:PATH;
+$env:PATH = 'C:\ST\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.win32_2.1.400.202404281720\tools\bin;' + $env:PATH;
