@@ -107,9 +107,19 @@ code --install-extension ms-vscode.cmake-tools
 
 Enable these extensions and restart VSCode.
 
-#### Configure and build the project
+#### Configure
 
-#### Flash the firmware
+![configure_01](misc/readme_images/vscode/configure_01.jpg)
+![configure_02](misc/readme_images/vscode/configure_02.jpg)
+![configure_03](misc/readme_images/vscode/configure_03.jpg)
+
+#### Compile
+
+![compile](misc/readme_images/vscode/compile.jpg)
+
+#### Flash
+
+![flash](misc/readme_images/vscode/flash.jpg)
 
 ## Rules
 
