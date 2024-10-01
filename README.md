@@ -6,11 +6,11 @@ Intro
 
 ### Prerequisites
 
-- **cmake** >= v3.22.0
-- **ninja** >= v1.11.0
+- **CMake** >= v3.22.0
+- **Ninja** >= v1.11.0
 - **gcc-arm-none-eabi** >= v12.3.0
-- **doxygen** >= 1.12.0 (optional for docs generation)
-- **PuTTY, minicom** or similar program to read serial COM port
+- **Doxygen** >= 1.12.0 (optional for docs generation)
+- **PuTTY, Minicom** or similar program to read serial COM port
 - **STM32CubeProg** >= v2.17.0 used for flashing FW
 - **STM32CubeIDE** (optional Eclipse based IDE used for programming and debugging STM32 projects)
 - **STM32CubeMX** (optional auto project generator)
@@ -22,7 +22,7 @@ You can use the `winget` pkg manager to get the previously mentioned prerequisit
 winget install Kitware.CMake Ninja-build.Ninja Arm.GnuArmEmbeddedToolchain DimitriVanHeesch.Doxygen PuTTY.PuTTY
 ```
 
-Make sure to restart the PowerShell session after installation or add additional missing installation directories to your `$env:PATH` or run the PowerShell script under `misc\env.ps1` that adds `gcc-arm-none-eabi` and `STM32CubeProg` installed in default locations temporarily to your `$env:PATH` until you close the current PowerShell session.
+Make sure to reload the PowerShell session after installation, or add any additional missing installation directories to your `$env:PATH`. Alternatively, run the PowerShell script under `misc\env.ps1`, which temporarily adds `gcc-arm-none-eabi` and `STM32CubeProg` (installed in default locations) to your `$env:PATH`.
 
 #### Installation Ubuntu
 
@@ -34,7 +34,7 @@ Make sure to restart the PowerShell session after installation or add additional
 
 If you plan on using `STM32CubeIDE` `STM32CubeProg` and  `gcc-arm-none-eabi` comes bundled with it.
 
-Go ahead and create a [myST](https://my.st.com) account, the stupid ST webiste won't let you download any STM32Cube Development Tools without it.
+Note: A [myST](https://my.st.com) account is required to download any STM32Cube Development Tools from the ST website.
 
 You can get them under following links:
 - [STM32CubeIDE](https://www.st.com/en/development-tools/stm32cubeide.html#st-get-software)
@@ -132,9 +132,9 @@ Enable these extensions and restart VSCode.
 - Document function and object declarations with example in `src/app.hpp` for doxygen docs generation.
 - Guard your created CMake subdirectories source and header files within `namespace` keyword with the same name as the name of the created subdirectory.
 - Keep the same structure of the subdirectories as in example subdirectories.
-- Place public header files into `src/[name_of_subdiretory]/include/[name_of_subdiretory]/`.
-- Keep private header files in `src/[name_of_subdiretory]` just like in `src/submodule`.
-- Create test functions inside `src/[name_of_subdiretory]/include/[name_of_subdiretory]/test.hpp` ready to test your newly created functionality.
+- Place public header files into `src/[name_of_subdirectory]/include/[name_of_subdirectory]/`.
+- Keep private header files in `src/[name_of_subdirectory]` just like in `src/submodule`.
+- Create test functions inside `src/[name_of_subdirectory]/include/[name_of_subdirectory]/test.hpp` ready to test your newly created functionality.
 - Modularize your code as much as possible into individual subdirectories.
 - Avoid creating circular dependencies within your subdirectories.
 - If you need more abstraction you're allowed to use OOP.
@@ -168,5 +168,5 @@ copy initializes the array, meaning it invokes the default aggregate initializat
 - Heap allocations (meaning avoid using `std::string`, `std::vector`, `new` and `delete` keyword, `calloc`, `malloc` and `free` functions etc.) instead allocate on the stack and use RAII.
 - Raw C style square bracket arrays, use `std::array` instead. When interfacing with C APIs using pointers use `T* std::array<T, U>::data()` to extract the raw pointer from the `std::array` `class` for example.
 - Raw C style `const char*` strings use `std::string_view` instead.
-- C style `union` objects, please use `std::variant` instead.
+- C style `union` objects, use `std::variant` instead.
 - Anonymous C style enumerations using the `enum` keyword, please use `enum class` instead. Use `static_cast<T>` when conversion is needed.
