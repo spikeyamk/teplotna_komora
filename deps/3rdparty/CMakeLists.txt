@@ -1,21 +1,24 @@
 #add_subdirectory("googletest")
 
 add_library(stm32cubef2
-    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_cortex.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_dac.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_dac_ex.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_rcc.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_rcc_ex.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_cortex.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_flash.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_flash_ex.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_pwr.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_pwr_ex.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_gpio.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_dma.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_dma_ex.c
-    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_pwr.c
-    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_pwr_ex.c
-    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_exti.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_i2c.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_spi.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_tim.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_tim_ex.c
-    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_usart.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_uart.c
 )
 
