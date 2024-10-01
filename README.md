@@ -166,7 +166,6 @@ copy initializes the array, meaning it invokes the default aggregate initializat
 - C++ exceptions
 - Operator overloading
 - Heap allocations (meaning avoid using `std::string`, `std::vector`, `new` and `delete` keyword, `calloc`, `malloc` and `free` functions etc.) instead allocate on the stack and use RAII.
-- Inheritance instead use composition.
 - Raw C style square bracket arrays, use `std::array` instead. When interfacing with C APIs using pointers use `T* std::array<T, U>::data()` to extract the raw pointer from the `std::array` `class` for example.
 - Raw C style `const char*` strings use `std::string_view` instead.
 - C style `union` objects, please use `std::variant` instead.
