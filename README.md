@@ -170,3 +170,4 @@ copy initializes the array, meaning it invokes the default aggregate initializat
 - Raw C style square bracket arrays, use `std::array` instead. When interfacing with C APIs using pointers use `T* std::array<T, U>::data()` to extract the raw pointer from the `std::array` `class` for example.
 - Raw C style `const char*` strings use `std::string_view` instead.
 - C style `union` objects, please use `std::variant` instead.
+- Anonymous C style enumerations using the `enum` keyword, please use `enum class` instead. Use `static_cast<T>` when conversion is needed.
