@@ -180,7 +180,6 @@ Enable these extensions and restart VSCode.
 #### Style
 
 - Use `nullptr` keyword instead of `NULL` macro.
-- Avoid using preprocessor macros. Use `if constexpr` code blocks for conditional code generation.
 - Following line:
 ```
     const std::array<uint8_t, 4> data = { 0, 1, 2, 3 };
@@ -201,6 +200,7 @@ Instead use:
 ### Banned language features
 
 - `goto` keyword
+- Preprocessor macros, use `if constexpr` code blocks for conditional code generation and `const` variables for constants.
 - Function pointers use, C++ lambda expressions instead, unless some C API requires using them.
 - C-style raw pointers, use C++ references instead, unless some C API requires using them.
 - Comma-separated initialization for example:
