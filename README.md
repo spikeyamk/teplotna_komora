@@ -156,17 +156,17 @@ Enable these extensions and restart VSCode.
 - Use `const` keyword by default as much as possible in place of variables, object member declarations, function arguments and object member method declarations.
 - Pass arguments as `const` reference to avoid unnecessary copying.
 - Use `unsigned` version of numerical data types to avoid overflow into negative values when needed.
-- Use `constexpr` whenever computation of an expression at the compile time is possible.
+- Use `constexpr` whenever computation of an expression is possible at compile time.
 - If you want to return mulitple parameters from a function return a `struct` or use `std::tuple`.
 - Use C++ for range loops to iterate over iterable objects or use iterators.
 - Use `#include <cstdint>` and `uint8_t` or `uint16_t` data types for example to explicitly express the size of a variable instead of `unsigned char` or `unsigned short`.
-- Avoid using `static` keyword when for local variables.
+- Avoid using `static` keyword for local variables.
 
 #### Object-oriented programming
 
 - If you need more abstraction you're allowed to use OOP.
 - Use `class` keyword for objects containing member methods, use `struct` keyword for objects with member variables only. If you want to add methods to it rewrite it with `class` keyword.
-- Use of dynamic or preferably static polymorphism allowed.
+- Use of dynamic or preferably static polymorphism is allowed.
 - RTTI is enabled for now don't rely on it too much, it may be disabled in the future in order to save FLASH space.
 
 #### Functional programming
@@ -185,12 +185,11 @@ copy initializes the array, meaning it invokes the default aggregate initializat
 ```
     const std::array<uint8_t, 4> data { 0, 1, 2, 3 };
 ```
-Use this sort of initialization for all data types.
-- Don't use unecessary `void` keyword in places of function declarations with no arguments. It's not needed in C++. Don't do:
+- Don't use unecessary `void` keyword in places of function declarations with no arguments like this:
 ```
     void func(void);
 ```
-Instead do:
+Instead use:
 ```
     void func();
 ```
@@ -198,21 +197,23 @@ Instead do:
 ### Banned language features
 
 - `goto` keyword
-- Function pointers use lambda expressions preferably, unless a C API requires using them.
-- C-style raw pointers, use C++ references instead unless some C API requires using them.
+- Function pointers use, C++ lambda expressions instead, unless some C API requires using them.
+- C-style raw pointers, use C++ references instead, unless some C API requires using them.
 - Comma-separated initialization for example:
 ```
     int32_t x = 0, y = 1;
 ```
-- empty uninitialized non-`const` variable definitions.
+- Empty uninitialized non-`const` variable definitions.
 - C++ exceptions
 - Operator overloading
 - `using namespace` in global scope (allowed for local scope).
 - Heap allocations (meaning avoid using `std::string`, `std::vector`, `new` and `delete` keyword, `calloc`, `malloc` and `free` functions etc.) instead allocate on the stack and use RAII to release memory resources.
-- Raw C-style square bracket arrays, use `std::array` instead. When interfacing with C APIs using pointers use `T* std::array<T, U>::data()` to extract the raw pointer from the `std::array` `class` for example.
-- Raw C-style `const char*` strings use `std::string_view` instead.
+- C-style raw square bracket arrays, use `std::array` instead. When interfacing with C APIs using pointers use `T* std::array<T, U>::data()` to extract the raw pointer from the `std::array` `class` for example.
+- C-style raw `const char*` strings use `std::string_view` instead.
 - C-style `union` objects, use `std::variant` instead.
-- Anonymous C-style enumerations using the `enum` keyword, please use `enum class` instead. Use `static_cast<T>` when conversion is needed.
+- Anonymous C-style enumerations using the `enum` keyword, please use `enum class` instead.
+- C-style type casting, use C++ `reinterpret_cast<T>` or much more preferably `static_cast<T>` equivalent when type conversion is needed.
+- `const_cast<T>` change the type specifier for the variable to be non-`const` instead
 - `typedef` keyword for creating user defined type name aliases instead use C++ `using` keyword equivalent
 - `typedef` keyword in place of user defined type declarations
 
