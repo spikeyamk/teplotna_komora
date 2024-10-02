@@ -177,7 +177,7 @@ Instead do:
 ```
     void func();
 ```
-- Use of dynamic or preferably static polymorphism or template meta-programming allowed
+- Use of dynamic or preferably static polymorphism allowed
 
 ### Banned language features
 
