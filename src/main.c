@@ -87,6 +87,13 @@ static void MX_USART3_UART_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+#define COM_POLL_TIMEOUT  1000
+
+int __io_putchar(int ch) {
+    HAL_UART_Transmit(&huart1, (uint8_t *) &ch, 1, COM_POLL_TIMEOUT);
+    return ch;
+}
+
 /* USER CODE END 0 */
 
 /**
