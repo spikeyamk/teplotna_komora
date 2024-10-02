@@ -36,7 +36,7 @@
 | PA13 | SWDIO | DIO | Vstup/výstup pre programovanie cez SWD | ⬜️ |
 | PA14 | SWCLK | DI | Hodinový vstup pre programovanie cez SWD | ⬜️ |
 
-# actuator
+# actu
 ## fan
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
@@ -90,7 +90,7 @@
 | PC1 | LED0 | DO | Panelová LED, môže byť použitá pre indikáciu zvyšovania teploty | ✔️ |
 | PC2 | LED2 | DO | Panelová LED, môže byť použitá pre indikáciu toku dát cez RS232/UART | ✔️ |
 | PC3 | LED3 | DO | Panelová LED, môže byť použitá pre indikáciu toku dát cez USB/UART | ✔️ |
-### 7seg
+### sevseg
 #### white
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
@@ -130,7 +130,7 @@
 | PB11 | ENCB | DI | Vstup B z kvadratúrneho enkodéra | ❌ |
 | PE15 | SWENC | DI | Vstup zo spínača integrovaného v kvadratúrnom enkodéri | ❌ |
 
-# sensor
+# sens
 ## i2c
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
@@ -140,7 +140,7 @@
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
 | none |
-### temperature_humidity
+### temp_hum
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
 | PA6 | ALRT0 | DI | Prerušenie zo senzora teploty a vlhkost na doske (v miestnost) | ❌ |
@@ -150,7 +150,7 @@
 |-------|---------|------|-----------------------------------------------| --- |
 | ~~PC13~~ | ~~WCN~~ | ~~DO~~ | ~~Výstup pre riadenie zápisu do EEPROM~~ | ~~❌~~ |
 ## spi
-### temperature
+### temp
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
 | PB3 | SCLK1 | DO | Hodinový výstup pre SPI pripojené k obom R/T prevodníkom | ❌ |

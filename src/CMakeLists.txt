@@ -1,5 +1,8 @@
 add_subdirectory("submodule")
-add_subdirectory("fan")
+add_subdirectory("actu")
+add_subdirectory("panel")
+add_subdirectory("sens")
+add_subdirectory("comm")
 
 set(CMAKE_EXECUTABLE_SUFFIX ".elf")
 add_executable(${CMAKE_PROJECT_NAME}
@@ -18,7 +21,24 @@ add_executable(${CMAKE_PROJECT_NAME}
 target_compile_definitions("${CMAKE_PROJECT_NAME}" PRIVATE STM32F205xx)
 target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE
     submodule
-    fan
+
+    actu::bridge
+    actu::buzzer
+    actu::fan
+    actu::lin_source
+    actu::pump
+
+    comm::usb_uart
+
+    panel::button
+    panel::encoder
+    panel::led
+    panel::green_yellow
+    panel::white
+
+    sens::light
+    sens::temp_hum
+    sens::spi_temp
 )
 target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE trielo)
 target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE stm32cubef2)

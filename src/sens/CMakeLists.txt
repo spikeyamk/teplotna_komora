@@ -1,0 +1,5 @@
+add_subdirectory(i2c)
+add_library(sens::light ALIAS light)
+add_library(sens::temp_hum ALIAS temp_hum)
+add_subdirectory(spi_temp)
+add_library(sens::spi_temp ALIAS spi_temp)
