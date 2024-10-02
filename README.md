@@ -180,6 +180,7 @@ Enable these extensions and restart VSCode.
 #### Style
 
 - Use `nullptr` keyword instead of `NULL` macro.
+- Avoid using preprocessor macros. Use `if constexpr` code blocks for conditional code generation.
 - Following line:
 ```
     const std::array<uint8_t, 4> data = { 0, 1, 2, 3 };
