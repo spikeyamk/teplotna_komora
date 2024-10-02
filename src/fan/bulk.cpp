@@ -1,7 +1,7 @@
 #include "stm32f2xx_hal.h"
-#include "fanctl/bulk.hpp"
+#include "fan/bulk.hpp"
 
-namespace fanctl {
+namespace fan {
     void stop_all() {
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);

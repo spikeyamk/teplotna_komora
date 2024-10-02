@@ -1,7 +1,7 @@
 #include <string_view>
 #include <trielo/trielo.hpp>
 #include "submodule/public.hpp"
-#include "fanctl/bulk.hpp"
+#include "fan/bulk.hpp"
 #include "returns_true.hpp"
 #include "stm32f2xx_hal.h"
 #include "main.h"
@@ -26,7 +26,7 @@ int app_main(int width, int height, UART_HandleTypeDef* huart1) {
     Trielo::trielo<submodule::foo>();
     Trielo::trielo<returns_true>();
 
-    fanctl::stop_all();
+    fan::stop_all();
 
     const std::string_view message { "Hello World!\n\r" };
     std::printf("%s", message.data());
