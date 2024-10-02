@@ -72,8 +72,8 @@ Get-WmiObject Win32_SerialPort | Select-Object DeviceID, Caption, Description
 ```
 or execute the PowerShell script under `misc\list_com.ps1`. Look for device with caption `Silicon Labs CP210x USB to UART Bridge (COM6)`. Launch `PuTTY` and select the `Serial` radio button for `Connection type`, enter `COM6` for `Serial line` and `115200` for `Speed`.
 
-![putty_01](misc/readme_images/putty/putty_01.jpg)
-![putty_02](misc/readme_images/putty/putty_02.jpg)
+![putty_01](docs/readme_images/putty/putty_01.jpg)
+![putty_02](docs/readme_images/putty/putty_02.jpg)
 
 #### Read COM Ubuntu
 
@@ -116,17 +116,17 @@ Enable these extensions and restart VSCode.
 
 #### Configure
 
-![configure_01](misc/readme_images/vscode/configure_01.jpg)
-![configure_02](misc/readme_images/vscode/configure_02.jpg)
-![configure_03](misc/readme_images/vscode/configure_03.jpg)
+![configure_01](docs/readme_images/vscode/configure_01.jpg)
+![configure_02](docs/readme_images/vscode/configure_02.jpg)
+![configure_03](docs/readme_images/vscode/configure_03.jpg)
 
 #### Compile
 
-![compile](misc/readme_images/vscode/compile.jpg)
+![compile](docs/readme_images/vscode/compile.jpg)
 
 #### Flash
 
-![flash](misc/readme_images/vscode/flash.jpg)
+![flash](docs/readme_images/vscode/flash.jpg)
 
 ## Rules
 
