@@ -200,7 +200,7 @@ Instead use:
 ### Banned language features
 
 - `goto` keyword
-- Preprocessor macros, use `if constexpr` code blocks for conditional code generation and `const` variables for constants.
+- Following preprocessor directives: `#define`, `#undef`, `#if`, `#ifdef`, `#ifndef`, `#else`, `#elif`, `#endif`, use `if constexpr` blocks for conditional code generation and `const` variables for constants.
 - Function pointers use, C++ lambda expressions instead, unless some C API requires using them.
 - C-style raw pointers, use C++ references instead, unless some C API requires using them.
 - Comma-separated initialization for example:
