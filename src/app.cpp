@@ -6,7 +6,7 @@
 #include "app.hpp"
 
 /// This function calculates the area of a rectangle.
-int run(int width, int height) {
+int app_main(int width, int height) {
     (void) width;
     (void) height;
 
