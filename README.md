@@ -173,6 +173,9 @@ Enable these extensions and restart VSCode.
 
 - Lambda expressions allowed.
 - Only `const` lambda expression variables allowed.
+- Don't use whole scope auto capture inside the lambda, use only variables you need inside lamba expression capture list.
+- Lambda expression `mutable` specifier allowed.
+- Be careful when using lambda captures in multi-threaded applications, can lead to segfaults pass as a parameter to the lambda instead or come up with a different solution.
 
 #### Style
 
