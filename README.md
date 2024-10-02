@@ -79,12 +79,12 @@ or execute the PowerShell script under `misc\list_com.ps1`. Look for device with
 
 List available serial ports:
 ```
-$ ls /dev/ttyACM*
+$ ls /dev/ttyUSB*
 ```
 
-Launch minicom and listen to `/dev/ttyACM0`:
+Launch minicom and listen to `/dev/ttyUSB0`:
 ```
-$ minicom -D /dev/ttyACM0
+$ minicom -D /dev/ttyUSB0
 ```
 
 #### Build docs
