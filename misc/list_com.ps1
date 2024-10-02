@@ -1,0 +1,1 @@
+Get-WmiObject Win32_SerialPort | Select-Object DeviceID, Caption, Description
