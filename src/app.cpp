@@ -1,8 +1,7 @@
 #include <string_view>
 #include <trielo/trielo.hpp>
 #include "submodule/public.hpp"
-#include "fanctl/bulk.hpp"
-#include "returns_true.hpp"
+#include "actu/fan/fan.hpp"
 #include "stm32f2xx_hal.h"
 #include "main.h"
 #include "app.hpp"
@@ -24,9 +23,8 @@ int app_main(int width, int height, UART_HandleTypeDef* huart1) {
 
     /* STM32H503x has 128K FLASH only these functions don't fit into it */
     Trielo::trielo<submodule::foo>();
-    Trielo::trielo<returns_true>();
 
-    fanctl::stop_all();
+    actu::fan::stop_all();
 
     const std::string_view message { "Hello World!\n\r" };
     std::printf("%s", message.data());
