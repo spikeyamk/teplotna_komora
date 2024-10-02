@@ -132,6 +132,8 @@ Enable these extensions and restart VSCode.
 
 ### General guidelines
 
+#### Structure
+
 - This project uses C++20 with an option to upgrade to C++23 if necessary.
 - Use `.cpp` suffix for source files and `.hpp` for header files.
 - Use `#pragma once` for header guards instead of a pair of `#ifndef FOO_H \n #define FOO_H` at the top and `#endif` at the bottom of a header file.
@@ -144,27 +146,42 @@ Enable these extensions and restart VSCode.
 - Create test functions inside `src/[name_of_subdirectory]/include/[name_of_subdirectory]/test.hpp` ready to test your newly created functionality.
 - Modularize your code as much as possible into individual subdirectories.
 - Avoid creating circular dependencies within your subdirectories.
-- If you need more abstraction you're allowed to use OOP.
-- Use `class` keyword for objects containing member methods, use `struct` keyword for objects with member variables only. If you want to add methods to it rewrite it with `class` keyword.
-- Use simple control flow. Avoid deeply nested code. Rewrite the algorithm or consider using a state machine.
-- Avoid functions that are too long. Consider splitting them into multiple functions.
+
+#### Procedural programming
+
+- Avoid global non-`const` variables.
+- Use simple control flow.
+- Avoid deeply nested code.
+- Avoid functions that are too long. Consider refactoring and splitting them into multiple functions.
 - Use `const` keyword by default as much as possible in place of variables, object member declarations, function arguments and object member method declarations.
-- Avoid using C-style raw pointers, use C++ references instead when possible.
 - Pass arguments as `const` reference to avoid unnecessary copying.
 - Use `unsigned` version of numerical data types to avoid overflow into negative values when needed.
 - Use `constexpr` whenever computation of an expression at the compile time is possible.
-- Avoid global variables.
-- Avoid using uninitialized non `const` variable definitions.
 - If you want to return mulitple parameters from a function return a `struct` or use `std::tuple`.
 - Use C++ for range loops to iterate over iterable objects or use iterators.
-- Use `#include <cstdint>` and `uint8_t` or `uint16_t` data types for example to express the size of a variable instead of `unsigned char` or `unsigned short`.
+- Use `#include <cstdint>` and `uint8_t` or `uint16_t` data types for example to explicitly express the size of a variable instead of `unsigned char` or `unsigned short`.
+- Avoid using `static` keyword when for local variables.
+
+#### Object-oriented programming
+
+- If you need more abstraction you're allowed to use OOP.
+- Use `class` keyword for objects containing member methods, use `struct` keyword for objects with member variables only. If you want to add methods to it rewrite it with `class` keyword.
+- Use of dynamic or preferably static polymorphism allowed.
+- RTTI is enabled for now don't rely on it too much, it may be disabled in the future in order to save FLASH space.
+
+#### Functional programming
+
+- Lambda expressions allowed.
+- Only `const` lambda expression variables allowed.
+
+#### Style
+
 - Use `nullptr` keyword instead of `NULL` macro.
-- Avoid using `static` keyword when declaring local variables.
-- For beginners following line:
+- Following line:
 ```
     const std::array<uint8_t, 4> data = { 0, 1, 2, 3 };
 ```
-copy initializes the array, meaning it invokes the default aggregate initialization constructor and then invokes the copy constructor. Use the following line to avoid unecessary copying:
+copy initializes the array, meaning it invokes the default aggregate initialization constructor `std::array<T, U>::array(0, 1, 2, 3)` and then invokes the default copy constructor `std::array<T, U> std::array<T, U>::array(const std::array<T, U>& rhs)`. Use the following line to avoid unecessary copying:
 ```
     const std::array<uint8_t, 4> data { 0, 1, 2, 3 };
 ```
@@ -177,16 +194,17 @@ Instead do:
 ```
     void func();
 ```
-- Use of dynamic or preferably static polymorphism allowed
 
 ### Banned language features
 
 - `goto` keyword
-- Function pointers unless a C API requires using them
-- Comma-separated initialization example:
+- Function pointers use lambda expressions preferably, unless a C API requires using them.
+- C-style raw pointers, use C++ references instead unless some C API requires using them.
+- Comma-separated initialization for example:
 ```
     int32_t x = 0, y = 1;
 ```
+- empty uninitialized non-`const` variable definitions.
 - C++ exceptions
 - Operator overloading
 - `using namespace` in global scope (allowed for local scope).
@@ -196,12 +214,12 @@ Instead do:
 - C-style `union` objects, use `std::variant` instead.
 - Anonymous C-style enumerations using the `enum` keyword, please use `enum class` instead. Use `static_cast<T>` when conversion is needed.
 - `typedef` keyword for creating user defined type name aliases instead use C++ `using` keyword equivalent
-- `typedef` keyowrd in place of user defined type declarations
+- `typedef` keyword in place of user defined type declarations
 
 ### Formatting
 
 - Use 4 space tabwidth delimiter.
-- Use snake_case for names of symbols for `namespace`s, local and global non-`const` variables and object member variables and functions:
+- Use snake_case for names for `namespace`s, local and global non-`const` variables and object member variables and functions:
 ```
 namespace example_namespace_name {
     int32_t example_variable;
@@ -220,7 +238,7 @@ namespace example_namespace_name {
         Blue
     };
 ```
-- Use UPPER_SNAKE_CASE for `const` variables:
+- Use UPPER_SNAKE_CASE for global `const` variables:
 ```
     const int32_t MY_VARIABLE { 12345 };
 ```
