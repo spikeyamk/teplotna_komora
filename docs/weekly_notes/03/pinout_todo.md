@@ -79,7 +79,7 @@
 ## buzzer
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PD11 | BUZ | DO | Výstup pre zapnute/vypnute piezoelektrického akustckého indikátora | ⬜ |
+| PD11 | BUZ | DO | Výstup pre zapnute/vypnute piezoelektrického akustckého indikátora | ✔️ |
 
 # panel
 ## out

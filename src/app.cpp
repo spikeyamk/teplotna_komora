@@ -2,6 +2,7 @@
 #include <trielo/trielo.hpp>
 #include "submodule/public.hpp"
 #include "actu/fan/fan.hpp"
+#include "actu/buzzer/buzzer.hpp"
 #include "stm32f2xx_hal.h"
 #include "main.h"
 #include "app.hpp"
@@ -16,11 +17,19 @@ int app_main(int width, int height) {
     Trielo::trielo<actu::fan::stop_all>();
 
     size_t i = 0;
+    bool buzzer_running { false };
     while(1) {
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_0);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_2);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
+        if(buzzer_running == false) {
+            actu::buzzer::start();
+            buzzer_running = true;
+        } else {
+            actu::buzzer::stop();
+            buzzer_running = false;
+        }
         std::printf("%u: Hello World!\n\r", i++);
         HAL_Delay(500);
     }
