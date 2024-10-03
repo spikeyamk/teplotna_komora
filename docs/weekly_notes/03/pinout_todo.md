@@ -69,14 +69,14 @@
 ## bridge
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PA8 | HC7 | DO | Invertovaný výstup pre ovládanie výkonového mosơka B (J7-1) | ❌ |
-| PB0 | HC2 | DO | Invertovaný výstup pre ovládanie výkonového mosơka A (J6-3) | ❌ |
-| PB1 | HC3 | DO | Invertovaný výstup pre ovládanie výkonového mosơka A (J6-1) | ❌ |
-| PC4 | HC0 | DO | Invertovaný výstup pre ovládanie výkonového mosơka A (J6-2) | ❌ |
-| PC5 | HC1 | DO | Invertovaný výstup pre ovládanie výkonového mosơka A (J6-4) | ❌ |
-| PC10 | HC6 | DO | Invertovaný výstup pre ovládanie výkonového mosơka B (J7-3) | ❌ |
-| PC11 | HC5 | DO | Invertovaný výstup pre ovládanie výkonového mosơka B (J7-4) | ❌ |
-| PC12 | HC4 | DO | Invertovaný výstup pre ovládanie výkonového mosơka B (J7-2) | ❌ |
+| PA8 | HC7 | DO | Invertovaný výstup pre ovládanie výkonového mosơka B (J7-1) | ⬜ |
+| PB0 | HC2 | DO | Invertovaný výstup pre ovládanie výkonového mosơka A (J6-3) | ⬜ |
+| PB1 | HC3 | DO | Invertovaný výstup pre ovládanie výkonového mosơka A (J6-1) | ⬜ |
+| PC4 | HC0 | DO | Invertovaný výstup pre ovládanie výkonového mosơka A (J6-2) | ⬜ |
+| PC5 | HC1 | DO | Invertovaný výstup pre ovládanie výkonového mosơka A (J6-4) | ⬜ |
+| PC10 | HC6 | DO | Invertovaný výstup pre ovládanie výkonového mosơka B (J7-3) | ⬜ |
+| PC11 | HC5 | DO | Invertovaný výstup pre ovládanie výkonového mosơka B (J7-4) | ⬜ |
+| PC12 | HC4 | DO | Invertovaný výstup pre ovládanie výkonového mosơka B (J7-2) | ⬜ |
 ## buzzer
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
