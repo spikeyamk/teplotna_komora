@@ -4,7 +4,19 @@
 namespace panel {
 namespace sevseg {
 namespace white {
-    void display() {
+    void init_brightness(TIM_HandleTypeDef* htim2) {
+        HAL_TIM_PWM_Start(htim2, TIM_CHANNEL_1);
+    }
+
+    void dim(TIM_HandleTypeDef* htim2) {
+        __HAL_TIM_SET_COMPARE(htim2, TIM_CHANNEL_1, 50'000);
+    }
+
+    void bright(TIM_HandleTypeDef* htim2) {
+        __HAL_TIM_SET_COMPARE(htim2, TIM_CHANNEL_1, 60'000);
+    }
+
+    void turn_on_all_segments() {
         //brightness
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
         

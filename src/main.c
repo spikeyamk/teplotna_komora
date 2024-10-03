@@ -129,7 +129,8 @@ int main(void)
     &htim4,
     &htim9,
     &hi2c1,
-    &hdac
+    &hdac,
+    &htim2
   );
   /* USER CODE END 2 */
 

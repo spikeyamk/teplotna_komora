@@ -95,7 +95,7 @@
 #### white
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PA15 | WHBK | DO | Výstup pre nastavovanie jasu bieleho displeja | 🟡 |
+| PA15 | WHBK | DO | Výstup pre nastavovanie jasu bieleho displeja | ✔️ |
 | PE0 | WH3 | DO | Výstup pre riadenie spoločnej katódy bieleho 7-segmentového displeja 0 | ✔️ |
 | PE1 | WH4 | DO | Výstup pre riadenie spoločnej katódy bieleho 7-segmentového displeja 1 | ✔️ |
 | PE2 | WH0 | DO | Výstup pre riadenie spoločnej katódy bieleho 7-segmentového displeja 2 | ✔️ |

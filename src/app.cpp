@@ -23,7 +23,8 @@ int app_main(
     TIM_HandleTypeDef* htim4,
     TIM_HandleTypeDef* htim9,
     I2C_HandleTypeDef* hi2c1,
-    DAC_HandleTypeDef* hdac
+    DAC_HandleTypeDef* hdac,
+    TIM_HandleTypeDef* htim2
 ) {
     (void) width;
     (void) height;
@@ -44,6 +45,8 @@ int app_main(
     actu::lin_source::start_dac(hdac);
     actu::lin_source::set_output(hdac, std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::max());
     actu::bridge::a::reverse();
+    panel::sevseg::white::init_brightness(htim2);
+    panel::sevseg::white::turn_on_all_segments();
     //actu::bridge::b::forward();
 
     size_t i = 0;
@@ -63,7 +66,7 @@ int app_main(
             );
             actu::buzzer::start();
             actu::pump::start();
-            panel::sevseg::white::display();
+            panel::sevseg::white::dim(htim2);
             buzzer_running = true;
         } else {
             actu::fan::stop_all(
@@ -75,6 +78,7 @@ int app_main(
             );
             actu::buzzer::stop();
             actu::pump::stop();
+            panel::sevseg::white::bright(htim2);
             buzzer_running = false;
         }
         std::printf("%u: Hello World!\n\r", i++);
