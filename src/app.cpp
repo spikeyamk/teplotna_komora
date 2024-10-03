@@ -3,6 +3,7 @@
 #include "submodule/public.hpp"
 #include "actu/fan/fan.hpp"
 #include "actu/buzzer/buzzer.hpp"
+#include "actu/lin_source/lin_source.hpp"
 #include "actu/pump/pump.hpp"
 #include "panel/sevseg/white/white.hpp"
 #include "sens/i2c/common/common.hpp"
@@ -11,7 +12,7 @@
 #include "app.hpp"
 
 /// This function calculates the area of a rectangle.
-int app_main(int width, int height, TIM_HandleTypeDef* htim2, I2C_HandleTypeDef* hi2c1) {
+int app_main(int width, int height, TIM_HandleTypeDef* htim2, I2C_HandleTypeDef* hi2c1, DAC_HandleTypeDef* hdac) {
     (void) width;
     (void) height;
 
@@ -20,6 +21,8 @@ int app_main(int width, int height, TIM_HandleTypeDef* htim2, I2C_HandleTypeDef*
     Trielo::trielo<actu::fan::stop_all>(htim2);
     std::printf("\n\r");
     sens::i2c::common::scan(hi2c1);
+    actu::lin_source::start_dac(hdac);
+    actu::lin_source::set_output(hdac, 1024, 1024);
 
     size_t i = 0;
     bool buzzer_running { false };

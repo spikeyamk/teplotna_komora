@@ -105,7 +105,7 @@ int main(void)
   MX_TIM2_Init();
   MX_DAC_Init();
   /* USER CODE BEGIN 2 */
-  return app_main(10, 20, &htim2, &hi2c1);
+  return app_main(10, 20, &htim2, &hi2c1, &hdac);
   /* USER CODE END 2 */
 
   /* Infinite loop */
