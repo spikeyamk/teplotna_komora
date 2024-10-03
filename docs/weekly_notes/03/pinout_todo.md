@@ -112,10 +112,10 @@
 #### green_yellow
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PB12 | DDCS | DO | Selektovací výstup pre SPI pripojené ku ovládaču sekundárnych 7-segmentových displejov | ❌ |
-| PB13 | SCLK2 | DO | Hodinový výstup pre SPI pripojené ku ovládaču sekundárnych 7-segmentových displejov | ❌ |
-| PB14 | MISO2 | DI | Dátový vstup pre SPI pripojené ku ovládaču sekundárnych 7-segmentových displejov | ❌ |
-| PB15 | MOSI2 | DO | Dátový výstup pre SPI pripojené ku ovládaču sekundárnych 7-segmentových displejov | ❌ |
+| PB12 | DDCS | DO | Selektovací výstup pre SPI pripojené ku ovládaču sekundárnych 7-segmentových displejov | ⬜ |
+| PB13 | SCLK2 | DO | Hodinový výstup pre SPI pripojené ku ovládaču sekundárnych 7-segmentových displejov | ⬜ |
+| PB14 | MISO2 | DI | Dátový vstup pre SPI pripojené ku ovládaču sekundárnych 7-segmentových displejov | ⬜ |
+| PB15 | MOSI2 | DO | Dátový výstup pre SPI pripojené ku ovládaču sekundárnych 7-segmentových displejov | ⬜ |
 ## in
 ### button
 | Pin   | Signál  | Typ  | Popis                                         | Status |
