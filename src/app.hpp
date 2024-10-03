@@ -13,7 +13,6 @@ extern "C" {
 int app_main(
     int width,
     int height,
-    TIM_HandleTypeDef* htim5,
     TIM_HandleTypeDef* htim10,
     TIM_HandleTypeDef* htim3,
     TIM_HandleTypeDef* htim4,

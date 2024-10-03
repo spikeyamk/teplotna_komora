@@ -15,11 +15,11 @@
 ## in
 | Pin   | Signál  | Typ  | Popis                                         | Status | Available TIM |
 |-------|---------|------|-----------------------------------------------| --- | --- |
-| PA1 | FF4 | DI | Spätná väzba ventilátora 4 | ❌ | TIM2_CH2, TIM5_CH2 |
-| PA3 | FF5 | DI | Spätná väzba ventilátora 5 | ❌ | TIM2_CH4, TIM5_CH4, TIM9_CH2 |
-| PB9 | FF7 | DI | Spätná väzba ventilátora 7 | ❌ | TIM11_CH1, TIM4_CH4 |
-| PC7 | FF0 | DI | Spätná väzba ventilátora 0 | ❌ | TIM3_CH2, TIM8_CH2 |
-| PC9 | FF1 | DI | Spätná väzba ventilátora 0 | ❌ | TIM3_CH4, TIM8_CH4 |
+| PA1 | FF4 | DI | Spätná väzba ventilátora 4 | ❌ | TIM5_CH2 |
+| PA3 | FF5 | DI | Spätná väzba ventilátora 5 | ❌ | TIM5_CH4 |
+| PB9 | FF7 | DI | Spätná väzba ventilátora 7 | ❌ | TIM11_CH1 |
+| PC7 | FF0 | DI | Spätná väzba ventilátora 0 | ❌ | TIM3_CH2 |
+| PC9 | FF1 | DI | Spätná väzba ventilátora 0 | ❌ | TIM3_CH4 |
 | PD13 | FF2 | DI | Spätná väzba ventilátora 2 | ❌ | TIM4_CH2 |
 | PD15 | FF3 | DI | Spätná väzba ventilátora 3 | ❌ | TIM4_CH4 |
 | PE6 | FF6 | DI | Spätná väzba ventilátora 6 | ❌ | TIM9_CH2 |

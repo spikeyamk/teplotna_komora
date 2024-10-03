@@ -17,7 +17,6 @@
 int app_main(
     int width,
     int height,
-    TIM_HandleTypeDef* htim5,
     TIM_HandleTypeDef* htim10,
     TIM_HandleTypeDef* htim3,
     TIM_HandleTypeDef* htim4,
@@ -31,8 +30,8 @@ int app_main(
 
     /* STM32H503x has 128K FLASH only these functions don't fit into it */
     //Trielo::trielo<submodule::foo>();
-    Trielo::trielo<actu::fan::init>(
-        htim5,
+    actu::fan::init_tim();
+    Trielo::trielo<actu::fan::init_ctl>(
         htim10,
         htim3,
         htim4,
@@ -58,7 +57,6 @@ int app_main(
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
         if(buzzer_running == false) {
             actu::fan::start_all(
-                htim5,
                 htim10,
                 htim3,
                 htim4,
@@ -67,10 +65,11 @@ int app_main(
             actu::buzzer::start();
             actu::pump::start();
             panel::sevseg::white::dim(htim2);
+            HAL_Delay(2000);
+            std::printf("fan_rpm: %lu\n\r", fan_rpm);
             buzzer_running = true;
         } else {
             actu::fan::stop_all(
-                htim5,
                 htim10,
                 htim3,
                 htim4,
@@ -79,6 +78,8 @@ int app_main(
             actu::buzzer::stop();
             actu::pump::stop();
             panel::sevseg::white::bright(htim2);
+            HAL_Delay(2000);
+            std::printf("fan_rpm: %lu\n\r", fan_rpm);
             buzzer_running = false;
         }
         std::printf("%u: Hello World!\n\r", i++);
