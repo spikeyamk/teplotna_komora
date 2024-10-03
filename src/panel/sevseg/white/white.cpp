@@ -5,6 +5,9 @@ namespace panel {
 namespace sevseg {
 namespace white {
     void display() {
+        //brightness
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
+        
         //cathodes
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_SET);
