@@ -65,7 +65,10 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+int __io_putchar(int ch) {
+    HAL_UART_Transmit(&huart1, (uint8_t *) &ch, sizeof(uint8_t), 1000);
+    return ch;
+}
 /* USER CODE END 0 */
 
 /**

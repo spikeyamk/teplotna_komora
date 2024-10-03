@@ -18,8 +18,8 @@ int app_main(int width, int height, TIM_HandleTypeDef* htim2, I2C_HandleTypeDef*
     /* STM32H503x has 128K FLASH only these functions don't fit into it */
     //Trielo::trielo<submodule::foo>();
     Trielo::trielo<actu::fan::stop_all>(htim2);
-    //std::printf("\n\r");
-    //sens::i2c::common::scan(hi2c1);
+    std::printf("\n\r");
+    sens::i2c::common::scan(hi2c1);
 
     size_t i = 0;
     bool buzzer_running { false };

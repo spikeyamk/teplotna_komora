@@ -3,6 +3,7 @@
 - ✔️ working
 - ⬜ configured, untested
 - 🟡 intentional wrong configuration
+- ⚠️ hardware fault
 
 # clk
 ## hse
@@ -134,8 +135,8 @@
 ## i2c
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PB6 | SDA1 | DIO | Obojsmerné sériové dáta pre senzor osvetlenia, senzory teploty a vlhkost a pre EEPROM | ⬜ |
-| PB7 | SCL1 | DO | Hodinový výstup pre senzor osvetlenia, senzory teploty a vlhkost a pre EEPROM | ⬜ |
+| PB6 | SDA1 | DIO | Obojsmerné sériové dáta pre senzor osvetlenia, senzory teploty a vlhkost a pre EEPROM | ⚠️ |
+| PB7 | SCL1 | DO | Hodinový výstup pre senzor osvetlenia, senzory teploty a vlhkost a pre EEPROM | ⚠️ |
 ### light
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
@@ -143,12 +144,12 @@
 ### temp_hum
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PA6 | ALRT0 | DI | Prerušenie zo senzora teploty a vlhkost na doske (v miestnost) | ❌ |
-| PA7 | ALRT1 | DI | Prerušenie z externého senzora teploty a vlhkost (v komore) | ❌ |
+| PA6 | ALRT0 | DI | Prerušenie zo senzora teploty a vlhkost na doske (v miestnost) | ⚠️ |
+| PA7 | ALRT1 | DI | Prerušenie z externého senzora teploty a vlhkost (v komore) | ⚠️ |
 ### ~~eeprom~~
 | ~~Pin~~   | ~~Signál~~  | ~~Typ~~  | ~~Popis~~                                         | ~~Status~~ |
 |-------|---------|------|-----------------------------------------------| --- |
-| ~~PC13~~ | ~~WCN~~ | ~~DO~~ | ~~Výstup pre riadenie zápisu do EEPROM~~ | ~~❌~~ |
+| ~~PC13~~ | ~~WCN~~ | ~~DO~~ | ~~Výstup pre riadenie zápisu do EEPROM~~ | ~~⚠️~~ |
 ## spi
 ### temp
 | Pin   | Signál  | Typ  | Popis                                         | Status |
