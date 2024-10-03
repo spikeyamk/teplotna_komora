@@ -59,7 +59,7 @@
 ## pump
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PD10 | APD | DO | Výstup pre zapnute/vypnute vzduchovej pumpy | ⬜ |
+| PD10 | APD | DO | Výstup pre zapnute/vypnute vzduchovej pumpy | ✔️ |
 ## lin_source
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |

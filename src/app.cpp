@@ -3,6 +3,7 @@
 #include "submodule/public.hpp"
 #include "actu/fan/fan.hpp"
 #include "actu/buzzer/buzzer.hpp"
+#include "actu/pump/pump.hpp"
 #include "stm32f2xx_hal.h"
 #include "main.h"
 #include "app.hpp"
@@ -25,9 +26,11 @@ int app_main(int width, int height) {
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
         if(buzzer_running == false) {
             actu::buzzer::start();
+            actu::pump::start();
             buzzer_running = true;
         } else {
             actu::buzzer::stop();
+            actu::pump::stop();
             buzzer_running = false;
         }
         std::printf("%u: Hello World!\n\r", i++);

@@ -2,7 +2,7 @@
 
 namespace actu {
 namespace pump {
-    void pump_start();
-    void pump_stop();
+    void start();
+    void stop();
 }
 }
