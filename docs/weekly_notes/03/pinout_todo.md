@@ -136,12 +136,12 @@
 ### temp
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PB3 | SCLK1 | DO | Hodinový výstup pre SPI pripojené k obom R/T prevodníkom | ❌ |
-| PB4 | MISO1 | DI | Dátový vstup pre SPI pripojené k obom R/T prevodníkom | ❌ |
-| PB5 | MOSI1 | DO | Dátový výstup pre SPI pripojené k obom R/T prevodníkom | ❌ |
-| PD7 | MCS1 | DO | Selektovací výstup pre SPI pripojené k druhému R/T prevodníku | ❌ |
+| PB3 | SCLK1 | DO | Hodinový výstup pre SPI pripojené k obom R/T prevodníkom | ⬜ |
+| PB4 | MISO1 | DI | Dátový vstup pre SPI pripojené k obom R/T prevodníkom | ⬜ |
+| PB5 | MOSI1 | DO | Dátový výstup pre SPI pripojené k obom R/T prevodníkom | ⬜ |
+| PD7 | MCS1 | DO | Selektovací výstup pre SPI pripojené k druhému R/T prevodníku | ⬜ |
 | PD4 | DRDY0 | DI | Vstup z prvého R/T prevodníka indikujúci pripravenosť dát na čítanie | ❌ |
-| PD5 | MCS0 | DO | Selektovací výstup pre SPI pripojené k prvému R/T prevodníku | ❌ |
+| PD5 | MCS0 | DO | Selektovací výstup pre SPI pripojené k prvému R/T prevodníku | ⬜ |
 | PD6 | DRDY1 | DI | Vstup z druhého R/T prevodníka indikujúci pripravenosť dát na čítanie | ❌ |
 ## i2c
 | Pin   | Signál  | Typ  | Popis                                         | Status |
