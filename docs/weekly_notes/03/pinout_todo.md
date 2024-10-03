@@ -134,8 +134,8 @@
 ## i2c
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PB6 | SDA1 | DIO | Obojsmerné sériové dáta pre senzor osvetlenia, senzory teploty a vlhkost a pre EEPROM | ❌ |
-| PB7 | SCL1 | DO | Hodinový výstup pre senzor osvetlenia, senzory teploty a vlhkost a pre EEPROM | ❌ |
+| PB6 | SDA1 | DIO | Obojsmerné sériové dáta pre senzor osvetlenia, senzory teploty a vlhkost a pre EEPROM | ⬜ |
+| PB7 | SCL1 | DO | Hodinový výstup pre senzor osvetlenia, senzory teploty a vlhkost a pre EEPROM | ⬜ |
 ### light
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
