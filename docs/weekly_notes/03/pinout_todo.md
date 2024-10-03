@@ -24,8 +24,8 @@
 |-------|---------|------|-----------------------------------------------| --- |
 | PA9 | TX1 | DO | Výstup sériových dát do prevodníka USB/UART | ✔️ |
 | PA10 | RX1 | DI | Vstup sériových dát z prevodníka USB/UART | ✔️ |
-| PA11 | CTS1 | DO | Výstup pre kontrolu toku dát z prevodníka USB/UART | ⬜️ |
-| PA12 | RTS1 | DI | Vstup pre kontrolu toku dát do prevodníka USB/UART | ⬜️ |
+| PA11 | CTS1 | DO | Výstup pre kontrolu toku dát z prevodníka USB/UART | 🟡️ |
+| PA12 | RTS1 | DI | Vstup pre kontrolu toku dát do prevodníka USB/UART | 🟡 |
 ## ~~rs232_uart~~
 | ~~Pin~~   | ~~Signál~~  | ~~Typ~~  | ~~Popis~~                                         | ~~Status~~ |
 |-------|---------|------|-----------------------------------------------| --- |
