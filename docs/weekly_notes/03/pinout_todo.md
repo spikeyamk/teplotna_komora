@@ -42,7 +42,7 @@
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
 | PA0 | FC4 | DO | Riadenie ventilátora 4 | ✔️ |
-| PA1 | FF4 | DI | Spätná väzba ventilátora 4 | ❌ |
+| PA1 | FF4 | DI | Spätná väzba ventilátora 4 | ⬜️ |
 | PA2 | FC5 | DO | Riadenie ventilátora 5 | ✔️|
 | PA3 | FF5 | DI | Spätná väzba ventilátora 5 | ❌ |
 | PB8 | FC7 | DO | Riadenie ventilátora 7 | ✔️ |
