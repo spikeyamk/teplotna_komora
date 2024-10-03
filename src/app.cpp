@@ -1,7 +1,9 @@
 #include <string_view>
+#include <limits>
 #include <trielo/trielo.hpp>
 #include "submodule/public.hpp"
 #include "actu/fan/fan.hpp"
+#include "actu/bridge/bridge.hpp"
 #include "actu/buzzer/buzzer.hpp"
 #include "actu/lin_source/lin_source.hpp"
 #include "actu/pump/pump.hpp"
@@ -21,8 +23,12 @@ int app_main(int width, int height, TIM_HandleTypeDef* htim2, I2C_HandleTypeDef*
     Trielo::trielo<actu::fan::stop_all>(htim2);
     std::printf("\n\r");
     sens::i2c::common::scan(hi2c1);
+    actu::bridge::a::turn_off();
+    actu::bridge::b::turn_off();
     actu::lin_source::start_dac(hdac);
-    actu::lin_source::set_output(hdac, 1024, 1024);
+    actu::lin_source::set_output(hdac, std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::max());
+    actu::bridge::a::reverse();
+    //actu::bridge::b::forward();
 
     size_t i = 0;
     bool buzzer_running { false };
