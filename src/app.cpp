@@ -14,13 +14,29 @@
 #include "app.hpp"
 
 /// This function calculates the area of a rectangle.
-int app_main(int width, int height, TIM_HandleTypeDef* htim2, I2C_HandleTypeDef* hi2c1, DAC_HandleTypeDef* hdac) {
+int app_main(
+    int width,
+    int height,
+    TIM_HandleTypeDef* htim5,
+    TIM_HandleTypeDef* htim10,
+    TIM_HandleTypeDef* htim3,
+    TIM_HandleTypeDef* htim4,
+    TIM_HandleTypeDef* htim9,
+    I2C_HandleTypeDef* hi2c1,
+    DAC_HandleTypeDef* hdac
+) {
     (void) width;
     (void) height;
 
     /* STM32H503x has 128K FLASH only these functions don't fit into it */
     //Trielo::trielo<submodule::foo>();
-    Trielo::trielo<actu::fan::stop_all>(htim2);
+    Trielo::trielo<actu::fan::init>(
+        htim5,
+        htim10,
+        htim3,
+        htim4,
+        htim9
+    );
     std::printf("\n\r");
     sens::i2c::common::scan(hi2c1);
     actu::bridge::a::turn_off();
@@ -38,17 +54,31 @@ int app_main(int width, int height, TIM_HandleTypeDef* htim2, I2C_HandleTypeDef*
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_2);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
         if(buzzer_running == false) {
+            actu::fan::start_all(
+                htim5,
+                htim10,
+                htim3,
+                htim4,
+                htim9
+            );
             actu::buzzer::start();
             actu::pump::start();
             panel::sevseg::white::display();
             buzzer_running = true;
         } else {
+            actu::fan::stop_all(
+                htim5,
+                htim10,
+                htim3,
+                htim4,
+                htim9
+            );
             actu::buzzer::stop();
             actu::pump::stop();
             buzzer_running = false;
         }
         std::printf("%u: Hello World!\n\r", i++);
-        HAL_Delay(500);
+        HAL_Delay(2000);
     }
     return 0;
 }

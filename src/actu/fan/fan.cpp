@@ -3,23 +3,55 @@
 
 namespace actu {
 namespace fan {
-    void stop_all(TIM_HandleTypeDef* htim2) {
-        //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
-        //HAL_TIM_PWM_Start(htim2, TIM_CHANNEL_1);
-        //__HAL_TIM_SET_COMPARE(htim2, TIM_CHANNEL_1, 50000);
+    void init(
+        TIM_HandleTypeDef* htim5,
+        TIM_HandleTypeDef* htim10,
+        TIM_HandleTypeDef* htim3,
+        TIM_HandleTypeDef* htim4,
+        TIM_HandleTypeDef* htim9
+    ) {
+        HAL_TIM_PWM_Start(htim5, TIM_CHANNEL_1);
+        HAL_TIM_PWM_Start(htim5, TIM_CHANNEL_3);
+        HAL_TIM_PWM_Start(htim10, TIM_CHANNEL_1);
+        HAL_TIM_PWM_Start(htim3, TIM_CHANNEL_1);
+        HAL_TIM_PWM_Start(htim3, TIM_CHANNEL_3);
+        HAL_TIM_PWM_Start(htim4, TIM_CHANNEL_1);
+        HAL_TIM_PWM_Start(htim4, TIM_CHANNEL_3);
+        HAL_TIM_PWM_Start(htim9, TIM_CHANNEL_1);
+    }
 
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);
+    void stop_all(
+        TIM_HandleTypeDef* htim5,
+        TIM_HandleTypeDef* htim10,
+        TIM_HandleTypeDef* htim3,
+        TIM_HandleTypeDef* htim4,
+        TIM_HandleTypeDef* htim9
+    ) {
+        __HAL_TIM_SET_COMPARE(htim5, TIM_CHANNEL_1, 65535);
+        __HAL_TIM_SET_COMPARE(htim5, TIM_CHANNEL_3, 65535);
+        __HAL_TIM_SET_COMPARE(htim10, TIM_CHANNEL_1, 65535);
+        __HAL_TIM_SET_COMPARE(htim3, TIM_CHANNEL_1, 65535);
+        __HAL_TIM_SET_COMPARE(htim3, TIM_CHANNEL_3, 65535);
+        __HAL_TIM_SET_COMPARE(htim4, TIM_CHANNEL_1, 65535);
+        __HAL_TIM_SET_COMPARE(htim4, TIM_CHANNEL_3, 65535);
+        __HAL_TIM_SET_COMPARE(htim9, TIM_CHANNEL_1, 65535);
+    }
 
-        // Missing fan
-        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
-
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
-
-        // Missing fan
-        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_5, GPIO_PIN_RESET);
+    void start_all(
+        TIM_HandleTypeDef* htim5,
+        TIM_HandleTypeDef* htim10,
+        TIM_HandleTypeDef* htim3,
+        TIM_HandleTypeDef* htim4,
+        TIM_HandleTypeDef* htim9
+    ) {
+        __HAL_TIM_SET_COMPARE(htim5, TIM_CHANNEL_1, 0);
+        __HAL_TIM_SET_COMPARE(htim5, TIM_CHANNEL_3, 0);
+        __HAL_TIM_SET_COMPARE(htim10, TIM_CHANNEL_1, 0);
+        __HAL_TIM_SET_COMPARE(htim3, TIM_CHANNEL_1, 0);
+        __HAL_TIM_SET_COMPARE(htim3, TIM_CHANNEL_3, 0);
+        __HAL_TIM_SET_COMPARE(htim4, TIM_CHANNEL_1, 0);
+        __HAL_TIM_SET_COMPARE(htim4, TIM_CHANNEL_3, 0);
+        __HAL_TIM_SET_COMPARE(htim9, TIM_CHANNEL_1, 0);
     }
 }
 }
