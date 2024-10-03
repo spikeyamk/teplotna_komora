@@ -1,7 +1,5 @@
 #pragma once
 
-#include "stm32f2xx_hal.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -12,7 +10,17 @@ extern "C" {
  * @param height The height of the rectangle.
  * @return The area of the rectangle.
  */
-int app_main(int width, int height, UART_HandleTypeDef* huart1);
+int app_main(
+    int width,
+    int height,
+    TIM_HandleTypeDef* htim10,
+    TIM_HandleTypeDef* htim3,
+    TIM_HandleTypeDef* htim4,
+    TIM_HandleTypeDef* htim9,
+    I2C_HandleTypeDef* hi2c1,
+    DAC_HandleTypeDef* hdac,
+    TIM_HandleTypeDef* htim2
+);
 
 #ifdef __cplusplus
 }

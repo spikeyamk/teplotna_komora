@@ -30,14 +30,13 @@ target_compile_definitions(stm32cubef2 PUBLIC
 )
 
 target_include_directories(stm32cubef2 PUBLIC
+    ${CMAKE_SOURCE_DIR}/src/core/include
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Inc
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Inc/Legacy
     STM32CubeF2/Drivers/BSP/STM32F2xx_Nucleo
     STM32CubeF2/Drivers/CMSIS/Device/ST/STM32F2xx/Include
     STM32CubeF2/Drivers/CMSIS/Include
 )
-
-target_link_libraries(stm32cubef2 PUBLIC core)
 
 #file(GLOB STM32H5XX_HAL_DRIVER_SRCS
 #    "STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/*.c"  # Adjust the path if necessary
