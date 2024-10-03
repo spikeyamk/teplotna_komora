@@ -5,8 +5,8 @@ namespace actu {
 namespace fan {
     void stop_all(TIM_HandleTypeDef* htim2) {
         //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
-        HAL_TIM_PWM_Start(htim2, TIM_CHANNEL_1);
-        __HAL_TIM_SET_COMPARE(htim2, TIM_CHANNEL_1, 50000);
+        //HAL_TIM_PWM_Start(htim2, TIM_CHANNEL_1);
+        //__HAL_TIM_SET_COMPARE(htim2, TIM_CHANNEL_1, 50000);
 
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);
 

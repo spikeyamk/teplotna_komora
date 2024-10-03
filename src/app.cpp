@@ -5,18 +5,21 @@
 #include "actu/buzzer/buzzer.hpp"
 #include "actu/pump/pump.hpp"
 #include "panel/sevseg/white/white.hpp"
+#include "sens/i2c/common/common.hpp"
 #include "stm32f2xx_hal.h"
 #include "main.h"
 #include "app.hpp"
 
 /// This function calculates the area of a rectangle.
-int app_main(int width, int height, TIM_HandleTypeDef* htim2) {
+int app_main(int width, int height, TIM_HandleTypeDef* htim2, I2C_HandleTypeDef* hi2c1) {
     (void) width;
     (void) height;
 
     /* STM32H503x has 128K FLASH only these functions don't fit into it */
-    Trielo::trielo<submodule::foo>();
+    //Trielo::trielo<submodule::foo>();
     Trielo::trielo<actu::fan::stop_all>(htim2);
+    //std::printf("\n\r");
+    //sens::i2c::common::scan(hi2c1);
 
     size_t i = 0;
     bool buzzer_running { false };
