@@ -1,42 +1,89 @@
 #include <string_view>
+#include <limits>
 #include <trielo/trielo.hpp>
 #include "submodule/public.hpp"
 #include "actu/fan/fan.hpp"
+#include "actu/bridge/bridge.hpp"
+#include "actu/buzzer/buzzer.hpp"
+#include "actu/lin_source/lin_source.hpp"
+#include "actu/pump/pump.hpp"
+#include "panel/sevseg/white/white.hpp"
+#include "sens/i2c/common/common.hpp"
 #include "stm32f2xx_hal.h"
 #include "main.h"
 #include "app.hpp"
 
-inline int redirect(int ch, UART_HandleTypeDef* huart1) {
-    const uint32_t COM_POLL_TIMEOUT = 1000;
-    HAL_UART_Transmit(huart1, (uint8_t *) &ch, 1, COM_POLL_TIMEOUT);
-    //HAL_UART_Transmit_IT(huart1, (uint8_t *) &ch, 1);
-    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_0);
-    HAL_Delay(100);
-    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_0);
-    return ch;
-}
-
 /// This function calculates the area of a rectangle.
-int app_main(int width, int height, UART_HandleTypeDef* huart1) {
+int app_main(
+    int width,
+    int height,
+    TIM_HandleTypeDef* htim10,
+    TIM_HandleTypeDef* htim3,
+    TIM_HandleTypeDef* htim4,
+    TIM_HandleTypeDef* htim9,
+    I2C_HandleTypeDef* hi2c1,
+    DAC_HandleTypeDef* hdac,
+    TIM_HandleTypeDef* htim2
+) {
     (void) width;
     (void) height;
 
     /* STM32H503x has 128K FLASH only these functions don't fit into it */
-    Trielo::trielo<submodule::foo>();
+    //Trielo::trielo<submodule::foo>();
+    actu::fan::init_tim();
+    Trielo::trielo<actu::fan::init_ctl>(
+        htim10,
+        htim3,
+        htim4,
+        htim9
+    );
+    std::printf("\n\r");
+    sens::i2c::common::scan(hi2c1);
+    actu::bridge::a::turn_off();
+    actu::bridge::b::turn_off();
+    actu::lin_source::start_dac(hdac);
+    actu::lin_source::set_output(hdac, std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::max());
+    actu::bridge::a::reverse();
+    panel::sevseg::white::init_brightness(htim2);
+    panel::sevseg::white::turn_on_all_segments();
+    //actu::bridge::b::forward();
 
-    actu::fan::stop_all();
-
-    const std::string_view message { "Hello World!\n\r" };
-    std::printf("%s", message.data());
+    size_t i = 0;
+    bool buzzer_running { false };
     while(1) {
-        //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_0);
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_0);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_2);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
-        for(const char c: message) {
-            redirect(c, huart1);
+        if(buzzer_running == false) {
+            actu::fan::start_all(
+                htim10,
+                htim3,
+                htim4,
+                htim9
+            );
+            actu::buzzer::start();
+            actu::pump::start();
+            panel::sevseg::white::dim(htim2);
+            HAL_Delay(2000);
+            std::printf("fan_rpm: %lu\n\r", fan_rpm);
+            buzzer_running = true;
+        } else {
+            actu::fan::stop_all(
+                htim10,
+                htim3,
+                htim4,
+                htim9
+            );
+            actu::buzzer::stop();
+            actu::pump::stop();
+            panel::sevseg::white::bright(htim2);
+            HAL_Delay(2000);
+            std::printf("fan_rpm: %lu\n\r", fan_rpm);
+            buzzer_running = false;
         }
-        HAL_Delay(500);
+        std::printf("%u: Hello World!\n\r", i++);
+        HAL_Delay(2000);
     }
     return 0;
 }
