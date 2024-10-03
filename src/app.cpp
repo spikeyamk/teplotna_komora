@@ -10,13 +10,13 @@
 #include "app.hpp"
 
 /// This function calculates the area of a rectangle.
-int app_main(int width, int height) {
+int app_main(int width, int height, TIM_HandleTypeDef* htim2) {
     (void) width;
     (void) height;
 
     /* STM32H503x has 128K FLASH only these functions don't fit into it */
     Trielo::trielo<submodule::foo>();
-    Trielo::trielo<actu::fan::stop_all>();
+    Trielo::trielo<actu::fan::stop_all>(htim2);
 
     size_t i = 0;
     bool buzzer_running { false };
@@ -28,7 +28,7 @@ int app_main(int width, int height) {
         if(buzzer_running == false) {
             actu::buzzer::start();
             actu::pump::start();
-            panel::sevseg::white::display();
+            //panel::sevseg::white::display();
             buzzer_running = true;
         } else {
             actu::buzzer::stop();

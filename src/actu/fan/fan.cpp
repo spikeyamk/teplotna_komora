@@ -1,10 +1,13 @@
-#include "stm32f2xx_hal.h"
+#include <limits>
 #include "actu/fan/fan.hpp"
 
 namespace actu {
 namespace fan {
-    void stop_all() {
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
+    void stop_all(TIM_HandleTypeDef* htim2) {
+        //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
+        HAL_TIM_PWM_Start(htim2, TIM_CHANNEL_1);
+        __HAL_TIM_SET_COMPARE(htim2, TIM_CHANNEL_1, 50000);
+
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);
 
         // Missing fan
