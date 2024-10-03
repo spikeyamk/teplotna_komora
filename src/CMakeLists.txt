@@ -1,15 +1,19 @@
 add_subdirectory("actu")
 add_subdirectory("comm")
-add_subdirectory("core")
 add_subdirectory("panel")
 add_subdirectory("sens")
 add_subdirectory("submodule")
 
 set(CMAKE_EXECUTABLE_SUFFIX ".elf")
 add_executable(${CMAKE_PROJECT_NAME}
-    "main.c"
+    "core/startup_stm32f205xx.s"
+    "core/stm32f2xx_hal_msp.c"
+    "core/stm32f2xx_it.c"
     "core/syscalls.c"
     "core/sysmem.c"
+    "core/system_stm32f2xx.c"
+
+    "main.c"
     "app.cpp"
 )
 
@@ -22,8 +26,6 @@ target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE
     actu::pump
 
     comm::usb_uart
-
-    core
 
     panel::button
     panel::encoder
