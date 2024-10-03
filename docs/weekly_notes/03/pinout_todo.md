@@ -95,20 +95,20 @@
 #### white
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PA15 | WHBK | DO | Výstup pre nastavovanie jasu bieleho displeja | ❌ |
-| PE0 | WH3 | DO | Výstup pre riadenie spoločnej katódy bieleho 7-segmentového displeja 0 | ⬜ |
-| PE1 | WH4 | DO | Výstup pre riadenie spoločnej katódy bieleho 7-segmentového displeja 1 | ⬜ |
-| PE2 | WH0 | DO | Výstup pre riadenie spoločnej katódy bieleho 7-segmentového displeja 2 | ⬜ |
-| PE3 | WH2 | DO | Výstup pre riadenie spoločnej katódy bieleho 7-segmentového displeja 3 | ⬜ |
-| PE4 | WH1 | DO | Výstup pre riadenie spoločnej katódy bieleho 7-segmentového displeja 4 | ⬜ |
-| PE7 | WHA | DO | Výstup pre riadenie segmentov A | ⬜ |
-| PE8 | WHB | DO | Výstup pre riadenie segmentov B | ⬜ |
-| PE9 | WHC | DO | Výstup pre riadenie segmentov C | ⬜ |
-| PE10 | WHD | DO | Výstup pre riadenie segmentov D | ⬜ |
-| PE11 | WHE | DO | Výstup pre riadenie segmentov E | ⬜ |
-| PE12 | WHF | DO | Výstup pre riadenie segmentov F | ⬜ |
-| PE13 | WHG | DO | Výstup pre riadenie segmentov G | ⬜ |
-| PE14 | WHDP | DO | Výstup pre riadenie segmentov DP | ⬜ |
+| PA15 | WHBK | DO | Výstup pre nastavovanie jasu bieleho displeja | 🟡 |
+| PE0 | WH3 | DO | Výstup pre riadenie spoločnej katódy bieleho 7-segmentového displeja 0 | ✔️ |
+| PE1 | WH4 | DO | Výstup pre riadenie spoločnej katódy bieleho 7-segmentového displeja 1 | ✔️ |
+| PE2 | WH0 | DO | Výstup pre riadenie spoločnej katódy bieleho 7-segmentového displeja 2 | ✔️ |
+| PE3 | WH2 | DO | Výstup pre riadenie spoločnej katódy bieleho 7-segmentového displeja 3 | ✔️ |
+| PE4 | WH1 | DO | Výstup pre riadenie spoločnej katódy bieleho 7-segmentového displeja 4 | ✔️ |
+| PE7 | WHA | DO | Výstup pre riadenie segmentov A | ✔️ |
+| PE8 | WHB | DO | Výstup pre riadenie segmentov B | ✔️ |
+| PE9 | WHC | DO | Výstup pre riadenie segmentov C | ✔️ |
+| PE10 | WHD | DO | Výstup pre riadenie segmentov D | ✔️ |
+| PE11 | WHE | DO | Výstup pre riadenie segmentov E | ✔️ |
+| PE12 | WHF | DO | Výstup pre riadenie segmentov F | ✔️ |
+| PE13 | WHG | DO | Výstup pre riadenie segmentov G | ✔️ |
+| PE14 | WHDP | DO | Výstup pre riadenie segmentov DP | ✔️ |
 #### green_yellow
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |

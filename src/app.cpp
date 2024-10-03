@@ -31,7 +31,7 @@ int app_main(int width, int height, TIM_HandleTypeDef* htim2, I2C_HandleTypeDef*
         if(buzzer_running == false) {
             actu::buzzer::start();
             actu::pump::start();
-            //panel::sevseg::white::display();
+            panel::sevseg::white::display();
             buzzer_running = true;
         } else {
             actu::buzzer::stop();
