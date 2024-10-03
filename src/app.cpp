@@ -4,6 +4,7 @@
 #include "actu/fan/fan.hpp"
 #include "actu/buzzer/buzzer.hpp"
 #include "actu/pump/pump.hpp"
+#include "panel/sevseg/white/white.hpp"
 #include "stm32f2xx_hal.h"
 #include "main.h"
 #include "app.hpp"
@@ -27,6 +28,7 @@ int app_main(int width, int height) {
         if(buzzer_running == false) {
             actu::buzzer::start();
             actu::pump::start();
+            panel::sevseg::white::display();
             buzzer_running = true;
         } else {
             actu::buzzer::stop();
