@@ -3,8 +3,10 @@ add_subdirectory("submodule")
 set(CMAKE_EXECUTABLE_SUFFIX ".elf")
 add_executable(${CMAKE_PROJECT_NAME}
     "main.c"
+    "core/freertos.c"
     "core/startup_stm32h723xx.s"
     "core/stm32h7xx_hal_msp.c"
+    "core/stm32h7xx_hal_timebase_tim.c"
     "core/stm32h7xx_it.c"
     "core/syscalls.c"
     "core/sysmem.c"
