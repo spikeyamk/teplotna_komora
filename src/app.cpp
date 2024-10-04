@@ -39,9 +39,9 @@ int app_main(
     std::printf("\n\r");
     actu::bridge::a::turn_off();
     actu::bridge::b::turn_off();
-    actu::lin_source::start_dac(hdac);
-    actu::lin_source::set_output(hdac, std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::max());
-    actu::bridge::a::reverse();
+    //actu::lin_source::start_dac(hdac);
+    //actu::lin_source::set_output(hdac, std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::max());
+    //actu::bridge::a::reverse();
     panel::sevseg::white::init_brightness(htim2);
     panel::sevseg::white::turn_on_all_segments();
     actu::pump::stop();
@@ -51,10 +51,10 @@ int app_main(
     size_t i = 0;
     bool buzzer_running { false };
     while(1) {
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_0);
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_2);
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
+        //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_0);
+        //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
+        //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_2);
+        //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
         /*
         if(buzzer_running == false) {
             actu::fan::start_all(

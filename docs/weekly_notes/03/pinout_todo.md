@@ -120,10 +120,10 @@
 ### button
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PD0 | SW0 | DI | Vstup z pravého krajného panelového spínača | ⬜ |
-| PD1 | SW1 | DI | Vstup z pravého stredného panelového spínača | ⬜ |
-| PD2 | SW2 | DI | Vstup z ľavého stredného panelového spínača | ⬜ |
-| PD3 | SW3 | DI | Vstup z ľavého krajného panelového spínača | ⬜ |
+| PD0 | SW0 | DI | Vstup z pravého krajného panelového spínača | ✔️ |
+| PD1 | SW1 | DI | Vstup z pravého stredného panelového spínača | ✔️ |
+| PD2 | SW2 | DI | Vstup z ľavého stredného panelového spínača | ✔️ |
+| PD3 | SW3 | DI | Vstup z ľavého krajného panelového spínača | ✔️ |
 ### encoder
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
