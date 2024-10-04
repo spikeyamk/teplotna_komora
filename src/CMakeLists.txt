@@ -14,7 +14,9 @@ add_executable(${CMAKE_PROJECT_NAME}
     "core/system_stm32f2xx.c"
 
     "main.c"
+    "printf_redirect.c"
     "app.cpp"
+    "button_it.cpp"
 )
 
 target_compile_definitions("${CMAKE_PROJECT_NAME}" PRIVATE STM32F205xx)
@@ -47,6 +49,7 @@ target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "core/include")
 # Define the ELF and binary file locations
 set(ELF_FILE "${CMAKE_BINARY_DIR}/src/${CMAKE_PROJECT_NAME}.elf")
 set(BIN_FILE "${CMAKE_BINARY_DIR}/src/${CMAKE_PROJECT_NAME}.bin")
+set(SILENT_BIN_FILE "${CMAKE_SOURCE_DIR}/misc/silent_firmware.bin")
 
 # Add a custom command to generate the .bin file from the .elf file
 add_custom_command(
@@ -63,4 +66,12 @@ add_custom_target(
     COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target all
     COMMAND STM32_Programmer_CLI -c port=SWD -w ${BIN_FILE} 0x08000000 -v -rst
     COMMENT "Building project and flashing the binary with STM32_Programmer_CLI"
+)
+
+# Custom target for flashing
+add_custom_target(
+    flash_silent
+    DEPENDS ${SILENT_BIN_FILE}
+    COMMAND STM32_Programmer_CLI -c port=SWD -w ${SILENT_BIN_FILE} 0x08000000 -v -rst
+    COMMENT "Flashing silent firmware"
 )

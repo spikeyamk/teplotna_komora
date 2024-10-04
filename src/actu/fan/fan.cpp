@@ -2,14 +2,17 @@
 #include <iostream>
 #include "actu/fan/fan.hpp"
 
+/*
 TIM_HandleTypeDef htim5;
 uint32_t capture_value1 = 0;
 uint32_t capture_value2 = 0;
 uint32_t capture_difference = 0;
 uint32_t fan_rpm = 0;
 volatile uint8_t capture_done = 0;
+*/
 
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
+    /*
     std::printf("HAL_TIM_IC_CaptureCallback: %p\n\r", htim);
     if(htim->Instance == TIM5) {
         if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
@@ -32,6 +35,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
             }
         }
     }
+    */
 }
 
 

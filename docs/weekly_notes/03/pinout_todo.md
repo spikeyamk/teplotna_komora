@@ -42,7 +42,7 @@
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
 | PA0 | FC4 | DO | Riadenie ventilátora 4 | ✔️ |
- PA1 | FF4 | DI | Spätná väzba ventilátora 4 | ⬜️ |
+| PA1 | FF4 | DI | Spätná väzba ventilátora 4 | ⬜️ |
 | PA2 | FC5 | DO | Riadenie ventilátora 5 | ✔️|
 | PA3 | FF5 | DI | Spätná väzba ventilátora 5 | ❌ |
 | PB8 | FC7 | DO | Riadenie ventilátora 7 | ✔️ |
@@ -60,7 +60,7 @@
 ## pump
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PD10 | APD | DO | Výstup pre zapnute/vypnute vzduchovej pumpy | ✔️ |
+| !PD11 | APD | DO | Výstup pre zapnute/vypnute vzduchovej pumpy | ✔️ |
 ## lin_source
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
@@ -69,18 +69,18 @@
 ## bridge
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PA8 | HC7 | DO | Invertovaný výstup pre ovládanie výkonového mostíka B (J7-1) | ⬜ |
-| PB0 | HC2 | DO | Invertovaný výstup pre ovládanie výkonového mostíka A (J6-3) | ⬜ |
-| PB1 | HC3 | DO | Invertovaný výstup pre ovládanie výkonového mostíka A (J6-1) | ⬜ |
-| PC4 | HC0 | DO | Invertovaný výstup pre ovládanie výkonového mostíka A (J6-2) | ⬜ |
-| PC5 | HC1 | DO | Invertovaný výstup pre ovládanie výkonového mostíka A (J6-4) | ⬜ |
-| PC10 | HC6 | DO | Invertovaný výstup pre ovládanie výkonového mostíka B (J7-3) | ⬜ |
-| PC11 | HC5 | DO | Invertovaný výstup pre ovládanie výkonového mostíka B (J7-4) | ⬜ |
-| PC12 | HC4 | DO | Invertovaný výstup pre ovládanie výkonového mostíka B (J7-2) | ⬜ |
+| PA8 | HC7 | DO | Invertovaný výstup pre ovládanie výkonového mostíka B (J7-1) | ⚠️ |
+| PB0 | HC2 | DO | Invertovaný výstup pre ovládanie výkonového mostíka A (J6-3) | ✔️ |
+| PB1 | HC3 | DO | Invertovaný výstup pre ovládanie výkonového mostíka A (J6-1) | ✔️ |
+| PC4 | HC0 | DO | Invertovaný výstup pre ovládanie výkonového mostíka A (J6-2) | ✔️ |
+| PC5 | HC1 | DO | Invertovaný výstup pre ovládanie výkonového mostíka A (J6-4) | ✔️ |
+| PC10 | HC6 | DO | Invertovaný výstup pre ovládanie výkonového mostíka B (J7-3) | ⚠️ |
+| PC11 | HC5 | DO | Invertovaný výstup pre ovládanie výkonového mostíka B (J7-4) | ⚠️ |
+| PC12 | HC4 | DO | Invertovaný výstup pre ovládanie výkonového mostíka B (J7-2) | ⚠️ |
 ## buzzer
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PD11 | BUZ | DO | Výstup pre zapnute/vypnute piezoelektrického akustckého indikátora | ✔️ |
+| !PD10 | BUZ | DO | Výstup pre zapnute/vypnute piezoelektrického akustckého indikátora | ✔️ |
 
 # panel
 ## out
@@ -112,18 +112,18 @@
 #### green_yellow
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PB12 | DDCS | DO | Selektovací výstup pre SPI pripojené ku ovládaču sekundárnych 7-segmentových displejov | ❌ |
-| PB13 | SCLK2 | DO | Hodinový výstup pre SPI pripojené ku ovládaču sekundárnych 7-segmentových displejov | ❌ |
-| PB14 | MISO2 | DI | Dátový vstup pre SPI pripojené ku ovládaču sekundárnych 7-segmentových displejov | ❌ |
-| PB15 | MOSI2 | DO | Dátový výstup pre SPI pripojené ku ovládaču sekundárnych 7-segmentových displejov | ❌ |
+| PB12 | DDCS | DO | Selektovací výstup pre SPI pripojené ku ovládaču sekundárnych 7-segmentových displejov | ⬜ |
+| PB13 | SCLK2 | DO | Hodinový výstup pre SPI pripojené ku ovládaču sekundárnych 7-segmentových displejov | ⬜ |
+| PB14 | MISO2 | DI | Dátový vstup pre SPI pripojené ku ovládaču sekundárnych 7-segmentových displejov | ⬜ |
+| PB15 | MOSI2 | DO | Dátový výstup pre SPI pripojené ku ovládaču sekundárnych 7-segmentových displejov | ⬜ |
 ## in
 ### button
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PD0 | SW0 | DI | Vstup z pravého krajného panelového spínača | ❌ |
-| PD1 | SW1 | DI | Vstup z pravého stredného panelového spínača | ❌ |
-| PD2 | SW2 | DI | Vstup z ľavého stredného panelového spínača | ❌ |
-| PD3 | SW3 | DI | Vstup z ľavého krajného panelového spínača | ❌ |
+| PD0 | SW0 | DI | Vstup z pravého krajného panelového spínača | ✔️ |
+| PD1 | SW1 | DI | Vstup z pravého stredného panelového spínača | ✔️ |
+| PD2 | SW2 | DI | Vstup z ľavého stredného panelového spínača | ✔️ |
+| PD3 | SW3 | DI | Vstup z ľavého krajného panelového spínača | ✔️ |
 ### encoder
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
@@ -136,13 +136,13 @@
 ### temp
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PB3 | SCLK1 | DO | Hodinový výstup pre SPI pripojené k obom R/T prevodníkom | ❌ |
-| PB4 | MISO1 | DI | Dátový vstup pre SPI pripojené k obom R/T prevodníkom | ❌ |
-| PB5 | MOSI1 | DO | Dátový výstup pre SPI pripojené k obom R/T prevodníkom | ❌ |
-| PD7 | MCS1 | DO | Selektovací výstup pre SPI pripojené k druhému R/T prevodníku | ❌ |
-| PD4 | DRDY0 | DI | Vstup z prvého R/T prevodníka indikujúci pripravenosť dát na čítanie | ❌ |
-| PD5 | MCS0 | DO | Selektovací výstup pre SPI pripojené k prvému R/T prevodníku | ❌ |
-| PD6 | DRDY1 | DI | Vstup z druhého R/T prevodníka indikujúci pripravenosť dát na čítanie | ❌ |
+| PB3 | SCLK1 | DO | Hodinový výstup pre SPI pripojené k obom R/T prevodníkom | ⬜ |
+| PB4 | MISO1 | DI | Dátový vstup pre SPI pripojené k obom R/T prevodníkom | ⬜ |
+| PB5 | MOSI1 | DO | Dátový výstup pre SPI pripojené k obom R/T prevodníkom | ⬜ |
+| PD7 | MCS1 | DO | Selektovací výstup pre SPI pripojené k druhému R/T prevodníku | ⬜ |
+| PD4 | DRDY0 | DI | Vstup z prvého R/T prevodníka indikujúci pripravenosť dát na čítanie | ⬜️ |
+| PD5 | MCS0 | DO | Selektovací výstup pre SPI pripojené k prvému R/T prevodníku | ⬜ |
+| PD6 | DRDY1 | DI | Vstup z druhého R/T prevodníka indikujúci pripravenosť dát na čítanie | ⬜️ |
 ## i2c
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |

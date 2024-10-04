@@ -12,7 +12,7 @@ namespace a {
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
     }
 
-    void forward() {
+    void heat() {
         // LG right
         HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
 
@@ -20,7 +20,7 @@ namespace a {
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
     }
 
-    void reverse() {
+    void cool() {
         // LG left
         HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
 
@@ -37,7 +37,8 @@ namespace b {
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
     }
 
-    void forward() {
+    /*
+    void heat() {
         // LG right
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
 
@@ -45,7 +46,24 @@ namespace b {
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_SET);
     }
 
-    void reverse() {
+    void cool() {
+        // LG left
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
+
+        // UG right
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_SET);
+    }
+    */
+
+    void cool() {
+        // LG right
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+
+        // UG left
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
+    }
+
+    void heat() {
         // LG left
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
 

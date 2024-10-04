@@ -5,7 +5,7 @@
 namespace sens {
 namespace i2c {
 namespace common {
-    void scan(I2C_HandleTypeDef* hi2c1);
+    //void scan(I2C_HandleTypeDef* hi2c1);
 }
 }
 }
