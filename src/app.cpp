@@ -8,6 +8,7 @@
 #include "actu/lin_source/lin_source.hpp"
 #include "actu/pump/pump.hpp"
 #include "panel/sevseg/white/white.hpp"
+#include "panel/sevseg/green_yellow/green_yellow.hpp"
 #include "sens/i2c/common/common.hpp"
 #include "stm32f2xx_hal.h"
 #include "main.h"
@@ -22,7 +23,8 @@ int app_main(
     TIM_HandleTypeDef* htim4,
     TIM_HandleTypeDef* htim9,
     DAC_HandleTypeDef* hdac,
-    TIM_HandleTypeDef* htim2
+    TIM_HandleTypeDef* htim2,
+    SPI_HandleTypeDef* hspi2
 ) {
     (void) width;
     (void) height;
@@ -46,6 +48,8 @@ int app_main(
     panel::sevseg::white::turn_on_all_segments();
     actu::pump::stop();
     actu::buzzer::stop();
+    panel::sevseg::green_yellow::init();
+    panel::sevseg::green_yellow::test();
     //actu::bridge::b::forward();
 
     size_t i = 0;

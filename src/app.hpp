@@ -18,7 +18,8 @@ int app_main(
     TIM_HandleTypeDef* htim4,
     TIM_HandleTypeDef* htim9,
     DAC_HandleTypeDef* hdac,
-    TIM_HandleTypeDef* htim2
+    TIM_HandleTypeDef* htim2,
+    SPI_HandleTypeDef* hspi2
 );
 
 #ifdef __cplusplus
