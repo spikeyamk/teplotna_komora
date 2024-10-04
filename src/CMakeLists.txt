@@ -16,6 +16,7 @@ add_executable(${CMAKE_PROJECT_NAME}
     "main.c"
     "printf_redirect.c"
     "app.cpp"
+    "button_it.cpp"
 )
 
 target_compile_definitions("${CMAKE_PROJECT_NAME}" PRIVATE STM32F205xx)

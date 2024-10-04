@@ -24,8 +24,7 @@ int app_main(
     TIM_HandleTypeDef* htim4,
     TIM_HandleTypeDef* htim9,
     DAC_HandleTypeDef* hdac,
-    TIM_HandleTypeDef* htim2,
-    SPI_HandleTypeDef* hspi2
+    TIM_HandleTypeDef* htim2
 ) {
     (void) width;
     (void) height;
@@ -55,13 +54,12 @@ int app_main(
     actu::bridge::b::cool();
 
     size_t i = 0;
-    bool buzzer_running { false };
-    while(1) {
-        //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_0);
-        //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
-        //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_2);
-        //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
-        /*
+    for(bool buzzer_running = false; true; buzzer_running = !(buzzer_running)) {
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_0);
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_2);
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
+
         if(buzzer_running == false) {
             actu::fan::start_all(
                 htim10,
@@ -71,10 +69,9 @@ int app_main(
             );
             actu::buzzer::start();
             actu::pump::start();
-            panel::sevseg::white::dim(htim2);
+            panel::sevseg::white::bright(htim2);
             HAL_Delay(2000);
             //std::printf("fan_rpm: %lu\n\r", fan_rpm);
-            buzzer_running = true;
         } else {
             actu::fan::stop_all(
                 htim10,
@@ -83,12 +80,11 @@ int app_main(
                 htim9
             );
             actu::buzzer::stop();
-            panel::sevseg::white::bright(htim2);
+            actu::pump::stop();
+            panel::sevseg::white::dim(htim2);
             HAL_Delay(2000);
             //std::printf("fan_rpm: %lu\n\r", fan_rpm);
-            buzzer_running = false;
         }
-        */
         std::printf("%u: Hello World!\n\r", i++);
         HAL_Delay(2000);
     }
