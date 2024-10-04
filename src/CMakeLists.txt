@@ -4,15 +4,16 @@ add_subdirectory("fanctl")
 set(CMAKE_EXECUTABLE_SUFFIX ".elf")
 add_executable(${CMAKE_PROJECT_NAME}
     "main.c"
+    "printf_redirect.c"
     "core/startup_stm32f205xx.s"
     "core/stm32f2xx_hal_msp.c"
+    "core/stm32f2xx_hal_timebase_tim.c"
     "core/stm32f2xx_it.c"
     "core/syscalls.c"
     "core/sysmem.c"
     "core/system_stm32f2xx.c"
 
     "app.cpp"
-    "returns_true.cpp"
 )
 
 target_compile_definitions("${CMAKE_PROJECT_NAME}" PRIVATE STM32F205xx)

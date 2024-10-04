@@ -1,44 +1,48 @@
-#include <string_view>
 #include <trielo/trielo.hpp>
 #include "submodule/public.hpp"
 #include "fanctl/bulk.hpp"
-#include "returns_true.hpp"
 #include "stm32f2xx_hal.h"
+#include "cmsis_os2.h"
 #include "main.h"
 #include "app.hpp"
 
-inline int redirect(int ch, UART_HandleTypeDef* huart1) {
-    const uint32_t COM_POLL_TIMEOUT = 1000;
-    HAL_UART_Transmit(huart1, (uint8_t *) &ch, 1, COM_POLL_TIMEOUT);
-    //HAL_UART_Transmit_IT(huart1, (uint8_t *) &ch, 1);
-    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_0);
-    HAL_Delay(100);
-    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_0);
-    return ch;
+volatile size_t produced_value { 0 };
+
+void worker(void* arg) {
+    UNUSED(arg);
+    std::printf("worker: %u\n\r", produced_value++);
+}
+
+void consumer(void* arg) {
+    UNUSED(arg);
+    std::printf("worker: %u\n\r", produced_value--);
 }
 
 /// This function calculates the area of a rectangle.
-int app_main(int width, int height, UART_HandleTypeDef* huart1) {
-    (void) width;
-    (void) height;
-
+void app_main() {
     /* STM32H503x has 128K FLASH only these functions don't fit into it */
-    Trielo::trielo<submodule::foo>();
-    Trielo::trielo<returns_true>();
-
     fanctl::stop_all();
 
-    const std::string_view message { "Hello World!\n\r" };
-    std::printf("%s", message.data());
+    const osThreadAttr_t worker_attr {
+        .name = "wokrer",
+        .stack_size = 128 * 4,
+        .priority = (osPriority_t) osPriorityNormal,
+    };
+    osThreadNew(&worker, nullptr, &worker_attr);
+
+    const osThreadAttr_t consumer_attr = {
+        .name = "consumer",
+        .stack_size = 128 * 4,
+        .priority = (osPriority_t) osPriorityNormal,
+    }; 
+    osThreadNew(&consumer, nullptr, &worker_attr);
+
     while(1) {
-        //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_0);
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_0);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_2);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
-        for(const char c: message) {
-            redirect(c, huart1);
-        }
+        std::printf("Hello World!\n\r");
         HAL_Delay(500);
     }
-    return 0;
 }

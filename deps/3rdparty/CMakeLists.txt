@@ -1,8 +1,6 @@
 #add_subdirectory("googletest")
 
 add_library(stm32cubef2
-    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_dac.c
-    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_dac_ex.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_rcc.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_rcc_ex.c
@@ -15,11 +13,19 @@ add_library(stm32cubef2
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_dma.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_dma_ex.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_exti.c
-    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_i2c.c
-    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_spi.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_tim.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_tim_ex.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_uart.c
+    STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/croutine.c
+    STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c
+    STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/list.c
+    STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/queue.c
+    STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c
+    STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/tasks.c
+    STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/timers.c
+    STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c
+    STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c
+    STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c
 )
 
 target_compile_definitions(stm32cubef2 PUBLIC 
@@ -36,6 +42,9 @@ target_include_directories(stm32cubef2 PUBLIC
     STM32CubeF2/Drivers/BSP/STM32F2xx_Nucleo
     STM32CubeF2/Drivers/CMSIS/Device/ST/STM32F2xx/Include
     STM32CubeF2/Drivers/CMSIS/Include
+    STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/include
+    STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
+    STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3
 )
 
 #file(GLOB STM32H5XX_HAL_DRIVER_SRCS
