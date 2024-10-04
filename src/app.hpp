@@ -17,7 +17,6 @@ int app_main(
     TIM_HandleTypeDef* htim3,
     TIM_HandleTypeDef* htim4,
     TIM_HandleTypeDef* htim9,
-    I2C_HandleTypeDef* hi2c1,
     DAC_HandleTypeDef* hdac,
     TIM_HandleTypeDef* htim2
 );

@@ -4,6 +4,7 @@
 namespace sens {
 namespace i2c {
 namespace common {
+    /*
     void scan(I2C_HandleTypeDef* hi2c1) {
         std::printf("Scanning I2C bus...\n\r");
         // I2C addresses are 7 bits, so they range from 0x08 to 0x77
@@ -16,6 +17,7 @@ namespace common {
         }
         std::printf("I2C scan complete.\n\r");
     }
+    */
 }
 }
 }
