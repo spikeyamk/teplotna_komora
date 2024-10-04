@@ -21,7 +21,6 @@ int app_main(
     TIM_HandleTypeDef* htim3,
     TIM_HandleTypeDef* htim4,
     TIM_HandleTypeDef* htim9,
-    I2C_HandleTypeDef* hi2c1,
     DAC_HandleTypeDef* hdac,
     TIM_HandleTypeDef* htim2
 ) {
@@ -38,7 +37,6 @@ int app_main(
         htim9
     );
     std::printf("\n\r");
-    sens::i2c::common::scan(hi2c1);
     actu::bridge::a::turn_off();
     actu::bridge::b::turn_off();
     actu::lin_source::start_dac(hdac);
@@ -66,7 +64,7 @@ int app_main(
             actu::pump::start();
             panel::sevseg::white::dim(htim2);
             HAL_Delay(2000);
-            std::printf("fan_rpm: %lu\n\r", fan_rpm);
+            //std::printf("fan_rpm: %lu\n\r", fan_rpm);
             buzzer_running = true;
         } else {
             actu::fan::stop_all(
@@ -79,7 +77,7 @@ int app_main(
             actu::pump::stop();
             panel::sevseg::white::bright(htim2);
             HAL_Delay(2000);
-            std::printf("fan_rpm: %lu\n\r", fan_rpm);
+            //std::printf("fan_rpm: %lu\n\r", fan_rpm);
             buzzer_running = false;
         }
         std::printf("%u: Hello World!\n\r", i++);

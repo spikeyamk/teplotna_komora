@@ -67,6 +67,10 @@ void Error_Handler(void);
 #define SPI3_DRDY1_GPIO_Port GPIOD
 #define SPI3_NSS1_Pin GPIO_PIN_7
 #define SPI3_NSS1_GPIO_Port GPIOD
+#define I2CBB0_SCL_Pin GPIO_PIN_6
+#define I2CBB0_SCL_GPIO_Port GPIOB
+#define I2CBB0_SDA_Pin GPIO_PIN_7
+#define I2CBB0_SDA_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
