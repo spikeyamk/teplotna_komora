@@ -44,6 +44,8 @@ int app_main(
     actu::bridge::a::reverse();
     panel::sevseg::white::init_brightness(htim2);
     panel::sevseg::white::turn_on_all_segments();
+    actu::pump::stop();
+    actu::buzzer::stop();
     //actu::bridge::b::forward();
 
     size_t i = 0;
@@ -53,6 +55,7 @@ int app_main(
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_2);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
+        /*
         if(buzzer_running == false) {
             actu::fan::start_all(
                 htim10,
@@ -74,12 +77,12 @@ int app_main(
                 htim9
             );
             actu::buzzer::stop();
-            actu::pump::stop();
             panel::sevseg::white::bright(htim2);
             HAL_Delay(2000);
             //std::printf("fan_rpm: %lu\n\r", fan_rpm);
             buzzer_running = false;
         }
+        */
         std::printf("%u: Hello World!\n\r", i++);
         HAL_Delay(2000);
     }
