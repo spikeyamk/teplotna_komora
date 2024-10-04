@@ -40,11 +40,6 @@ int app_main(
         htim9
     );
     std::printf("\n\r");
-    actu::bridge::a::turn_off();
-    actu::bridge::b::turn_off();
-    //actu::lin_source::start_dac(hdac);
-    //actu::lin_source::set_output(hdac, std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::max());
-    //actu::bridge::a::reverse();
     panel::sevseg::white::init_brightness(htim2);
     panel::sevseg::white::turn_on_all_segments();
     actu::pump::stop();
@@ -53,7 +48,11 @@ int app_main(
     panel::sevseg::green_yellow::test();
     sens::spi_temp::test();
 
-    //actu::bridge::b::forward();
+    actu::bridge::a::turn_off();
+    actu::bridge::b::turn_off();
+    actu::lin_source::start_dac(hdac);
+    actu::lin_source::set_output(hdac, std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::max());
+    actu::bridge::b::cool();
 
     size_t i = 0;
     bool buzzer_running { false };
