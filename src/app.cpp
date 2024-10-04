@@ -10,6 +10,7 @@
 #include "panel/sevseg/white/white.hpp"
 #include "panel/sevseg/green_yellow/green_yellow.hpp"
 #include "sens/i2c/common/common.hpp"
+#include "sens/spi_temp/spi_temp.hpp"
 #include "stm32f2xx_hal.h"
 #include "main.h"
 #include "app.hpp"
@@ -50,6 +51,8 @@ int app_main(
     actu::buzzer::stop();
     panel::sevseg::green_yellow::init();
     panel::sevseg::green_yellow::test();
+    sens::spi_temp::test();
+
     //actu::bridge::b::forward();
 
     size_t i = 0;
