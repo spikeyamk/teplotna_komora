@@ -14,6 +14,7 @@ add_executable(${CMAKE_PROJECT_NAME}
     "core/system_stm32f2xx.c"
 
     "main.c"
+    "printf_redirect.c"
     "app.cpp"
 )
 
