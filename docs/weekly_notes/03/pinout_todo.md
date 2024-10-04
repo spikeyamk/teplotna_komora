@@ -60,7 +60,7 @@
 ## pump
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PD10 | APD | DO | Výstup pre zapnute/vypnute vzduchovej pumpy | ✔️ |
+| !PD11 | APD | DO | Výstup pre zapnute/vypnute vzduchovej pumpy | ✔️ |
 ## lin_source
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
@@ -80,7 +80,7 @@
 ## buzzer
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PD11 | BUZ | DO | Výstup pre zapnute/vypnute piezoelektrického akustckého indikátora | ✔️ |
+| !PD10 | BUZ | DO | Výstup pre zapnute/vypnute piezoelektrického akustckého indikátora | ✔️ |
 
 # panel
 ## out
