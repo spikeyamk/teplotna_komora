@@ -38,7 +38,6 @@ int app_main(
         htim4,
         htim9
     );
-    std::printf("\n\r");
     panel::sevseg::white::init_brightness(htim2);
     panel::sevseg::white::turn_on_all_segments();
     actu::pump::stop();
@@ -85,7 +84,7 @@ int app_main(
             HAL_Delay(2000);
             //std::printf("fan_rpm: %lu\n\r", fan_rpm);
         }
-        std::printf("%u: Hello World!\n\r", i++);
+        std::printf("%u: Hello World!\n", i++);
         HAL_Delay(2000);
     }
     return 0;
