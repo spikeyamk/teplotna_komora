@@ -3,10 +3,11 @@
 
 namespace ds3231 {
     const uint32_t TIMEOUT { 100 };
+
     void scan_i2c_bus(I2C_HandleTypeDef* hi2cx) {
         std::printf("Scanning I2C bus...\n\r");
         // I2C addresses are 7 bits, so they range from 0x08 to 0x77
-        for(uint8_t address = 0x01; address < 0xFF; address++) {
+        for(uint8_t address = 0x08; address < 0xFF; address++) {
             // Attempt to communicate with the device
             if(HAL_I2C_IsDeviceReady(hi2cx, (address << 1), 3, TIMEOUT) == HAL_OK) {
                 // If the device responds, print its address
@@ -19,9 +20,6 @@ namespace ds3231 {
         }
         std::printf("I2C scan complete.\n\r");
     }
-
-    // DS3231 I2C address
-    constexpr uint8_t DS3231_ADDRESS { 0x68 << 1 }; // DS3231 uses 7-bit address, shifted left for I2C communication
 
     // Function to convert Binary Coded Decimal (BCD) to Decimal
     uint8_t bcd_to_decimal(uint8_t val) {
