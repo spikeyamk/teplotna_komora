@@ -1,4 +1,5 @@
 add_subdirectory("submodule")
+add_subdirectory("ds3231")
 
 set(CMAKE_EXECUTABLE_SUFFIX ".elf")
 add_executable(${CMAKE_PROJECT_NAME}
@@ -17,7 +18,7 @@ add_executable(${CMAKE_PROJECT_NAME}
 )
 
 target_compile_definitions("${CMAKE_PROJECT_NAME}" PRIVATE STM32H723xx)
-target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE submodule)
+target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE submodule ds3231)
 target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE trielo)
 target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE stm32cubeh7)
 target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "core/include")

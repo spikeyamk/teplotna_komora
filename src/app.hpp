@@ -10,7 +10,7 @@ extern "C" {
  * @param height The height of the rectangle.
  * @return The area of the rectangle.
  */
-int run(int width, int height);
+void app_main(void* arg);
 
 #ifdef __cplusplus
 }
