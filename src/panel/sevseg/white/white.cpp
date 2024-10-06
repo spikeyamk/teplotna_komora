@@ -65,25 +65,6 @@ namespace white {
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, GPIO_PIN_SET);
     }
 
-    void display_number(uint32_t number) {
-        turn_off_all_segments();
-        //numbers might be displayed in wrong order, need to test
-        uint16_t active_cathode[5] = {
-            GPIO_PIN_0, GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_3, GPIO_PIN_4
-        };
-
-        while (number > 0) {
-            uint32_t digit = number % 10;
-            number /= 10;
-
-            for (uint8_t i = 0; i < 5; i++) {
-                HAL_GPIO_WritePin(GPIOE, active_cathode[i], GPIO_PIN_RESET);
-                display_digit(digit);
-                HAL_GPIO_WritePin(GPIOE, active_cathode[i], GPIO_PIN_SET);
-            }
-        }
-    }
-
     void display_digit(uint32_t digit) {
         switch (digit) {
             case 0:
@@ -155,6 +136,25 @@ namespace white {
                 HAL_GPIO_WritePin(GPIOE, GPIO_PIN_12, GPIO_PIN_SET);
                 HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, GPIO_PIN_SET);
                 break;
+        }
+    }
+
+    void display_number(uint32_t number) {
+        turn_off_all_segments();
+        //numbers might be displayed in wrong order, need to test
+        uint16_t active_cathode[5] = {
+            GPIO_PIN_0, GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_3, GPIO_PIN_4
+        };
+
+        while (number > 0) {
+            uint32_t digit = number % 10;
+            number /= 10;
+
+            for (uint8_t i = 0; i < 5; i++) {
+                HAL_GPIO_WritePin(GPIOE, active_cathode[i], GPIO_PIN_RESET);
+                display_digit(digit);
+                HAL_GPIO_WritePin(GPIOE, active_cathode[i], GPIO_PIN_SET);
+            }
         }
     }
 }
