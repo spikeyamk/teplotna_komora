@@ -7,6 +7,7 @@
 namespace ds3231 {
     void test() {
         i2c2::hw::Bus i2c2_hw_bus;
+        i2c2_hw_bus.scan();
         DS3231 ds3231 { i2c2_hw_bus };
         ds3231.print_time();
     }

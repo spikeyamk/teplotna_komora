@@ -5,7 +5,7 @@
 namespace i2c2 {
     namespace hw {
        Bus::Bus() {
-           /* USER CODE BEGIN I2C2_Init 0 */
+            /* USER CODE BEGIN I2C2_Init 0 */
 
             /* USER CODE END I2C2_Init 0 */
 

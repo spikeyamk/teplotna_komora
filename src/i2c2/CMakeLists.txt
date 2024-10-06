@@ -1,6 +1,10 @@
-add_library(i2c2 "common.cpp" "hw.cpp" "sw.cpp" "test.cpp")
+add_library(i2c2
+    "common.cpp" "hw.cpp" "sw.cpp" "test.cpp"
+    "stm32_bitbang_i2c/stm32_sw_i2c.cpp"
+)
 target_include_directories(i2c2 PUBLIC "include")
 target_link_libraries(i2c2 PRIVATE
     stm32cubeh7
     trielo
+    clk
 )

@@ -1,4 +1,5 @@
 add_subdirectory("submodule")
+add_subdirectory("clk")
 add_subdirectory("ds3231")
 add_subdirectory("i2c2")
 

@@ -15,7 +15,9 @@ void app_main(void* arg) {
     //Trielo::trielo<submodule::foo>();
     //Trielo::trielo<returns_true>();
     i2c2::hw::test();
-    ds3231::test();
+    //i2c2::sw::test();
+    //i2c2::stm32_bitbang_i2c::test();
+    //ds3231::test();
     while(1) {
         std::printf("app_main\n");
         osDelay(1000);

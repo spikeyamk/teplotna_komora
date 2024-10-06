@@ -1,7 +1,7 @@
 #include "i2c2/common.hpp"
 
 namespace i2c2 {
-    const uint32_t TIMEOUT { 100 };
+    const uint32_t TIMEOUT { 10 };
     const GPIO_TypeDef* PORT { GPIOF };
 
     void Error_Handler() {
