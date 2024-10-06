@@ -9,6 +9,7 @@
 #include "actu/pump/pump.hpp"
 #include "panel/sevseg/white/white.hpp"
 #include "panel/sevseg/green_yellow/green_yellow.hpp"
+#include "panel/button/button.hpp"
 #include "sens/i2c/common/common.hpp"
 //#include "sens/spi_temp/spi_temp.hpp"
 #include "stm32f2xx_hal.h"
@@ -40,6 +41,8 @@ int app_main(
     );
     panel::sevseg::white::init_brightness(htim2);
     panel::sevseg::white::turn_on_all_segments();
+    panel::sevseg::white::turn_off_all_segments();
+    panel::sevseg::white::display_number(12345);
     actu::pump::stop();
     actu::buzzer::stop();
     panel::sevseg::green_yellow::init();
@@ -58,6 +61,10 @@ int app_main(
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_2);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
+        panel::button::left_most_button_press();
+        panel::button::left_middle_button_press();
+        panel::button::right_middle_button_press();
+        panel::button::right_most_button_press();
 
         if(buzzer_running == false) {
             actu::fan::start_all(
