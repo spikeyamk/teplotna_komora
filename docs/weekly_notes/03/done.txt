@@ -1,0 +1,20 @@
+- obdržanie schémy systému
+- v teplotnej komore sa nachádza STLink-V2 pripojený na dosku predného panelu pomocou headerov
+- na STLink-V2 je vyvedený zo zadu teplotnej komory na USB 2.0 Type-B konektor
+- STM32F205VGT6 je v stave stáleho resetu, ak je na dosku predného panelu napojený STLink-V2 bez pripojenia k počítaču pomocou USB 
+- USB/UART je vyvedený na micro-USB konektor na doske predného panelu z vnútornej strany
+- prvé úspešné napálenie fw do STM32F205VGT6
+- rozblikanie štyroch LED na prednom paneli
+- tichý fw - úspešné zastavenie všetkých ventilátorov
+- rozdelenie úloh na moduly pre periférie
+- úspešné presmerovanie printf do Silicon Labs USB/UART Bridge
+- nedokočené overenie funkčnosti všetkých periférií
+- I2C1_SCL a I2C1_SDA piny prehodené
+- piny pre buzzer a pumpu prehodené v schémach
+- pravdepodobná hardvérová chyba v DAC_CH2, U/I prevodníku, mostíku alebo Peltier modulu
+- úsešný test cmsisv2-freertos na Nucleo-H723ZG
+- newlib nedostatky:
+    - chýbajúce funkcie typu __swvnprintf pre wchar_t - znemožňuje použiť trielo
+    - chýbajúca C++ Concurrency Support Library
+- I2C1 bitbang nedokončený
+- nedokončená konfigurácia TIM pinov
