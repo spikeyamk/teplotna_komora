@@ -10,9 +10,7 @@ namespace i2c2 {
 
     namespace sw {
         void test() {
-            Bus bus;
-            //bus.
-            //Bus().scan();
+            //Bus bus;
         }
     }
 }

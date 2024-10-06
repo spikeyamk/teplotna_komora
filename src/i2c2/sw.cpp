@@ -1,12 +1,47 @@
-#include <iostream>
-#include "stm32h7xx_hal.h"
+#include <trielo/trielo.hpp>
 #include "i2c2/common.hpp"
 #include "i2c2/sw.hpp"
 
 namespace i2c2 {
     namespace sw {
         Bus::Bus() {
+            Trielo::trielo<init_clk>();
 
+            Trielo::trielo<HAL_GPIO_WritePin>(
+                const_cast<GPIO_TypeDef*>(PORT),
+                static_cast<uint16_t>(Pins::SDA) | static_cast<uint16_t>(Pins::SCL),
+                GPIO_PIN_RESET
+            );
+
+            const GPIO_InitTypeDef GPIO_InitStruct {
+                .Pin = static_cast<uint16_t>(Pins::SDA) | static_cast<uint16_t>(Pins::SCL),
+                .Mode = GPIO_MODE_OUTPUT_OD,
+                .Pull = GPIO_NOPULL ,
+                .Speed = GPIO_SPEED_FREQ_LOW,
+            };
+            Trielo::trielo<HAL_GPIO_Init>(const_cast<GPIO_TypeDef*>(PORT), const_cast<GPIO_InitTypeDef*>(&GPIO_InitStruct));
+            set_SDA();
+            set_SCL();
+        }
+
+        void Bus::init_clk() {
+            __HAL_RCC_GPIOF_CLK_ENABLE();
+        }
+
+        void Bus::set_SDA() {
+            HAL_GPIO_WritePin(const_cast<GPIO_TypeDef*>(PORT), static_cast<uint16_t>(Pins::SDA), GPIO_PIN_SET);
+        }
+
+        void Bus::reset_SDA() {
+            HAL_GPIO_WritePin(const_cast<GPIO_TypeDef*>(PORT), static_cast<uint16_t>(Pins::SDA), GPIO_PIN_RESET);
+        }
+
+        void Bus::set_SCL() {
+            HAL_GPIO_WritePin(const_cast<GPIO_TypeDef*>(PORT), static_cast<uint16_t>(Pins::SCL), GPIO_PIN_SET);
+        }
+
+        void Bus::reset_SCL() {
+            HAL_GPIO_WritePin(const_cast<GPIO_TypeDef*>(PORT), static_cast<uint16_t>(Pins::SCL), GPIO_PIN_RESET);
         }
 
         Bus::~Bus() {

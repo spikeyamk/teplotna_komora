@@ -15,7 +15,6 @@ add_executable(${CMAKE_PROJECT_NAME}
     "core/system_stm32h7xx.c"
 
     "app.cpp"
-    "returns_true.cpp"
 )
 
 target_compile_definitions("${CMAKE_PROJECT_NAME}" PRIVATE STM32H723xx)

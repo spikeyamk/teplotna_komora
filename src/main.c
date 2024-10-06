@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "cmsis_os.h"
+#include "cmsis_os2.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -480,7 +480,7 @@ void StartDefaultTask(void *argument)
   for(size_t i = 0; true; i++)
   {
     if(i % 1000 == 0) {
-      printf("tick: %u\n\r", i);
+      printf("tick: %u\n", i);
     }
     osDelay(1);
   }

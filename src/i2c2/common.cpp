@@ -1,8 +1,8 @@
-#include "stm32h7xx_hal.h"
 #include "i2c2/common.hpp"
 
 namespace i2c2 {
     const uint32_t TIMEOUT { 100 };
+    const GPIO_TypeDef* PORT { GPIOF };
 
     void Error_Handler() {
         /* USER CODE BEGIN Error_Handler_Debug */
