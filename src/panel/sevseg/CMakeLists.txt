@@ -1,2 +1,0 @@
-add_subdirectory(green_yellow)
-add_subdirectory(white)
