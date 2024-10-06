@@ -39,7 +39,7 @@ namespace white {
     }
 
     void turn_off_all_segments() {        
-        //assuming brightness has been initialized in turn_on_all_segments()
+        //assuming brightness has been initialized in turn_on_all_segments(), if not it needs to be initialized
         //enable all cathodes
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_RESET);
@@ -67,6 +67,7 @@ namespace white {
 
     void display_number(uint32_t number) {
         turn_off_all_segments();
+        //numbers might be displayed in wrong order, need to test
         uint16_t active_cathode[5] = {
             GPIO_PIN_0, GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_3, GPIO_PIN_4
         };
