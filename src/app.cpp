@@ -13,12 +13,12 @@
 void app_main(void* arg) {
     UNUSED(arg);
     comm::usb_uart::init();
-    i2c2::hw::test();
+    //i2c2::hw::test();
+    //i2c2::stm32_bitbang_i2c::test();
     //i2c2::sw::test();
-    i2c2::stm32_bitbang_i2c::test();
-    //ds3231::test();
     for(size_t i = 0; true; i++) {
-        std::printf("%u: app_main\n", i);
-        osDelay(10'000);
+        //std::printf("%u: app_main\n", i);
+        ds3231::test();
+        osDelay(2'000);
     }
 }

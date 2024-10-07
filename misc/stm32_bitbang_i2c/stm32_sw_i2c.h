@@ -9,13 +9,34 @@
 #include "main.h"
 #include "dwt_stm32_delay.h"
 #include "cmsis_os2.h"
+#include "core_cm7.h"
+
+namespace i2c2 {
+namespace stm32_bitbang_i2c {
+    void init();
+    void deinit();
+    void scan();
+}
+}
 
 #define I2C_CLEAR_SDA HAL_GPIO_WritePin(GPIOF, GPIO_PIN_0, GPIO_PIN_RESET);
 #define I2C_SET_SDA HAL_GPIO_WritePin(GPIOF, GPIO_PIN_0, GPIO_PIN_SET);
 //#define I2C_READ_SDA {if (HAL_GPIO_ReadPin(SW_I2C_SDA_GPIO_Port, SW_I2C_SDA_Pin)) == GPIO_PIN_SET) return 1; else return 0; return 0;};
 #define I2C_CLEAR_SCL HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_RESET);
 #define I2C_SET_SCL HAL_GPIO_WritePin(GPIOF, GPIO_PIN_1, GPIO_PIN_SET);
-#define I2C_DELAY osDelay(1); // 5 microsecond delay
+
+#define SYSTICK_LOAD (SystemCoreClock/1000000U)
+#define SYSTICK_DELAY_CALIB (SYSTICK_LOAD >> 1)
+
+#define DELAY_US(us) \
+    do { \
+         uint32_t start = SysTick->VAL; \
+         uint32_t ticks = (us * SYSTICK_LOAD)-SYSTICK_DELAY_CALIB;  \
+         while((start - SysTick->VAL) < ticks); \
+    } while (0)
+
+#define I2C_DELAY DELAY_US(5); // 5 microsecond delay
+//#define I2C_DELAY osDelay(1); // 5 microsecond delay
 
 //void I2C_bus_init(uint8_t scl_pin, uint8_t sda_pin, uint8_t port);
 

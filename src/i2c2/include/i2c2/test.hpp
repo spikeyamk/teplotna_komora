@@ -10,6 +10,6 @@ namespace i2c2 {
     }
 
     namespace stm32_bitbang_i2c {
-        void test();
+        //void test();
     }
 }

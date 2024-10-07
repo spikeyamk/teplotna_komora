@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <algorithm>
 #include <optional>
 #include "stm32h7xx_hal.h"
 
@@ -44,6 +45,10 @@ namespace ds3231 {
                 std::printf("print_time: time_data.has_value() == false\n\r");
                 return;
             }
+            
+            std::for_each(time_data.value().begin(), time_data.value().end(), [index = 0](const uint8_t e) mutable {
+                std::printf("time_data[%u]: 0x%02X\n", index++, e);
+            });
 
             const uint8_t seconds = bcd_to_decimal(time_data.value()[0]);
             const uint8_t minutes = bcd_to_decimal(time_data.value()[1]);
@@ -53,7 +58,7 @@ namespace ds3231 {
             const uint8_t month = bcd_to_decimal(time_data.value()[5] & 0x1F); // Mask the century bit
             const uint8_t year = bcd_to_decimal(time_data.value()[6]);
 
-            std::printf("Time: %02u:%02u:%02u, Date: %02u/%02u/20%02u\n\r", hours, minutes, seconds, date, month, year);
+            std::printf("Time: %02u:%02u:%02u, Day: %02u, Date: %02u/%02u/20%02u\n\r", hours, minutes, seconds, day, date, month, year);
         }
     };
 }

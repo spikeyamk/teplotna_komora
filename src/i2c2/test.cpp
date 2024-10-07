@@ -1,9 +1,9 @@
 #include <iostream>
 #include <array>
+#include <algorithm>
 #include "cmsis_os2.h"
 #include "i2c2/i2c2.hpp"
 #include "i2c2/test.hpp"
-#include "stm32_bitbang_i2c/stm32_sw_i2c.h"
 
 namespace i2c2 {
     namespace hw {
@@ -14,40 +14,37 @@ namespace i2c2 {
 
     namespace sw {
         void test() {
-            Bus bus;
-            bus.test_SCL();
-            bus.test_SDA();
-            std::printf("bus.is_device_ready(0x68 << 1): %u\n", bus.is_device_ready(0x68 << 1));
-            //bus.scan();
+            Bus().scan();
         }
     }
 
+
+            /*
     namespace stm32_bitbang_i2c {
         static uint8_t bcd_to_decimal(uint8_t val) {
             return ((val / 16) * 10) + (val % 16);
         }
 
         void test() {
-            std::printf("stm32_bitbang_i2c::test\n");
-            GPIO_InitTypeDef GPIO_InitStruct { 0 };
-            /*Configure GPIO pins : SW_I2C_SCL_Pin SW_I2C_SDA_Pin */
-            GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
-            GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
-            GPIO_InitStruct.Pull = GPIO_NOPULL;
-            GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-            std::printf("here1\n");
-            HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
-            std::printf("here2\n");
-            I2C_init();
-            std::printf("here3\n");
-            uint8_t reg[] { 0x01 };
+            std::printf("i2c2::stm32_bitbang_i2c::test\n");
+            init();
+            scan();
+
             std::array<uint8_t, 7> time_data {};
-            if(I2C_receive((0x68 << 1), reg, time_data.data(), 1, time_data.size()) == false) {
+            uint8_t reg { 0x00 };
+            if(I2C_transmit((0x68 << 1), &reg, 1) == false) {
+                std::printf("I2C_transmit((0x68 << 1), reg, ) == false\n");
+            }
+
+            if(I2C_receive((0x68 << 1), &reg, time_data.data(), 0, time_data.size()) == false) {
                 std::printf("here5\n");
                 std::printf("I2C_receive(0x68, reg, data.data(), 1, data.size()) == false\n");
                 //return;
             }
-            std::printf("here6\n");
+
+            std::for_each(time_data.begin(), time_data.end(), [index = 0](const uint8_t e) mutable {
+                std::printf("time_data[%u]: 0x%02X\n", index++, e);
+            });
 
             const uint8_t seconds = bcd_to_decimal(time_data[0]);
             const uint8_t minutes = bcd_to_decimal(time_data[1]);
@@ -58,8 +55,9 @@ namespace i2c2 {
             const uint8_t year = bcd_to_decimal(time_data[6]);
 
             std::printf("Time: %02u:%02u:%02u, Date: %02u/%02u/20%02u\n\r", hours, minutes, seconds, date, month, year);
-            HAL_GPIO_DeInit(GPIOF, GPIO_PIN_0);
-            HAL_GPIO_DeInit(GPIOF, GPIO_PIN_1);
+
+            deinit();
         }
     }
+            */
 }

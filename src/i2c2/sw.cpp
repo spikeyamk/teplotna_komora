@@ -1,3 +1,5 @@
+// https://github.com/PascalPolygon/stm32_bitbang_i2c
+
 #include <trielo/trielo.hpp>
 #include "cmsis_os2.h"
 #include "clk/clk.hpp"
@@ -27,46 +29,29 @@ namespace i2c2 {
         }
 
         Bus::~Bus() {
+            HAL_GPIO_WritePin(
+                const_cast<GPIO_TypeDef*>(PORT),
+                static_cast<uint16_t>(Pins::SDA) | static_cast<uint16_t>(Pins::SCL),
+                GPIO_PIN_RESET
+            );
             HAL_GPIO_DeInit(const_cast<GPIO_TypeDef*>(PORT), static_cast<uint16_t>(Pins::SCL));
             HAL_GPIO_DeInit(const_cast<GPIO_TypeDef*>(PORT), static_cast<uint16_t>(Pins::SDA));
-        }
-
-        void Bus::test_SCL() {
-            for(uint8_t i = 0; i < 8; i++) {
-                reset_SCL();
-                osDelay(1000);
-                set_SCL();
-                osDelay(1000);
-            }
-        }
-
-        void Bus::test_SDA() {
-            for(uint8_t i = 0; i < 8; i++) {
-                reset_SDA();
-                osDelay(1000);
-                set_SDA();
-                osDelay(1000);
-            }
-        }
-
-        void Bus::set_SDA() {
-            HAL_GPIO_WritePin(const_cast<GPIO_TypeDef*>(PORT), static_cast<uint16_t>(Pins::SDA), GPIO_PIN_SET);
-        }
-
-        void Bus::reset_SDA() {
-            HAL_GPIO_WritePin(const_cast<GPIO_TypeDef*>(PORT), static_cast<uint16_t>(Pins::SDA), GPIO_PIN_RESET);
         }
 
         void Bus::set_SCL() {
             HAL_GPIO_WritePin(const_cast<GPIO_TypeDef*>(PORT), static_cast<uint16_t>(Pins::SCL), GPIO_PIN_SET);
         }
 
+        void Bus::set_SDA() {
+            HAL_GPIO_WritePin(const_cast<GPIO_TypeDef*>(PORT), static_cast<uint16_t>(Pins::SDA), GPIO_PIN_SET);
+        }
+
         void Bus::reset_SCL() {
             HAL_GPIO_WritePin(const_cast<GPIO_TypeDef*>(PORT), static_cast<uint16_t>(Pins::SCL), GPIO_PIN_RESET);
         }
 
-        void Bus::delay() {
-            osDelay(100);
+        void Bus::reset_SDA() {
+            HAL_GPIO_WritePin(const_cast<GPIO_TypeDef*>(PORT), static_cast<uint16_t>(Pins::SDA), GPIO_PIN_RESET);
         }
 
         void Bus::start_cond() {
@@ -76,6 +61,7 @@ namespace i2c2 {
             reset_SDA();
             delay();
             reset_SCL();
+            delay();
         }
 
         void Bus::stop_cond() {
@@ -87,12 +73,11 @@ namespace i2c2 {
             delay();
         }
 
-        void Bus::write_bit(const bool bit) {
-            if(bit == true) {
+        void Bus::write_bit(const uint8_t b) {
+            if(b > 0)
                 set_SDA();
-            } else {
+            else
                 reset_SDA();
-            }
 
             delay();
             set_SCL();
@@ -100,129 +85,147 @@ namespace i2c2 {
             reset_SCL();
         }
 
-        bool Bus::read_SDA() {
-            if(HAL_GPIO_ReadPin(const_cast<GPIO_TypeDef*>(PORT), static_cast<uint16_t>(Pins::SDA)) == GPIO_PIN_SET) {
-                return true;
-            } else {
-                return false;
-            }
+        uint8_t Bus::read_SDA() {
+            if(HAL_GPIO_ReadPin(GPIOF, GPIO_PIN_0) == GPIO_PIN_SET)
+                return 1;
+            else
+                return 0;
         }
 
-        bool Bus::read_bit() {
+        // Reading a bit in Bus:
+        uint8_t Bus::read_bit() {
             set_SDA();
             delay();
             set_SCL();
             delay();
-            const bool ret { read_SDA() };
+
+            const uint8_t b { Bus::read_SDA() };
             reset_SCL();
-            return ret;
+            return b;
         }
 
-        bool Bus::write_byte(const std::bitset<8>& byte, const bool start, const bool stop) {
-            if(start) {
-                start_cond();
+        bool Bus::write_byte(uint8_t B, const bool start, const bool stop) {
+            if(start)
+                Bus::start_cond();
+
+            for(uint8_t i = 0; i < 8; i++) {
+                Bus::write_bit(B & 0x80); // write the most-significant bit
+                B <<= 1;
             }
 
-            // std::bitset doesn't come up with std::iterator implemented iterates over the bitset from the back to the front
-            for(size_t i = byte.size() - 1; ;i--) {
-                write_bit(byte[i]);
-                if(i == 0) {
-                    break;
-                }
-            }
+            uint8_t ack = Bus::read_bit();
 
-            bool ack { read_bit() };
+            if(stop)
+                Bus::stop_cond();
 
-            if(stop == true) {
-                stop_cond();
-            }
-
-            return !ack;
+            return !ack; //0-ack, 1-nack
         }
 
-        bool Bus::send_byte(uint8_t address, uint8_t data) {
-            if(write_byte(address, true, false)) {
-                if(write_byte(data, false, true)) {
+        // Reading a byte with Bus:
+        uint8_t Bus::read_byte(const bool ack, const bool stop)
+        {
+            uint8_t B = 0;
+
+            for(uint8_t i = 0; i < 8; i++) {
+                B <<= 1;
+                B |= Bus::read_bit();
+            }
+
+            if(ack)
+                Bus::write_bit(0);
+            else
+                Bus::write_bit(1);
+
+            if(stop)
+                Bus::stop_cond();
+
+            return B;
+        }
+
+        // Sending a byte with Bus:
+        bool Bus::send_byte(const uint8_t address, const uint8_t data) {
+            //    if( Bus::write_byte( address << 1, true, false ) )   // start, send address, write
+            if(Bus::write_byte(address, true, false)) {// start, send address, write
+                // send data, stop
+                if(Bus::write_byte(data, false, true))
                     return true;
-                }
             }
 
-            stop_cond();
+            Bus::stop_cond(); // make sure to impose a stop if NAK'd
             return false;
         }
 
-        uint8_t Bus::recv_byte(uint8_t address) {
-            if(write_byte((address << 1) | 0x01, true, false)) {
-                return read_byte(false, true).to_ulong();
+        // Receiving a byte with Bus:
+        uint8_t Bus::receive_byte(const uint8_t address) {
+            if(Bus::write_byte((address << 1) | 0x01, true, false)) {// start, send address, read
+                return Bus::read_byte(false, true);
             }
 
-            return 0;
+            return 0; // return zero if NAK'd
         }
 
-        std::bitset<8> Bus::read_byte(const bool ack, const bool stop) {
-            std::bitset<8> ret {};
-            for(size_t i = 0; i < ret.size(); i++) {
-                ret = read_bit();
+        // Sending a byte of data with Bus:
+        bool Bus::send_byte_data(const uint8_t address, const uint8_t reg, const uint8_t data) {
+            //    if( Bus::write_byte( address << 1, true, false ) )   // start, send address, write
+            if(Bus::write_byte(address, true, false)) {
+                if(Bus::write_byte(reg, false, false)) {// send desired register
+                    if(Bus::write_byte(data, false, true))
+                        return true; // send data, stop
+                }
             }
 
-            if(ack) {
-                write_bit(true);
-            } else {
-                write_bit(false);
-            }
-
-            if(stop) {
-                stop_cond();
-            }
-
-            return ret;
+            Bus::stop_cond();
+            return false;
         }
 
-        HAL_StatusTypeDef Bus::transmit(const uint16_t address, const std::span<uint8_t>& data) {
-            if(write_byte(static_cast<uint8_t>(address & 0b0000'0000'1111'1110), true, false)) {
-                for(size_t i = 0; i < data.size(); i++) {
+        // Receiving a byte of data with Bus:
+        uint8_t Bus::receive_byte_data(const uint8_t address, const uint8_t reg) {
+            //if( Bus::write_byte( address << 1, true, false ) )   // start, send address, write
+            if(Bus::write_byte(address, true, false)) {
+                if(Bus::write_byte(reg, false, false)) {// send desired register
+                    if(Bus::write_byte((address << 1) | 0x01, true, false)) // start again, send address, read
+                        return Bus::read_byte(false, true); // read data
+                }
+            }
+
+            Bus::stop_cond();
+            return 0; // return zero if NACKed
+        }
+
+        HAL_StatusTypeDef Bus::transmit(const uint8_t address, const std::span<uint8_t>& data) {
+            if(Bus::write_byte(address, true, false)) {// first byte
+                for(uint8_t i = 0; i < data.size(); i++) {
                     if(i == data.size() - 1) {
-                        if(write_byte(data[i], false, true)) {
-                            return HAL_ERROR;
-                        }
-                    } else {
-                        if(!write_byte(data[i], false, false)) {
-                            break;
-                        }
-                    }
+                        if(Bus::write_byte(data[i], false, true))
+                            return HAL_OK;
+                    } else if(!Bus::write_byte(data[i], false, false))
+                        break; //last byte
                 }
             }
 
-            stop_cond();
-            return HAL_OK;
+            Bus::stop_cond();
+            return HAL_ERROR;
         }
 
-        HAL_StatusTypeDef Bus::receive(const uint16_t address, const std::span<uint8_t>& data) {
-            if(write_byte(address | 0x0001, true, false)) {
-                for(size_t i = 0; i < data.size(); i++) {
-                    data[i] = static_cast<uint8_t>(read_byte(false, false).to_ulong());
+        HAL_StatusTypeDef Bus::receive(const uint8_t address, const std::span<uint8_t>& data) {
+            if(Bus::write_byte(address | 0x01, true, false)) {// start again, send address, read (LSB signifies R or W)
+                for(uint8_t i = 0; i < data.size(); i++) {
+                    data[i] = Bus::read_byte(true, false); // read data
                 }
-            }
-
-            stop_cond();
-            return HAL_OK;
-        }
-
-        HAL_StatusTypeDef Bus::is_device_ready(const uint16_t address) {
-            if(write_byte(static_cast<uint8_t>(address), true, true)) {
+                Bus::stop_cond();
                 return HAL_OK;
             }
+            Bus::stop_cond();
             return HAL_ERROR;
         }
 
         void Bus::scan() {
             std::printf("Scanning I2C bus...\n\r");
             // I2C addresses are 7 bits, so they range from 0x08 to 0x77
-            for(uint8_t address = 0x60; address < 0xFF; address++) {
+            std::array<uint8_t, 1> reg { 0 };
+            for(uint8_t address = 0x08; address < 0xFF; address++) {
                 // Attempt to communicate with the device
-                if(is_device_ready(address << 1) == HAL_OK
-                    //HAL_I2C_IsDeviceReady(&hi2c2, (address << 1), 1, TIMEOUT) == HAL_OK
-                ) {
+                if(transmit((address << 1), reg) == HAL_OK) {
                     // If the device responds, print its address
                     std::printf("Device found at 0x%02X\n\r", address);
                     const uint8_t ds3231_address { 0x68 };

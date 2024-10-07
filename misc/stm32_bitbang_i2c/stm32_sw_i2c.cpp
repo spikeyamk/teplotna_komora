@@ -1,3 +1,4 @@
+#include <iostream>
 #include "main.h"
 #include "dwt_stm32_delay.h"
 #include "stm32_sw_i2c.h"
@@ -10,6 +11,45 @@
 //	  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 //	  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 //}
+
+namespace i2c2 {
+namespace stm32_bitbang_i2c {
+    void init() {
+        GPIO_InitTypeDef GPIO_InitStruct { 0 };
+        GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
+        GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+        HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
+        I2C_init();
+    }
+
+    void deinit() {
+        I2C_CLEAR_SDA
+        I2C_CLEAR_SCL
+        HAL_GPIO_DeInit(GPIOF, GPIO_PIN_0);
+        HAL_GPIO_DeInit(GPIOF, GPIO_PIN_1);
+    }
+
+    void scan() {
+        std::printf("Scanning I2C bus...\n\r");
+        // I2C addresses are 7 bits, so they range from 0x08 to 0x77
+        uint8_t data[] { 0 };
+        for(uint8_t address = 0x08; address < 0xFF; address++) {
+            // Attempt to communicate with the device
+            if(I2C_transmit((address << 1), data, 1) == true) {
+                // If the device responds, print its address
+                std::printf("Device found at 0x%02X\n\r", address);
+                const uint8_t ds3231_address { 0x68 };
+                if(address == ds3231_address) {
+                    std::printf("address == ds3231_address\n\r");
+                }
+            }
+        }
+        std::printf("I2C scan complete.\n\r");
+    }
+}
+}
 
 void I2C_init(void)
 {
@@ -213,24 +253,13 @@ bool I2C_transmit(uint8_t address, uint8_t data[], uint8_t size)
     return false;
 }
 
-bool I2C_receive(uint8_t address, uint8_t reg[], uint8_t *data, uint8_t reg_size, uint8_t size)
-{
-    if (I2C_write_byte(address, true, false))
-    {
-        for (int i = 0; i < reg_size; i++)
-        {
-            if (!I2C_write_byte(reg[i], false, false))
-                break;
+bool I2C_receive(uint8_t address, uint8_t reg[], uint8_t *data, uint8_t reg_size, uint8_t size) {
+    if (I2C_write_byte(address | 0x01, true, false)) {// start again, send address, read (LSB signifies R or W)
+        for (int j = 0; j < size; j++) {
+            *data++ = I2C_read_byte(true, false); // read data
         }
-        if (I2C_write_byte(address | 0x01, true, false)) // start again, send address, read (LSB signifies R or W)
-        {
-            for (int j = 0; j < size; j++)
-            {
-                *data++ = I2C_read_byte(false, false); // read data
-            }
-            I2C_stop_cond();
-            return true;
-        }
+        I2C_stop_cond();
+        return true;
     }
     I2C_stop_cond();
     return false;

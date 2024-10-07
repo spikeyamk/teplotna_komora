@@ -113,6 +113,7 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
+  UNUSED(argument);
   /* USER CODE BEGIN StartDefaultTask */
   const osThreadAttr_t app_main_attr = {
     .name = "app_main",
