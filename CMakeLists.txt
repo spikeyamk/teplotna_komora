@@ -3,6 +3,7 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/cmake/gcc-arm-none-eabi.cmak
 
 set(CMAKE_PROJECT_NAME teplotna_komora)
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+
 project(${CMAKE_PROJECT_NAME} C CXX ASM)
 message("Project name: ${CMAKE_PROJECT_NAME}, build type: ${CMAKE_BUILD_TYPE}")
 
@@ -11,6 +12,18 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD 20)
+
+set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/app)
+set(CUBEMX_INCLUDE_DIRECTORIES
+    ${CMAKE_SOURCE_DIR}/core/inc
+    ${CMAKE_SOURCE_DIR}/drivers/STM32F2xx_HAL_Driver/Inc
+    ${CMAKE_SOURCE_DIR}/drivers/STM32F2xx_HAL_Driver/Inc/Legacy
+    ${CMAKE_SOURCE_DIR}/drivers/CMSIS/Device/ST/STM32F2xx/Include
+    ${CMAKE_SOURCE_DIR}/drivers/CMSIS/Include
+    )
+set(PROJECT_INCLUDE_DIRECTORIES
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_DIR})
 
 # Add dependencies and subdirectories
 enable_testing()
@@ -38,7 +51,6 @@ else ()
     message(WARNING "Doxygen not found. Documentation will not be generated.")
 endif ()
 
-# Add unit tests if necessary
-# add_executable("${CMAKE_PROJECT_NAME}_tests" test/test_top.cpp) # target_link_libraries("${CMAKE_PROJECT_NAME}_tests" gtest gtest_main)
-# target_link_libraries("${CMAKE_PROJECT_NAME}_tests" "${CMAKE_PROJECT_NAME}_lib")
-# add_test(NAME "${CMAKE_PROJECT_NAME}_tests" COMMAND "${CMAKE_PROJECT_NAME}_tests")
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
+    ${CUBEMX_INCLUDE_DIRECTORIES}
+    ${PROJECT_INCLUDE_DIRECTORIES})

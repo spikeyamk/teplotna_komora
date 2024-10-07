@@ -28,10 +28,9 @@ target_compile_definitions(stm32cubef2 PUBLIC
 )
 
 target_include_directories(stm32cubef2 PUBLIC
-    ${CMAKE_SOURCE_DIR}core/inc
+    ${CMAKE_SOURCE_DIR}/core/inc
     STM32F2xx_HAL_Driver/Inc
     STM32F2xx_HAL_Driver/Inc/Legacy
-    BSP/STM32F2xx_Nucleo
     CMSIS/Device/ST/STM32F2xx/Include
     CMSIS/Include
 )
