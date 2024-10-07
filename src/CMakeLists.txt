@@ -2,6 +2,7 @@ add_subdirectory("submodule")
 add_subdirectory("clk")
 add_subdirectory("ds3231")
 add_subdirectory("i2c2")
+add_subdirectory("comm")
 
 file(GLOB_RECURSE CORE_SOURCE_FILES "core/*.s" "core/*.c" "core/*.cpp")
 
@@ -16,6 +17,7 @@ target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE
     submodule
     ds3231
     i2c2
+    usb_uart
 )
 target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE trielo)
 target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE stm32cubeh7)
