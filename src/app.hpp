@@ -11,6 +11,7 @@ extern "C" {
  * @return The area of the rectangle.
  */
 void app_main(void* arg);
+void init_bsp_com();
 
 #ifdef __cplusplus
 }

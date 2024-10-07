@@ -6,7 +6,7 @@
 namespace i2c2 {
     namespace hw {
         class Bus {
-            I2C_HandleTypeDef hi2c2;
+            I2C_HandleTypeDef hi2c2 {};
         public:
             Bus();
             ~Bus();

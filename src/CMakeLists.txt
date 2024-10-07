@@ -3,18 +3,11 @@ add_subdirectory("clk")
 add_subdirectory("ds3231")
 add_subdirectory("i2c2")
 
+file(GLOB_RECURSE CORE_SOURCE_FILES "core/*.s" "core/*.c" "core/*.cpp")
+
 set(CMAKE_EXECUTABLE_SUFFIX ".elf")
 add_executable(${CMAKE_PROJECT_NAME}
-    "main.c"
-    "core/freertos.c"
-    "core/startup_stm32h723xx.s"
-    "core/stm32h7xx_hal_msp.c"
-    "core/stm32h7xx_hal_timebase_tim.c"
-    "core/stm32h7xx_it.c"
-    "core/syscalls.c"
-    "core/sysmem.c"
-    "core/system_stm32h7xx.c"
-
+    ${CORE_SOURCE_FILES}
     "app.cpp"
 )
 
