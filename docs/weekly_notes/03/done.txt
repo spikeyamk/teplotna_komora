@@ -9,7 +9,7 @@
 - rozdelenie úloh na moduly pre periférie
 - úspešné presmerovanie printf do Silicon Labs USB/UART Bridge
 - nedokočené overenie funkčnosti všetkých periférií
-- I2C1_SCL a I2C1_SDA piny prehodené
+- I2C1_SCL a I2C1_SDA prehodené piny
 - piny pre buzzer a pumpu prehodené v schémach
 - pravdepodobná hardvérová chyba v DAC_CH2, U/I prevodníku, mostíku alebo Peltier modulu
 - úsešný test cmsisv2-freertos na Nucleo-H723ZG
