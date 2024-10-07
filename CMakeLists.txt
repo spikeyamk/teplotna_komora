@@ -13,9 +13,11 @@ set(CMAKE_C_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD 20)
 
 # Add dependencies and subdirectories
-add_subdirectory("deps")
 enable_testing()
-add_subdirectory("src")
+add_subdirectory("app")
+add_subdirectory("core")
+add_subdirectory("deps")
+add_subdirectory("drivers")
 
 # Apply stricter warnings for Debug builds
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
