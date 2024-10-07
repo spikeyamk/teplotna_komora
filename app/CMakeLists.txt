@@ -1,5 +1,25 @@
-get_filename_component(SUBMODULE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-file(GLOB_RECURSE SUBMODULE_SOURCE_FILES "*.cpp")
-add_library(${SUBMODULE_NAME} ${SUBMODULE_SOURCE_FILES})
-target_include_directories(${SUBMODULE_NAME} PUBLIC "inc")
-target_link_libraries(${SUBMODULE_NAME} PRIVATE stm32cubef2)
+add_subdirectory("actuators")
+add_subdirectory("communication")
+add_subdirectory("control")
+add_subdirectory("display")
+add_subdirectory("sensors")
+add_subdirectory("tasks")
+
+set(CMAKE_EXECUTABLE_SUFFIX ".elf")
+
+add_executable(${CMAKE_PROJECT_NAME}
+    "app.cpp"
+    "button_it.cpp"
+    "main.c"
+    "printf_redirect.c"
+)
+
+target_compile_definitions("${CMAKE_PROJECT_NAME}" PRIVATE STM32F205xx)
+target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE
+    actuators
+    communication
+    control
+    display
+    sensors
+    tasks
+)
