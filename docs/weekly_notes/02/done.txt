@@ -1,7 +1,7 @@
 - oboznámenie sa s dokumentami o teplotnej komore
 - Adam Hudec poskytol Nucleo-H503RB a Nucleo-H723ZG STM32 Devkit
-- založenia myST konta
-- inštalácia vývojárskeho prostredia
+- založenie myST konta
+- inštalácia vývojového prostredia
 - neúspešný pokus o napálenie fw pomocou open-source st-link, nepodporuje Nucleo-H503RB, treba použiť STM32CubeProg
 - úspešné rozblikanie LED na obvidvoch doskách
 - oboznámenie sa s vývojárskymi nástrojmi STM32CubeMX, STM32CubeIDE, STM32CubeProg
