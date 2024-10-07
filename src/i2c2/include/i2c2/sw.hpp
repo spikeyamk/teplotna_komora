@@ -11,10 +11,14 @@ namespace i2c2 {
             Bus();
             ~Bus();
 
-            void set_SDA();
-            void reset_SDA();
             void set_SCL();
             void reset_SCL();
+            void test_SCL();
+
+            void set_SDA();
+            void reset_SDA();
+            void test_SDA();
+
             void delay();
 
             void start_cond(); 

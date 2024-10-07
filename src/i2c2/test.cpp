@@ -15,9 +15,9 @@ namespace i2c2 {
     namespace sw {
         void test() {
             Bus bus;
-            std::printf("bus.is_device_ready(0x68 << 1): %u\n",
-                bus.is_device_ready(0x68 << 1)
-            );
+            bus.test_SCL();
+            bus.test_SDA();
+            std::printf("bus.is_device_ready(0x68 << 1): %u\n", bus.is_device_ready(0x68 << 1));
             //bus.scan();
         }
     }
@@ -33,19 +33,19 @@ namespace i2c2 {
             /*Configure GPIO pins : SW_I2C_SCL_Pin SW_I2C_SDA_Pin */
             GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
             GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
-            GPIO_InitStruct.Pull = GPIO_PULLUP;
-            GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+            GPIO_InitStruct.Pull = GPIO_NOPULL;
+            GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
             std::printf("here1\n");
-            HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+            HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
             std::printf("here2\n");
             I2C_init();
             std::printf("here3\n");
-            uint8_t reg[] { 0x00 };
+            uint8_t reg[] { 0x01 };
             std::array<uint8_t, 7> time_data {};
-            if(I2C_receive(0x68, reg, time_data.data(), 1, time_data.size()) == false) {
+            if(I2C_receive((0x68 << 1), reg, time_data.data(), 1, time_data.size()) == false) {
                 std::printf("here5\n");
                 std::printf("I2C_receive(0x68, reg, data.data(), 1, data.size()) == false\n");
-                return;
+                //return;
             }
             std::printf("here6\n");
 
@@ -58,6 +58,8 @@ namespace i2c2 {
             const uint8_t year = bcd_to_decimal(time_data[6]);
 
             std::printf("Time: %02u:%02u:%02u, Date: %02u/%02u/20%02u\n\r", hours, minutes, seconds, date, month, year);
+            HAL_GPIO_DeInit(GPIOF, GPIO_PIN_0);
+            HAL_GPIO_DeInit(GPIOF, GPIO_PIN_1);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace i2c2 {
             const GPIO_InitTypeDef GPIO_InitStruct {
                 .Pin = static_cast<uint16_t>(Pins::SDA) | static_cast<uint16_t>(Pins::SCL),
                 .Mode = GPIO_MODE_OUTPUT_OD,
-                .Pull = GPIO_NOPULL ,
+                .Pull = GPIO_NOPULL,
                 .Speed = GPIO_SPEED_FREQ_LOW,
             };
 
@@ -29,6 +29,24 @@ namespace i2c2 {
         Bus::~Bus() {
             HAL_GPIO_DeInit(const_cast<GPIO_TypeDef*>(PORT), static_cast<uint16_t>(Pins::SCL));
             HAL_GPIO_DeInit(const_cast<GPIO_TypeDef*>(PORT), static_cast<uint16_t>(Pins::SDA));
+        }
+
+        void Bus::test_SCL() {
+            for(uint8_t i = 0; i < 8; i++) {
+                reset_SCL();
+                osDelay(1000);
+                set_SCL();
+                osDelay(1000);
+            }
+        }
+
+        void Bus::test_SDA() {
+            for(uint8_t i = 0; i < 8; i++) {
+                reset_SDA();
+                osDelay(1000);
+                set_SDA();
+                osDelay(1000);
+            }
         }
 
         void Bus::set_SDA() {
