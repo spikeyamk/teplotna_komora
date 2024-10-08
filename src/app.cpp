@@ -42,50 +42,41 @@ int app_main(
     panel::sevseg::white::turn_on_all_segments();
     actu::pump::stop();
     actu::buzzer::stop();
-    panel::sevseg::green_yellow::init();
+    /*
+    actu::fan::start_all(
+        htim10,
+        htim3,
+        htim4,
+        htim9
+    );
+    */
+    actu::fan::stop_all(
+        htim10,
+        htim3,
+        htim4,
+        htim9
+    );
+
+    //panel::sevseg::green_yellow::init();
     panel::sevseg::green_yellow::test();
-    //sens::spi_temp::test();
 
     actu::bridge::a::turn_off();
     actu::bridge::b::turn_off();
     actu::lin_source::start_dac(hdac);
     actu::lin_source::set_output(hdac, std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::max());
-    actu::bridge::b::cool();
+    //actu::bridge::a::cool();
+    //actu::bridge::b::cool();
 
-    size_t i = 0;
-    for(bool buzzer_running = false; true; buzzer_running = !(buzzer_running)) {
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_0);
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_2);
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
-
-        if(buzzer_running == false) {
-            actu::fan::start_all(
-                htim10,
-                htim3,
-                htim4,
-                htim9
-            );
-            actu::buzzer::start();
-            actu::pump::start();
-            panel::sevseg::white::bright(htim2);
-            HAL_Delay(2000);
-            //std::printf("fan_rpm: %lu\n\r", fan_rpm);
-        } else {
-            actu::fan::stop_all(
-                htim10,
-                htim3,
-                htim4,
-                htim9
-            );
-            actu::buzzer::stop();
-            actu::pump::stop();
-            panel::sevseg::white::dim(htim2);
-            HAL_Delay(2000);
-            //std::printf("fan_rpm: %lu\n\r", fan_rpm);
+    for(uint16_t dac_value = 0; true; ) {
+        HAL_DAC_SetValue(hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dac_value);
+        HAL_DAC_SetValue(hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, dac_value);
+        if(dac_value + 1000 > 4095)
+            dac_value = 0;
+        else {
+            dac_value += 1000;
         }
-        std::printf("%u: Hello World!\n", i++);
-        HAL_Delay(2000);
+        std::printf("dac_value: %u\n", dac_value);
+        HAL_Delay(5000);
     }
     return 0;
 }
