@@ -4,6 +4,7 @@
 - ⬜ configured, untested
 - 🟡 intentional wrong configuration
 - ⚠️ hardware fault
+- 🔎 missing
 
 # clk
 ## hse
@@ -156,7 +157,7 @@
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
 | PA6 | ALRT0 | DI | Prerušenie zo senzora teploty a vlhkost na doske (v miestnost) | ❌️ |
-| PA7 | ALRT1 | DI | Prerušenie z externého senzora teploty a vlhkost (v komore) | ❌️ |
+| PA7 | ALRT1 | DI | Prerušenie z externého senzora teploty a vlhkost (v komore) | 🔎 |
 ### ~~eeprom~~
 | ~~Pin~~   | ~~Signál~~  | ~~Typ~~  | ~~Popis~~                                         | ~~Status~~ |
 |-------|---------|------|-----------------------------------------------| --- |
