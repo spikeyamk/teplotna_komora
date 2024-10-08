@@ -61,10 +61,15 @@ int app_main(
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_2);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
-        panel::button::left_most_button_press();
-        panel::button::left_middle_button_press();
-        panel::button::right_middle_button_press();
-        panel::button::right_most_button_press();
+        
+        if (panel::button::right_most_button_press() == true) {
+            actu::fan::toggle_fans(htim10, htim3, htim4, htim9);
+        }
+
+        //panel::button::left_most_button_press();
+        //panel::button::left_middle_button_press();
+        //panel::button::right_middle_button_press();
+        //panel::button::right_most_button_press();
 
         if(buzzer_running == false) {
             actu::fan::start_all(

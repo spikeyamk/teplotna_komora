@@ -39,5 +39,13 @@ namespace fan {
         TIM_HandleTypeDef* htim4,
         TIM_HandleTypeDef* htim9
     );
+
+    //toggle fans between on and off
+    void toggle_fans(
+        TIM_HandleTypeDef* htim10,
+        TIM_HandleTypeDef* htim3,
+        TIM_HandleTypeDef* htim4,
+        TIM_HandleTypeDef* htim9
+    );
 }
 }

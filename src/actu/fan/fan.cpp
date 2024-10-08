@@ -322,5 +322,30 @@ namespace fan {
         __HAL_TIM_SET_COMPARE(htim4, TIM_CHANNEL_3, 0);
         __HAL_TIM_SET_COMPARE(htim9, TIM_CHANNEL_1, 0);
     }
+
+    void toggle_fans(
+        TIM_HandleTypeDef* htim10,
+        TIM_HandleTypeDef* htim3,
+        TIM_HandleTypeDef* htim4,
+        TIM_HandleTypeDef* htim9
+    ) {
+        static bool fan_state = false;
+        if (fan_state == false) {
+            stop_all(
+                htim10,
+                htim3,
+                htim4,
+                htim9);
+        }
+        else {
+            start_all(
+                htim10,
+                htim3,
+                htim4,
+                htim9
+            );
+        }
+        fan_state = !fan_state;
+    }
 }
 }

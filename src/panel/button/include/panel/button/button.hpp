@@ -6,6 +6,7 @@ namespace button {
     void left_most_button_press();
     void left_middle_button_press();
     void right_middle_button_press();
-    void right_most_button_press();
+    //void right_most_button_press();
+    bool right_most_button_press();
 }
 }
