@@ -1,6 +1,7 @@
 add_subdirectory("actu")
 add_subdirectory("comm")
 add_subdirectory("panel")
+add_subdirectory("peripheral")
 add_subdirectory("sens")
 add_subdirectory("submodule")
 
@@ -34,6 +35,16 @@ target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE
     panel::led
     panel::green_yellow
     panel::white
+
+    peripheral::dac
+    peripheral::gpio
+    peripheral::it
+    peripheral::spi1_temp
+    peripheral::spi2_sevyg
+    peripheral::tim_fan
+    peripheral::tim_sevw
+    peripheral::uart1_usb
+    peripheral::uart3_rs232
 
     sens::i2c_common
     sens::i2c_light
