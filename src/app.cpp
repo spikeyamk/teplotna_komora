@@ -41,19 +41,17 @@ int app_main(
     );
     panel::sevseg::white::init_brightness(htim2);
     panel::sevseg::white::turn_on_all_segments();
-    panel::sevseg::white::turn_off_all_segments();
-    panel::sevseg::white::display_number(12345);
     actu::pump::stop();
     actu::buzzer::stop();
     panel::sevseg::green_yellow::init();
     panel::sevseg::green_yellow::test();
     //sens::spi_temp::test();
 
-    actu::bridge::a::turn_off();
-    actu::bridge::b::turn_off();
-    actu::lin_source::start_dac(hdac);
-    actu::lin_source::set_output(hdac, std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::max());
-    actu::bridge::b::cool();
+    //actu::bridge::a::turn_off();
+    //actu::bridge::b::turn_off();
+    //actu::lin_source::start_dac(hdac);
+    //actu::lin_source::set_output(hdac, std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::max());
+    //actu::bridge::b::cool();
 
     size_t i = 0;
     for(bool buzzer_running = false; true; buzzer_running = !(buzzer_running)) {
@@ -62,14 +60,12 @@ int app_main(
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_2);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
         
-        if (panel::button::right_most_button_press() == true) {
-            actu::fan::toggle_fans(htim10, htim3, htim4, htim9);
-        }
-
         //panel::button::left_most_button_press();
         //panel::button::left_middle_button_press();
         //panel::button::right_middle_button_press();
-        //panel::button::right_most_button_press();
+        if (panel::button::right_most_button_press() == true) {
+            actu::fan::toggle_fans(htim10, htim3, htim4, htim9);
+        }
 
         if(buzzer_running == false) {
             actu::fan::start_all(
@@ -96,6 +92,7 @@ int app_main(
             HAL_Delay(2000);
             //std::printf("fan_rpm: %lu\n\r", fan_rpm);
         }
+        panel::sevseg::white::display_number(i);
         std::printf("%u: Hello World!\n", i++);
         HAL_Delay(2000);
     }
