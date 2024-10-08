@@ -1,5 +1,7 @@
 add_subdirectory("actu")
 add_subdirectory("comm")
+add_subdirectory("ds3231")
+add_subdirectory("i2cbb")
 add_subdirectory("panel")
 add_subdirectory("peripheral")
 add_subdirectory("sens")
@@ -29,6 +31,10 @@ target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE
     actu::pump
 
     comm::usb_uart
+
+    ds3231
+
+    i2cbb
 
     panel::button
     panel::encoder
