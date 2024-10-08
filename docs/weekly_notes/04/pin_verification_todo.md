@@ -5,6 +5,7 @@
 - 🟡 intentional wrong configuration
 - ⚠️ hardware fault
 - 🔎 missing
+- ![PIN_NAME] wrong name in schematics
 
 # clk
 ## hse
