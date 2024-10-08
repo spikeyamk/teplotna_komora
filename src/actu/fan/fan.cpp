@@ -322,5 +322,21 @@ namespace fan {
         __HAL_TIM_SET_COMPARE(htim4, TIM_CHANNEL_3, 0);
         __HAL_TIM_SET_COMPARE(htim9, TIM_CHANNEL_1, 0);
     }
+
+    void start_all_half_speed(
+        TIM_HandleTypeDef* htim10,
+        TIM_HandleTypeDef* htim3,
+        TIM_HandleTypeDef* htim4,
+        TIM_HandleTypeDef* htim9
+    ) {
+        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, (2 << 14));
+        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, (2 << 14));
+        __HAL_TIM_SET_COMPARE(htim10, TIM_CHANNEL_1, (2 << 14));
+        __HAL_TIM_SET_COMPARE(htim3, TIM_CHANNEL_1, (2 << 14));
+        __HAL_TIM_SET_COMPARE(htim3, TIM_CHANNEL_3, (2 << 14));
+        __HAL_TIM_SET_COMPARE(htim4, TIM_CHANNEL_1, (2 << 14));
+        __HAL_TIM_SET_COMPARE(htim4, TIM_CHANNEL_3, (2 << 14));
+        __HAL_TIM_SET_COMPARE(htim9, TIM_CHANNEL_1, (2 << 14));
+    }
 }
 }

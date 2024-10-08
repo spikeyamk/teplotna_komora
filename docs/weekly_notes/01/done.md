@@ -1,0 +1,4 @@
+- založenie tímu
+- rozdelenie úloh v tíme
+- oboznámenie sa s teplotou komorou
+- vytvorenie a schválenie zadania
