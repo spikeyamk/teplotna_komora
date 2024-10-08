@@ -1,0 +1,13 @@
+- oboznámenie sa s dokumentami o teplotnej komore
+- Adam Hudec poskytol Nucleo-H503RB a Nucleo-H723ZG STM32 Devkit
+- založenie myST konta
+- inštalácia vývojového prostredia
+- neúspešný pokus o napálenie fw pomocou open-source st-link, nepodporuje Nucleo-H503RB, treba použiť STM32CubeProg
+- úspešné rozblikanie LED na obvidvoch doskách
+- oboznámenie sa s vývojárskymi nástrojmi STM32CubeMX, STM32CubeIDE, STM32CubeProg
+- úspešné presmerovanie printf do UART Virtual COM port pre Nucleo-H503RB, neúspešné pre Nucleo-H723ZG
+- neúspešný pokus o manuálnu konfiguráciu STM32CubeH5
+- STM32CubeMX automatické generovanie inicializačného kódu
+- STM32CubeMX automatická konfigurácia STM32CubeH5
+- STM32CubeMX generuje linker script s chybami, treba použiť STM32CubeIDE, vytvoriť v ňom prázdny projekt a linker script z neho skopírovať
+- hotová šablóna kódu projektu pre Nucleo-H503RB, Nucleo-H723ZG a STM32F205VGT6 založená na CMake

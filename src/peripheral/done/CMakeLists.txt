@@ -1,0 +1,8 @@
+add_subdirectory(dac)
+add_library(peripheral::dac ALIAS dac)
+add_subdirectory(uart)
+add_library(peripheral::uart ALIAS uart)
+add_subdirectory(gpio)
+add_library(peripheral::gpio ALIAS gpio)
+add_subdirectory(spi)
+add_library(peripheral::spi ALIAS spi)

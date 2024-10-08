@@ -10,7 +10,7 @@
 #include "panel/sevseg/white/white.hpp"
 #include "panel/sevseg/green_yellow/green_yellow.hpp"
 #include "sens/i2c/common/common.hpp"
-#include "sens/spi_temp/spi_temp.hpp"
+//#include "sens/spi_temp/spi_temp.hpp"
 #include "stm32f2xx_hal.h"
 #include "main.h"
 #include "app.hpp"
@@ -38,55 +38,37 @@ int app_main(
         htim4,
         htim9
     );
-    std::printf("\n\r");
     panel::sevseg::white::init_brightness(htim2);
     panel::sevseg::white::turn_on_all_segments();
     actu::pump::stop();
     actu::buzzer::stop();
-    panel::sevseg::green_yellow::init();
-    panel::sevseg::green_yellow::test();
-    sens::spi_temp::test();
+    actu::fan::start_all_half_speed(
+        htim10,
+        htim3,
+        htim4,
+        htim9
+    );
 
     actu::bridge::a::turn_off();
     actu::bridge::b::turn_off();
     actu::lin_source::start_dac(hdac);
     actu::lin_source::set_output(hdac, std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::max());
-    actu::bridge::b::cool();
+    //actu::bridge::a::cool();
+    //actu::bridge::b::cool();
 
-    size_t i = 0;
-    for(bool buzzer_running = false; true; buzzer_running = !(buzzer_running)) {
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_0);
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_2);
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
-
-        if(buzzer_running == false) {
-            actu::fan::start_all(
-                htim10,
-                htim3,
-                htim4,
-                htim9
-            );
-            actu::buzzer::start();
-            actu::pump::start();
-            panel::sevseg::white::bright(htim2);
-            HAL_Delay(2000);
-            //std::printf("fan_rpm: %lu\n\r", fan_rpm);
-        } else {
-            actu::fan::stop_all(
-                htim10,
-                htim3,
-                htim4,
-                htim9
-            );
-            actu::buzzer::stop();
-            actu::pump::stop();
-            panel::sevseg::white::dim(htim2);
-            HAL_Delay(2000);
-            //std::printf("fan_rpm: %lu\n\r", fan_rpm);
-        }
-        std::printf("%u: Hello World!\n\r", i++);
-        HAL_Delay(2000);
+    for(
+        uint16_t dac_value = 0;
+        true;
+        dac_value = [](const uint16_t in) {
+            static constexpr uint16_t inc { 2 << 9 };
+            static constexpr uint16_t stopper { 2 << 11 };
+            return (in + inc) > stopper ? 0 : in + inc;
+        }(dac_value)
+    ) {
+        HAL_DAC_SetValue(hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dac_value);
+        HAL_DAC_SetValue(hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, dac_value);
+        std::printf("dac_value: %u\n", dac_value);
+        HAL_Delay(5000);
     }
     return 0;
 }
