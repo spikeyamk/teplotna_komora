@@ -42,23 +42,12 @@ int app_main(
     panel::sevseg::white::turn_on_all_segments();
     actu::pump::stop();
     actu::buzzer::stop();
-    /*
-    actu::fan::start_all(
+    actu::fan::start_all_half_speed(
         htim10,
         htim3,
         htim4,
         htim9
     );
-    */
-    actu::fan::stop_all(
-        htim10,
-        htim3,
-        htim4,
-        htim9
-    );
-
-    //panel::sevseg::green_yellow::init();
-    panel::sevseg::green_yellow::test();
 
     actu::bridge::a::turn_off();
     actu::bridge::b::turn_off();
@@ -67,14 +56,17 @@ int app_main(
     //actu::bridge::a::cool();
     //actu::bridge::b::cool();
 
-    for(uint16_t dac_value = 0; true; ) {
+    for(
+        uint16_t dac_value = 0;
+        true;
+        dac_value = [](const uint16_t in) {
+            static constexpr uint16_t inc { 2 << 9 };
+            static constexpr uint16_t stopper { 2 << 11 };
+            return (in + inc) > stopper ? 0 : in + inc;
+        }(dac_value)
+    ) {
         HAL_DAC_SetValue(hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dac_value);
         HAL_DAC_SetValue(hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, dac_value);
-        if(dac_value + 1000 > 4095)
-            dac_value = 0;
-        else {
-            dac_value += 1000;
-        }
         std::printf("dac_value: %u\n", dac_value);
         HAL_Delay(5000);
     }

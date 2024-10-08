@@ -39,5 +39,12 @@ namespace fan {
         TIM_HandleTypeDef* htim4,
         TIM_HandleTypeDef* htim9
     );
+
+    void start_all_half_speed(
+        TIM_HandleTypeDef* htim10,
+        TIM_HandleTypeDef* htim3,
+        TIM_HandleTypeDef* htim4,
+        TIM_HandleTypeDef* htim9
+    );
 }
 }
