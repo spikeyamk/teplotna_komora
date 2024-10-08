@@ -39,12 +39,9 @@ target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE
     peripheral::dac
     peripheral::gpio
     peripheral::it
-    peripheral::spi1_temp
-    peripheral::spi2_sevyg
-    peripheral::tim_fan
-    peripheral::tim_sevw
-    peripheral::uart1_usb
-    peripheral::uart3_rs232
+    peripheral::spi
+    peripheral::tim
+    peripheral::uart
 
     sens::i2c_common
     sens::i2c_light
