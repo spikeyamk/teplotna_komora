@@ -172,6 +172,8 @@ namespace white {
             number /= 10;
             HAL_GPIO_WritePin(GPIOE, active_cathode[i], GPIO_PIN_RESET);
             display_digit(digit);
+            HAL_GPIO_WritePin(GPIOE, active_cathode[i], GPIO_PIN_SET);
+            HAL_Delay(500);
         }
 
         /*HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_RESET);
