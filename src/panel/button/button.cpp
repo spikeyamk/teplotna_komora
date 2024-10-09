@@ -27,7 +27,7 @@ namespace button {
         if (HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_1) == GPIO_PIN_SET) {
             //std::printf("Right middle button pressed.\n");
             return true;
-            HAL_Delay(200);
+            HAL_Delay(1000);
         }
         }
     }
