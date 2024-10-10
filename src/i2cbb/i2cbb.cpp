@@ -46,6 +46,7 @@ namespace i2cbb {
     }
 
     void Bus::stop_cond() {
+        delay();
         reset_SDA();
         delay();
         set_SCL();
@@ -67,7 +68,7 @@ namespace i2cbb {
     }
 
     uint8_t Bus::read_SDA() {
-        if(HAL_GPIO_ReadPin(GPIOF, GPIO_PIN_0) == GPIO_PIN_SET)
+        if(HAL_GPIO_ReadPin(const_cast<GPIO_TypeDef*>(port), sda) == GPIO_PIN_SET)
             return 1;
         else
             return 0;
@@ -174,7 +175,7 @@ namespace i2cbb {
     }
 
     HAL_StatusTypeDef Bus::transmit(const uint8_t address, const std::span<uint8_t>& data) {
-        if(Bus::write_byte(address, true, false)) {// first byte
+        if(Bus::write_byte(address & 0xFE, true, false)) {// first byte
             for(uint8_t i = 0; i < data.size(); i++) {
                 if(i == data.size() - 1) {
                     if(Bus::write_byte(data[i], false, true))
@@ -183,6 +184,23 @@ namespace i2cbb {
                     break; //last byte
             }
         }
+
+        Bus::stop_cond();
+        return HAL_ERROR;
+    }
+    
+    HAL_StatusTypeDef Bus::is_device_ready(const uint8_t address) {
+        /*
+        if(Bus::write_byte(address & 0xFE, true, true)) {// first byte
+            return HAL_OK;
+            for(uint8_t i = 0; i < data.size(); i++) {
+                if(i == data.size() - 1) {
+                    if(Bus::write_byte(data[i], false, true))
+                } else if(!Bus::write_byte(data[i], false, false))
+                    break; //last byte
+            }
+        }
+        */
 
         Bus::stop_cond();
         return HAL_ERROR;
@@ -203,8 +221,8 @@ namespace i2cbb {
     void Bus::scan() {
         std::printf("Scanning I2C bus...\n\r");
         // I2C addresses are 7 bits, so they range from 0x08 to 0x77
-        std::array<uint8_t, 1> reg { 0 };
-        for(uint8_t address = 0x08; address < 0xFF; address++) {
+        std::array<uint8_t, 1> reg { 0xFF };
+        for(uint8_t address = 0x00; address < 0xFF; address++) {
             // Attempt to communicate with the device
             if(transmit((address << 1), reg) == HAL_OK) {
                 // If the device responds, print its address

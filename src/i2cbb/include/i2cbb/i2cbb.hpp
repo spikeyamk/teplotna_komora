@@ -15,7 +15,7 @@ namespace i2cbb {
         ~Bus();
 
         // https://deepbluembedded.com/stm32-delay-microsecond-millisecond-utility-dwt-delay-timer-delay/
-        inline void delay(uint32_t us = 5) {
+        static inline void delay(uint32_t us = 5) {
             const uint32_t SYSTICK_LOAD { SystemCoreClock / 1000000U };
             const uint32_t SYSTICK_DELAY_CALIB { SYSTICK_LOAD >> 1 };
 
@@ -43,8 +43,8 @@ namespace i2cbb {
         bool send_byte_data(const uint8_t address, const uint8_t reg, const uint8_t data);
         uint8_t receive_byte_data(const uint8_t address, const uint8_t reg);
         HAL_StatusTypeDef transmit(const uint8_t address, const std::span<uint8_t>& data);
+        HAL_StatusTypeDef is_device_ready(const uint8_t address);
         HAL_StatusTypeDef receive(const uint8_t address, const std::span<uint8_t>& data);
-
         void scan();
     };
 }
