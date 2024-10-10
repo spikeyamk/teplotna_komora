@@ -164,16 +164,16 @@ namespace white {
     void display_one_number(const int digit, const uint16_t cathode_pin) {
         HAL_GPIO_WritePin(GPIOE, cathode_pin, GPIO_PIN_RESET);
         display_digit(digit);
-        //need shorter delay
-        HAL_Delay(2);
+        //most likely need shorter delay
+        HAL_Delay(1);
         HAL_GPIO_WritePin(GPIOE, cathode_pin, GPIO_PIN_SET);
     }
     
     void display_number(uint32_t number) {
-        turn_off_all_segments();
+        //turn_off_all_segments();
         //numbers might be displayed in wrong order, need to test
-        const uint16_t active_cathode[5] = {
-            GPIO_PIN_1, GPIO_PIN_0, GPIO_PIN_2, GPIO_PIN_3, GPIO_PIN_4
+        const uint16_t active_cathode[3] = {
+            GPIO_PIN_1, GPIO_PIN_0, GPIO_PIN_2//, GPIO_PIN_3, GPIO_PIN_4
         };
 
         for (const auto i: active_cathode) {
