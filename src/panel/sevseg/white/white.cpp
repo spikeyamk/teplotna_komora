@@ -6,6 +6,7 @@ namespace sevseg {
 namespace white {
     void init_brightness(TIM_HandleTypeDef* htim2) {
         HAL_TIM_PWM_Start(htim2, TIM_CHANNEL_1);
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
     }
 
     void dim(TIM_HandleTypeDef* htim2) {
@@ -160,27 +161,26 @@ namespace white {
         }
     }
 
+    void display_one_number(const int digit, const uint16_t cathode_pin) {
+        HAL_GPIO_WritePin(GPIOE, cathode_pin, GPIO_PIN_RESET);
+        display_digit(digit);
+        //need shorter delay
+        HAL_Delay(2);
+        HAL_GPIO_WritePin(GPIOE, cathode_pin, GPIO_PIN_SET);
+    }
+    
     void display_number(uint32_t number) {
         turn_off_all_segments();
         //numbers might be displayed in wrong order, need to test
-        uint16_t active_cathode[5] = {
-            GPIO_PIN_0, GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_3, GPIO_PIN_4
+        const uint16_t active_cathode[5] = {
+            GPIO_PIN_1, GPIO_PIN_0, GPIO_PIN_2, GPIO_PIN_3, GPIO_PIN_4
         };
 
-        for (uint8_t i = 0; (i < 5) && (number > 0); i++) {
+        for (const auto i: active_cathode) {
             uint32_t digit = number % 10;
             number /= 10;
-            HAL_GPIO_WritePin(GPIOE, active_cathode[i], GPIO_PIN_RESET);
-            display_digit(digit);
-            HAL_GPIO_WritePin(GPIOE, active_cathode[i], GPIO_PIN_SET);
-            HAL_Delay(500);
+            display_one_number(digit, i);
         }
-
-        /*HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, GPIO_PIN_RESET);*/
     }
 }
 }
