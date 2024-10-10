@@ -5,6 +5,12 @@
 namespace panel {
 namespace sevseg {
 namespace green_yellow {
+    class MAX6954 {
+    public:
+        MAX6954() = default;
+    };
+
+
     void write(uint8_t address, uint8_t data);
     void init();
     void test();
