@@ -1,5 +1,5 @@
 #include "spi_temperature.hpp"
-#include "MAX31865.h"
+#include "../MAX31865/include/MAX31865.h"
 
 namespace sens {
     namespace spi_temperature {

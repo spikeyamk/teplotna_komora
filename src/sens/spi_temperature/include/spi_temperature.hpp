@@ -3,7 +3,7 @@
 
 #include <stm32f205xx.h>
 #include "stm32f2xx_hal.h"
-#include "MAX31865.h"
+#include "../MAX31865/include/MAX31865.h"
 
 // SPI pin configuration for MAX31865 U1A temperature sensor
 #define MAX31865_CE_PORT_U1A GPIOD
@@ -62,14 +62,14 @@ namespace sens {
          *
          * @return float The temperature in degrees Celsius
          */
-        float readSensorU1ATemperature() {}
+        float readSensorU1ATemperature();
 
         /**
          * Read the temperature from the MAX31865 U3A temperature sensor
          *
          * @return float The temperature in degrees Celsius
          */
-        float readSensorU3ATemperature() {}
+        float readSensorU3ATemperature();
     }
 }
 #endif //SPI_TEMPERATURE_H

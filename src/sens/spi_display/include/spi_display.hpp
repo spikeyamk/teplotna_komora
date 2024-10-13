@@ -1,7 +1,7 @@
 #ifndef SPI_DISPLAY_HPP
 #define SPI_DISPLAY_HPP
 
-#include "MAX6954.h"
+#include "../MAX6954/include/MAX6954.h"
 
 namespace sens {
     namespace spi_display {

@@ -1,4 +1,4 @@
-#include "spi_display.hpp"
+#include "include/spi_display.hpp"
 
 namespace sens {
     namespace spi_display {
