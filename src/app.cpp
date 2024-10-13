@@ -11,6 +11,8 @@
 #include "panel/sevseg/green_yellow/green_yellow.hpp"
 #include "sens/i2c/common/common.hpp"
 //#include "sens/spi_temp/spi_temp.hpp"
+#include "sens/spi_display/include/spi_display.hpp"
+#include "sens/spi_temperature/include/spi_temperature.hpp"
 #include "stm32f2xx_hal.h"
 #include "main.h"
 #include "app.hpp"
@@ -53,8 +55,17 @@ int app_main(
     actu::bridge::b::turn_off();
     actu::lin_source::start_dac(hdac);
     actu::lin_source::set_output(hdac, std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::max());
-    //actu::bridge::a::cool();
-    //actu::bridge::b::cool();
+
+    std::printf("Reading temperature from chamber sensor 1\n");
+    float temperatureSensor1 =  sens::spi_temperature::readSensorU1ATemperature();
+    std::printf("Chamber sensor 1 temperature: %f\n", temperatureSensor1);
+    float temperatureSensor2 =  sens::spi_temperature::readSensorU1ATemperature();
+    std::printf("Chamber sensor 2 temperature: %f\n", temperatureSensor2);
+
+    std::printf("Displaying temperature from chamber sensor 1 in yellow\n");
+    sens::spi_display::writeFloatToDisplay(temperatureSensor1, DisplayColor::YELLOW);
+    std::printf("Displaying temperature from chamber sensor 1 in green\n");
+    sens::spi_display::writeFloatToDisplay(temperatureSensor2, DisplayColor::GREEN);
 
     for(
         uint16_t dac_value = 0;
