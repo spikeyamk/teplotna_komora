@@ -19,11 +19,11 @@ void spi_write(uint8_t *data, uint8_t len)
     {
         for (int8_t i = 7; i >= 0; i--)
         {
-            HAL_GPIO_WritePin(gpio->MOSI_PORT, gpio->MOSI_PIN, (data[x] & (1 << i)));
+            HAL_GPIO_WritePin(gpio->MOSI_PORT, gpio->MOSI_PIN, (data[x] & (1 << i)) ? GPIO_PIN_SET : GPIO_PIN_RESET);
             DELAY(1);
-            HAL_GPIO_WritePin(gpio->CLK_PORT, gpio->CLK_PIN, 1);
+            HAL_GPIO_WritePin(gpio->CLK_PORT, gpio->CLK_PIN, GPIO_PIN_SET);
             DELAY(1);
-            HAL_GPIO_WritePin(gpio->CLK_PORT, gpio->CLK_PIN, 0);
+            HAL_GPIO_WritePin(gpio->CLK_PORT, gpio->CLK_PIN, GPIO_PIN_RESET);
         }
     }
 }
@@ -43,11 +43,11 @@ void spi_read(uint8_t *buffer, uint8_t len)
         for (int8_t i = 7; i >= 0; i--)
         {
             buffer[x] <<= 1;
-            HAL_GPIO_WritePin(gpio->CLK_PORT, gpio->CLK_PIN, 1);
+            HAL_GPIO_WritePin(gpio->CLK_PORT, gpio->CLK_PIN, GPIO_PIN_SET);
             DELAY(1);
             buffer[x] |= HAL_GPIO_ReadPin(gpio->MISO_PORT, gpio->MISO_PIN);
             DELAY(1);
-            HAL_GPIO_WritePin(gpio->CLK_PORT, gpio->CLK_PIN, 0);
+            HAL_GPIO_WritePin(gpio->CLK_PORT, gpio->CLK_PIN, GPIO_PIN_RESET);
         }
     }
 }
@@ -63,12 +63,12 @@ void MAX31865_read(uint8_t addr, uint8_t *buffer, uint8_t len)
 {
     addr &= ~MAX31865_READ; // Force read bit on address
 
-    HAL_GPIO_WritePin(gpio->CE_PORT, gpio->CE_PIN, 0); // Enable CE
+    HAL_GPIO_WritePin(gpio->CE_PORT, gpio->CE_PIN, GPIO_PIN_RESET); // Enable CE
 
     spi_write(&addr, 1);   // Write addr
     spi_read(buffer, len); // Read data
 
-    HAL_GPIO_WritePin(gpio->CE_PORT, gpio->CE_PIN, 1); // Disable CE
+    HAL_GPIO_WritePin(gpio->CE_PORT, gpio->CE_PIN, GPIO_PIN_SET); // Disable CE
 }
 
 /**
@@ -81,12 +81,12 @@ void MAX31865_write(uint8_t addr, uint8_t data)
 {
     addr |= MAX31865_WRITE; // Force write bit on address
 
-    HAL_GPIO_WritePin(gpio->CE_PORT, gpio->CE_PIN, 0); // Enable CE
+    HAL_GPIO_WritePin(gpio->CE_PORT, gpio->CE_PIN, GPIO_PIN_RESET); // Enable CE
 
     spi_write(&addr, 1); // Write addr
     spi_write(&data, 1); // Write data
 
-    HAL_GPIO_WritePin(gpio->CE_PORT, gpio->CE_PIN, 1); // Disable CE
+    HAL_GPIO_WritePin(gpio->CE_PORT, gpio->CE_PIN, GPIO_PIN_SET); // Disable CE
 }
 
 /**
@@ -181,9 +181,9 @@ void MAX31865_init(MAX31865_GPIO *max_gpio, uint8_t wires)
     gpio = max_gpio;
 
     // Datalines in reset state
-    HAL_GPIO_WritePin(gpio->CE_PORT, gpio->CE_PIN, 1);
-    HAL_GPIO_WritePin(gpio->CLK_PORT, gpio->CLK_PIN, 1);
-    HAL_GPIO_WritePin(gpio->MOSI_PORT, gpio->MOSI_PIN, 1);
+    HAL_GPIO_WritePin(gpio->CE_PORT, gpio->CE_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(gpio->CLK_PORT, gpio->CLK_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(gpio->MOSI_PORT, gpio->MOSI_PIN, GPIO_PIN_SET);
 
     setWires(wires);  // Set 2,3 or 4 wire sensor
     enableBias(OFF);  // Disable bias voltage

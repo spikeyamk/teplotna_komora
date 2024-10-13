@@ -15,30 +15,28 @@
 #include <stm32f205xx.h>
 
 /********************* MAX31865 registers and config bits *********************/
-#define MAX31865_READ                   0x00
-#define MAX31865_WRITE                  0x80
-#define MAX31856_RTDMSB_REG             0x01
-#define MAX31856_CONFIG_REG             0x00
-#define MAX31856_CONFIG_BIAS            0x80
-#define MAX31856_CONFIG_1SHOT           0x20
-#define MAX31856_CONFIG_3WIRE           0x10
-#define MAX31856_CONFIG_MODEAUTO        0x40
-
+#define MAX31865_READ 0x00
+#define MAX31865_WRITE 0x80
+#define MAX31856_RTDMSB_REG 0x01
+#define MAX31856_CONFIG_REG 0x00
+#define MAX31856_CONFIG_BIAS 0x80
+#define MAX31856_CONFIG_1SHOT 0x20
+#define MAX31856_CONFIG_3WIRE 0x10
+#define MAX31856_CONFIG_MODEAUTO 0x40
 
 /********************* Constants *********************/
-#define RREF 430                        // Reference resistor
-#define FACTOR 32768                    // 2^15 used for data to resistance conversion
-#define ALPHA 0.003851                  // PT-100 temperature coefficient
-
+#define RREF 430       // Reference resistor
+#define FACTOR 32768   // 2^15 used for data to resistance conversion
+#define ALPHA 0.003851 // PT-100 temperature coefficient
 
 /********************* General defines *********************/
 #define ON 1
 #define OFF 0
 #define DELAY(x) HAL_Delay(x)
 
-
 /********************* MAX31865_GPIO pinout struct *********************/
-typedef struct {
+typedef struct
+{
     GPIO_TypeDef *CE_PORT;
     uint16_t CE_PIN;
 
@@ -52,9 +50,8 @@ typedef struct {
     uint16_t MISO_PIN;
 } MAX31865_GPIO;
 
-
 /********************* Public functions *********************/
 float MAX31865_readTemp();
 void MAX31865_init(MAX31865_GPIO *max_gpio, uint8_t wires);
 
-#endif //MAX31865_LIB_MAX31865_H
+#endif // MAX31865_LIB_MAX31865_H
