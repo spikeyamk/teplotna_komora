@@ -68,6 +68,6 @@ enum DisplayColor
 
 /********************* Public functions *********************/
 void MAX6954_init();
-void MAX6954_write(uint8_t address, uint8_t data);
+void MAX6954_display_float(float number, enum DisplayColor color);
 
 #endif // MAX6954_LIB_MAX6954_H
