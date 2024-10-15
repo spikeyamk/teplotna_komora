@@ -1,5 +1,28 @@
 #include "MAX6954.h"
 #include <stdint.h>
+#include "stdio.h"
+
+extern SPI_HandleTypeDef hspi2;
+
+void printBinary(uint8_t value)
+{
+    for (int i = 7; i >= 0; i--)
+    {
+        // Use bitwise AND to check if the ith bit is set
+        printf("%d", value & (1 << i) ? 1 : 0);
+    }
+    printf("\n");
+}
+
+void printBinary16(uint16_t value)
+{
+    for (int i = 15; i >= 0; i--)
+    {
+        // Use bitwise AND to check if the ith bit is set
+        printf("%d", value & (1 << i) ? 1 : 0);
+    }
+    printf("\n");
+}
 
 /*********************** Begin Private functions *************************/
 /**
@@ -8,22 +31,24 @@
  * @param data Pointer to transmit buffer
  * @param len  Amount of bytes to send
  */
+
 void MAX6954_spi_write(uint8_t *data, uint8_t len)
 {
     // Start by pulling the chip select low to begin communication
     HAL_GPIO_WritePin(MAX6954_CE_PORT, MAX6954_CE_PIN, GPIO_PIN_RESET);
 
-    for (uint8_t x = 0; x < len; x++)
+    for (uint8_t i = 0; i < len; i++)
     {
-        for (int8_t i = 7; i >= 0; i--)
+        // Transmit the data using HAL SPI transmit function
+        if (HAL_SPI_Transmit(&hspi2, data[i], 1, HAL_MAX_DELAY) != HAL_OK)
         {
-            // Set the MOSI pin to the current bit (data[x] & (1 << i))
-            HAL_GPIO_WritePin(MAX6954_MOSI_PORT, MAX6954_MOSI_PIN, (data[x] & (1 << i)) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-
-            // Generate a clock pulse
-            HAL_GPIO_WritePin(MAX6954_CLK_PORT, MAX6954_CLK_PIN, GPIO_PIN_SET);
-            DELAY(1); // Delay for a short period to allow the clock signal to stabilize
-            HAL_GPIO_WritePin(MAX6954_CLK_PORT, MAX6954_CLK_PIN, GPIO_PIN_RESET);
+            // Handle error
+            printf("SPI Transmission Error\n");
+        }
+        else
+        {
+            printf("Successfully sent to MAX6954 via SPI bytes\n", 1);
+            printBinary(data[i]);
         }
     }
 
@@ -45,6 +70,10 @@ void MAX6954_send_command(uint8_t address, uint8_t data, bool decimal_point)
     // D15 is 0 for write, set by default
     // D14-D8: Address bits
     command |= (address << 8);
+    printf("Sending command to MAX6954 address %#X\n", address);
+    printBinary(address);
+    printf("Sending data MAX6954\n");
+    printBinary(data);
 
     // D7: Decimal point control (1 for on, 0 for off)
     if (decimal_point)
@@ -56,6 +85,8 @@ void MAX6954_send_command(uint8_t address, uint8_t data, bool decimal_point)
 
     // D3-D0: Data (character to display, from 0 to F)
     command |= (data & 0x0F);
+    printf("Sending command to MAX6954\n");
+    printBinary16(command);
 
     // Send the 16-bit command via SPI
     uint8_t data_to_send[2];
@@ -72,6 +103,7 @@ void MAX6954_send_command(uint8_t address, uint8_t data, bool decimal_point)
  */
 MAX6954_Float_Digits convert_to_float_digits(float number)
 {
+    printf("Converting float %f to digits\n", number);
     // Split the float number into integer and fractional parts
     int integer_part = (int)number;
     int fractional_part = (int)((number - integer_part) * 100); // Assume 2 decimal places for now
@@ -108,10 +140,15 @@ MAX6954_Float_Digits convert_to_float_digits(float number)
 void display_on_yellow_7_segment(MAX6954_Float_Digits float_digits)
 {
     // Display the digits on the yellow 7-segment display
+    printf("Displaying on yellow color first digit %d in MAX6954\n", float_digits.digits[0]);
     MAX6954_send_command(MAX6954_DIGIT_ADDRESS_DS4, float_digits.digits[4], float_digits.decimal_points[4]);
+    printf("Displaying on yellow color second digit %d in MAX6954\n", float_digits.digits[1]);
     MAX6954_send_command(MAX6954_DIGIT_ADDRESS_DS7, float_digits.digits[3], float_digits.decimal_points[3]);
+    printf("Displaying on yellow color third digit %d in MAX6954\n", float_digits.digits[2]);
     MAX6954_send_command(MAX6954_DIGIT_ADDRESS_DS10, float_digits.digits[2], float_digits.decimal_points[2]);
+    printf("Displaying on yellow color fourth digit %d in MAX6954\n", float_digits.digits[1]);
     MAX6954_send_command(MAX6954_DIGIT_ADDRESS_DS12, float_digits.digits[1], float_digits.decimal_points[1]);
+    printf("Displaying on yellow color fifth digit %d in MAX6954\n", float_digits.digits[0]);
     MAX6954_send_command(MAX6954_DIGIT_ADDRESS_DS14, float_digits.digits[0], float_digits.decimal_points[0]);
 }
 
@@ -123,10 +160,15 @@ void display_on_yellow_7_segment(MAX6954_Float_Digits float_digits)
 void display_on_green_7_segment(MAX6954_Float_Digits float_digits)
 {
     // Display the digits on the green 7-segment display
+    printf("Displaying on green color first digit %d in MAX6954\n", float_digits.digits[0]);
     MAX6954_send_command(MAX6954_DIGIT_ADDRESS_DS5, float_digits.digits[4], float_digits.decimal_points[4]);
+    printf("Displaying on green color second digit %d in MAX6954\n", float_digits.digits[1]);
     MAX6954_send_command(MAX6954_DIGIT_ADDRESS_DS8, float_digits.digits[3], float_digits.decimal_points[3]);
+    printf("Displaying on green color third digit %d in MAX6954\n", float_digits.digits[2]);
     MAX6954_send_command(MAX6954_DIGIT_ADDRESS_DS11, float_digits.digits[2], float_digits.decimal_points[2]);
+    printf("Displaying on green color fourth digit %d in MAX6954\n", float_digits.digits[1]);
     MAX6954_send_command(MAX6954_DIGIT_ADDRESS_DS13, float_digits.digits[1], float_digits.decimal_points[1]);
+    printf("Displaying on green color fifth digit %d in MAX6954\n", float_digits.digits[0]);
     MAX6954_send_command(MAX6954_DIGIT_ADDRESS_DS15, float_digits.digits[0], float_digits.decimal_points[0]);
 }
 /*********************** End Private functions *************************/
@@ -139,8 +181,7 @@ void display_on_green_7_segment(MAX6954_Float_Digits float_digits)
 void MAX6954_init(void)
 {
     // Implement function to set intensity and other display configurations
-    MAX6954_display_float(000.00, YELLOW);
-    MAX6954_display_float(000.00, YELLOW);
+    printf("Initializing display in MAX6954\n");
 }
 
 /**
@@ -152,6 +193,7 @@ void MAX6954_init(void)
 void MAX6954_display_float(float number, enum DisplayColor color)
 {
     MAX6954_Float_Digits float_digits = convert_to_float_digits(number);
+    printf("Displaying float %f in MAX6954\n", number);
 
     if (color == YELLOW)
     {
