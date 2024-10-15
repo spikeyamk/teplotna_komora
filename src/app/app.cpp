@@ -37,7 +37,7 @@ void launch_tasks(uint32_t* product) {
 // This function cannot exit.
 void app_main(void* arg) {
     (void) arg;
-    start_watchdog();
+    //start_watchdog();
     redirect_printf();
 
     Trielo::trielo<example_submodule::foo>();
