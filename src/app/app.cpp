@@ -8,6 +8,7 @@ void producer(void* arg) {
     while(true) {
         std::printf("producer: *reinterpret_cast<*uint32_t>(arg): %lu\n\r", (*reinterpret_cast<uint32_t*>(arg))++);
         osDelay(100);
+        osThreadYield();
     }
 }
 
@@ -15,6 +16,7 @@ void consumer(void* arg) {
     while(true) {
         std::printf("consumer: *reinterpret_cast<*uint32_t>(arg): %lu\n\r", (*reinterpret_cast<uint32_t*>(arg))--);
         osDelay(500);
+        osThreadYield();
     }
 }
 
@@ -37,7 +39,7 @@ void launch_tasks(uint32_t* product) {
 // This function cannot exit.
 void app_main(void* arg) {
     (void) arg;
-    start_watchdog();
+    //start_watchdog();
     redirect_printf();
 
     Trielo::trielo<example_submodule::foo>();
