@@ -51,7 +51,16 @@ typedef struct
 } MAX31865_GPIO;
 
 /********************* Public functions *********************/
-float MAX31865_readTemp();
-void MAX31865_init(MAX31865_GPIO *max_gpio, uint8_t wires);
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+    float MAX31865_readTemp();
+    void MAX31865_init(MAX31865_GPIO *max_gpio, uint8_t wires);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // MAX31865_LIB_MAX31865_H

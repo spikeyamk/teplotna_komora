@@ -32,28 +32,10 @@
 #define MAX31865_MISO_PIN_U3A GPIO_PIN_4
 
 // Configurations to use while intializing the MAX31865 U1A temperature sensor
-MAX31865_GPIO max_gpio_u1a = {
-    MAX31865_CE_PORT_U1A,
-    MAX31865_CE_PIN_U1A,
-    MAX31865_CLK_PORT_U1A,
-    MAX31865_CLK_PIN_U1A,
-    MAX31865_MOSI_PORT_U1A,
-    MAX31865_MOSI_PIN_U1A,
-    MAX31865_MISO_PORT_U1A,
-    MAX31865_MISO_PIN_U1A
-};
+extern MAX31865_GPIO max_gpio_u1a;
 
 // Configurations to use while intializing the MAX31865 U3A temperature sensor
-MAX31865_GPIO max_gpio_u3a = {
-    MAX31865_CE_PORT_U3A,
-    MAX31865_CE_PIN_U3A,
-    MAX31865_CLK_PORT_U3A,
-    MAX31865_CLK_PIN_U3A,
-    MAX31865_MOSI_PORT_U3A,
-    MAX31865_MOSI_PIN_U3A,
-    MAX31865_MISO_PORT_U3A,
-    MAX31865_MISO_PIN_U3A
-};
+extern MAX31865_GPIO max_gpio_u3a;
 
 namespace sens {
     namespace spi_temperature {

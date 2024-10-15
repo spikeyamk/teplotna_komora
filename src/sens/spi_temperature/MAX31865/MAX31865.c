@@ -13,7 +13,7 @@ MAX31865_GPIO *gpio;
  * @param data Pointer to transmit buffer
  * @param len  Amount of bytes to send
  */
-void spi_write(uint8_t *data, uint8_t len)
+void MAX31865_spi_write(uint8_t *data, uint8_t len)
 {
     for (uint8_t x = 0; x < len; x++)
     {
@@ -34,7 +34,7 @@ void spi_write(uint8_t *data, uint8_t len)
  * @param buffer Pointer to rx buffer
  * @param len Amount of bytes to receive
  */
-void spi_read(uint8_t *buffer, uint8_t len)
+void MAX31865_spi_read(uint8_t *buffer, uint8_t len)
 {
     for (uint8_t x = 0; x < len; x++)
     {
@@ -65,8 +65,8 @@ void MAX31865_read(uint8_t addr, uint8_t *buffer, uint8_t len)
 
     HAL_GPIO_WritePin(gpio->CE_PORT, gpio->CE_PIN, GPIO_PIN_RESET); // Enable CE
 
-    spi_write(&addr, 1);   // Write addr
-    spi_read(buffer, len); // Read data
+    MAX31865_spi_write(&addr, 1);   // Write addr
+    MAX31865_spi_read(buffer, len); // Read data
 
     HAL_GPIO_WritePin(gpio->CE_PORT, gpio->CE_PIN, GPIO_PIN_SET); // Disable CE
 }
@@ -83,8 +83,8 @@ void MAX31865_write(uint8_t addr, uint8_t data)
 
     HAL_GPIO_WritePin(gpio->CE_PORT, gpio->CE_PIN, GPIO_PIN_RESET); // Enable CE
 
-    spi_write(&addr, 1); // Write addr
-    spi_write(&data, 1); // Write data
+    MAX31865_spi_write(&addr, 1); // Write addr
+    MAX31865_spi_write(&data, 1); // Write data
 
     HAL_GPIO_WritePin(gpio->CE_PORT, gpio->CE_PIN, GPIO_PIN_SET); // Disable CE
 }

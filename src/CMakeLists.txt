@@ -46,12 +46,14 @@ target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE
     sens::i2c_common
     sens::i2c_light
     sens::i2c_temp_hum
-    #sens::spi_temp
+    sens::spi_temperature
+    sens::spi_display
 
     submodule
 )
 target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE trielo)
 target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE stm32cubef2)
+target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE MAX31865 MAX6954)
 target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "core/include")
 
 # Define the ELF and binary file locations

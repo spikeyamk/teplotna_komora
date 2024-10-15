@@ -8,7 +8,7 @@
  * @param data Pointer to transmit buffer
  * @param len  Amount of bytes to send
  */
-void spi_write(uint8_t *data, uint8_t len)
+void MAX6954_spi_write(uint8_t *data, uint8_t len)
 {
     // Start by pulling the chip select low to begin communication
     HAL_GPIO_WritePin(MAX6954_CE_PORT, MAX6954_CE_PIN, GPIO_PIN_RESET);
@@ -61,7 +61,7 @@ void MAX6954_send_command(uint8_t address, uint8_t data, bool decimal_point)
     uint8_t data_to_send[2];
     data_to_send[0] = (command >> 8) & 0xFF; // MSB first
     data_to_send[1] = command & 0xFF;        // LSB second
-    spi_write(data_to_send, 2);
+    MAX6954_spi_write(data_to_send, 2);
 }
 
 /**
@@ -90,7 +90,14 @@ MAX6954_Float_Digits convert_to_float_digits(float number)
     digits[1] = fractional_part / 10; // Tenths place
     digits[0] = fractional_part % 10; // Hundredths place
 
-    return (MAX6954_Float_Digits){.digits = digits, .decimal_points = decimal_points};
+    MAX6954_Float_Digits result;
+    for (int i = 0; i < 5; i++)
+    {
+        result.digits[i] = digits[i];
+        result.decimal_points[i] = decimal_points[i];
+    }
+
+    return result;
 }
 
 /**
@@ -132,8 +139,8 @@ void display_on_green_7_segment(MAX6954_Float_Digits float_digits)
 void MAX6954_init(void)
 {
     // Implement function to set intensity and other display configurations
-    MAX6954_write_float(000.00, YELLOW);
-    MAX6954_write_float(000.00, YELLOW);
+    MAX6954_display_float(000.00, YELLOW);
+    MAX6954_display_float(000.00, YELLOW);
 }
 
 /**
