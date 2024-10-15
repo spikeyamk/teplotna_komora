@@ -129,7 +129,8 @@ void StartDefaultTask(void *argument)
   {
     if(i % 10000 == 0)
       printf("StartDefaultTask tick: %lu\n\r", i);
-    osDelay(1);
+    osDelay(1000);
+    osThreadYield();
   }
   /* USER CODE END StartDefaultTask */
 }
