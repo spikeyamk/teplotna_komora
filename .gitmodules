@@ -7,3 +7,6 @@
 [submodule "deps/3rdparty/STM32CubeH7"]
 	path = deps/3rdparty/STM32CubeH7
 	url = https://github.com/STMicroelectronics/STM32CubeH7.git
+[submodule "docs/mfrc522/RFID-MIFARE-RC522-ARM-STM32"]
+	path = docs/mfrc522/RFID-MIFARE-RC522-ARM-STM32
+	url = https://github.com/Hamid-R-Tanhaei/RFID-MIFARE-RC522-ARM-STM32.git
