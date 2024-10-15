@@ -1,6 +1,7 @@
 #include <trielo/trielo.hpp>
 #include <cmsis_os2.h>
 #include "example_submodule/public.hpp"
+#include "util.hpp"
 #include "app/app.hpp"
 
 void producer(void* arg) {
@@ -33,13 +34,15 @@ void launch_tasks(uint32_t* product) {
     osThreadNew(consumer, reinterpret_cast<void*>(product), &consumer_attr);
 }
 
-/// This function calculates the area of a rectangle.
+// This function cannot exit.
 void app_main(void* arg) {
     (void) arg;
+    start_watchdog();
+    redirect_printf();
+
     Trielo::trielo<example_submodule::foo>();
     uint32_t product { 0 };
     launch_tasks(&product);
-    
     while(1) {
         osThreadYield();
     }
