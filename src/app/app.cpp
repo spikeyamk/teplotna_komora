@@ -2,6 +2,8 @@
 #include <cmsis_os2.h>
 #include "example_submodule/public.hpp"
 #include "util.hpp"
+#include "main.h"
+#include "mfrc522/MFRC522.hpp"
 #include "app/app.hpp"
 
 void producer(void* arg) {
@@ -40,9 +42,60 @@ void app_main(void* arg) {
     //start_watchdog();
     redirect_printf();
 
-    Trielo::trielo<example_submodule::foo>();
-    uint32_t product { 0 };
-    launch_tasks(&product);
+    HAL_GPIO_WritePin(SPI4_NRSTPD_GPIO_Port, SPI4_NRSTPD_Pin, GPIO_PIN_SET);
+    osDelay(1000);
+
+    MFRC522_Reset();
+    osDelay(1000);
+
+    Write_MFRC522(TModeReg, 0x80);
+    osDelay(1000);
+    std::printf(
+        "Read_MFRC522(TModeReg): 0x%02X\n\r",
+        Read_MFRC522(TModeReg)
+    );
+    osDelay(1000);
+
+    Write_MFRC522(TPrescalerReg, 0xA9); //0x34);
+    osDelay(1000);
+    std::printf(
+        "Read_MFRC522(TPrescalerReg): 0x%02X\n\r",
+        Read_MFRC522(TPrescalerReg)
+    );
+    osDelay(1000);
+
+    Write_MFRC522(TReloadRegL, 0x03);
+    osDelay(1000);
+    std::printf(
+        "Read_MFRC522(TReloadRegL): 0x%02X\n\r",
+        Read_MFRC522(TReloadRegL)
+    );
+    osDelay(1000);
+
+    Write_MFRC522(TReloadRegH, 0xE8);
+    osDelay(1000);
+    std::printf(
+        "Read_MFRC522(TReloadRegH): 0x%02X\n\r",
+        Read_MFRC522(TReloadRegH)
+    );
+    osDelay(1000);
+
+    Write_MFRC522(TxAutoReg, 0x40);
+    osDelay(1000);
+    std::printf(
+        "Read_MFRC522(TxAutoReg): 0x%02X\n\r",
+        Read_MFRC522(TxAutoReg)
+    );
+    osDelay(1000);
+
+    Write_MFRC522(ModeReg, 0x3D);
+    osDelay(1000);
+    std::printf(
+        "Read_MFRC522(ModeReg): 0x%02X\n\r",
+        Read_MFRC522(ModeReg)
+    );
+    osDelay(1000);
+
     while(1) {
         osThreadYield();
     }
