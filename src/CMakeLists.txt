@@ -1,33 +1,8 @@
-add_subdirectory("submodule")
-
-set(CMAKE_EXECUTABLE_SUFFIX ".elf")
-add_executable(${CMAKE_PROJECT_NAME}
-    "core/freertos.c"
-    "core/gpio.c"
-    "core/startup_stm32h723xx.s"
-    "core/stm32h7xx_hal_msp.c"
-    "core/stm32h7xx_hal_timebase_tim.c"
-    "core/stm32h7xx_it.c"
-    "core/syscalls.c"
-    "core/sysmem.c"
-    "core/system_stm32h7xx.c"
-    "core/usart.c"
-
-    "main.c"
-    "app.cpp"
-    "returns_true.cpp"
-)
-
-target_compile_definitions("${CMAKE_PROJECT_NAME}" PRIVATE STM32H723xx)
-target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE submodule)
-target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE trielo)
-target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE stm32cubeh7)
-target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "core/include")
+add_subdirectories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Define the ELF and binary file locations
-set(ELF_FILE "${CMAKE_BINARY_DIR}/src/${CMAKE_PROJECT_NAME}.elf")
-set(BIN_FILE "${CMAKE_BINARY_DIR}/src/${CMAKE_PROJECT_NAME}.bin")
-set(FLASH_ADDRESS "0x08000000")
+set(ELF_FILE "${CMAKE_BINARY_DIR}/src/core/${CMAKE_PROJECT_NAME}.elf")
+set(BIN_FILE "${CMAKE_BINARY_DIR}/src/core/${CMAKE_PROJECT_NAME}.bin")
 
 # Add a custom command to generate the .bin file from the .elf file
 add_custom_command(
@@ -42,6 +17,6 @@ add_custom_target(
     flash
     DEPENDS ${BIN_FILE}  # Ensure the binary is built before flashing
     COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target all
-    COMMAND STM32_Programmer_CLI -c port=SWD -w ${BIN_FILE} ${FLASH_ADDRESS} -v -rst
+    COMMAND STM32_Programmer_CLI -c port=SWD -w ${BIN_FILE} 0x08000000 -v -rst
     COMMENT "Building project and flashing the binary with STM32_Programmer_CLI"
 )

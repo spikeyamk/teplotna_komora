@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include <stdbool.h>
+#include "app/app.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -115,11 +116,19 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
+  const osThreadAttr_t app_main_attr = {
+    .name = "app_main",
+    .stack_size = 4 * 1024,
+    .priority = (osPriority_t) osPriorityNormal,
+  };
+
+  osThreadNew(app_main, NULL, &app_main_attr);
+
   /* Infinite loop */
   for(uint32_t i = 0; true; i++)
   {
-    if(i % 1000 == 0)
-      printf("tick: %u\n\r", i);
+    if(i % 10000 == 0)
+      printf("StartDefaultTask tick: %lu\n\r", i);
     osDelay(1);
   }
   /* USER CODE END StartDefaultTask */

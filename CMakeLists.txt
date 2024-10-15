@@ -12,6 +12,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD 20)
 
+include(cmake/add_subdirectories.cmake)
 # Add dependencies and subdirectories
 add_subdirectory("deps")
 enable_testing()
