@@ -3,7 +3,7 @@
 #include "stm32f2xx_hal.h"
 #ifdef __cplusplus
 extern "C" {
-#include "MAX31865/max31865.h"
+//#include "MAX31865/max31865.h"
 }
 #endif
 
@@ -36,6 +36,7 @@ namespace spi_temp {
     }
 
     void test() {
+        /*
         max31865_t TempSensor;
         max31865_init(
             &TempSensor,
@@ -53,6 +54,7 @@ namespace spi_temp {
             false
         );
         std::printf("max31865_readADC(&TempSensor): %u\n\r", max31865_readADC(&TempSensor));
+        */
     }
 }
 }
