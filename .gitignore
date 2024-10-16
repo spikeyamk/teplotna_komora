@@ -1,3 +1,6 @@
 build*
 .vscode*
 .cache*
+/misc/pinout/*
+# Exclude the pinout.ioc file from being ignored
+!/misc/pinout/pinout.ioc
