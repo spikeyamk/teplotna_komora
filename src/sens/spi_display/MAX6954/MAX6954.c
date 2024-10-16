@@ -1,8 +1,7 @@
 #include "MAX6954.h"
 #include <stdint.h>
 #include "stdio.h"
-
-extern SPI_HandleTypeDef hspi2;
+#include "spi.h"
 
 void printBinary(uint8_t value)
 {
@@ -24,6 +23,21 @@ void printBinary16(uint16_t value)
     printf("\n");
 }
 
+HAL_StatusTypeDef send_spi_command(uint8_t address, uint8_t value)
+{
+    HAL_GPIO_WritePin(MAX6954_CE_PORT, MAX6954_CE_PIN, GPIO_PIN_RESET);
+
+    // Create a buffer with 2 bytes: the address and the value
+    uint8_t buf[2] = {(address & 0x7E), value};
+
+    // Transmit the buffer using HAL_SPI_Transmit (blocking)
+    HAL_StatusTypeDef ret = HAL_SPI_Transmit(&hspi2, buf, 2, 1000);
+
+    HAL_GPIO_WritePin(MAX6954_CE_PORT, MAX6954_CE_PIN, GPIO_PIN_SET);
+
+    return ret;
+}
+
 /*********************** Begin Private functions *************************/
 /**
  * Write x bytes using software SPI
@@ -37,19 +51,14 @@ void MAX6954_spi_write(uint8_t *data, uint8_t len)
     // Start by pulling the chip select low to begin communication
     HAL_GPIO_WritePin(MAX6954_CE_PORT, MAX6954_CE_PIN, GPIO_PIN_RESET);
 
-    for (uint8_t i = 0; i < len; i++)
+    if (HAL_SPI_Transmit(&hspi2, data, 2, HAL_MAX_DELAY) != HAL_OK)
     {
-        // Transmit the data using HAL SPI transmit function
-        if (HAL_SPI_Transmit(&hspi2, data[i], 1, HAL_MAX_DELAY) != HAL_OK)
-        {
-            // Handle error
-            printf("SPI Transmission Error\n");
-        }
-        else
-        {
-            printf("Successfully sent to MAX6954 via SPI bytes\n", 1);
-            printBinary(data[i]);
-        }
+        // Handle error
+        printf("SPI Transmission Error\n");
+    }
+    else
+    {
+        printf("Successfully sent %d to MAX6954 via SPI\n", len);
     }
 
     // Pull the chip select high to end communication
@@ -182,6 +191,18 @@ void MAX6954_init(void)
 {
     // Implement function to set intensity and other display configurations
     printf("Initializing display in MAX6954\n");
+
+    // Configurations setup
+    send_spi_command(MAX6954_DECODE_MODE_REG, 0x01); // No shutdown, no test mode
+    send_spi_command(MAX6954_BRIGHTNESS_REG, 0xFF);  // Maximum brightness
+    send_spi_command(MAX6954_SCAN_LIMIT_REG, 0xFF);  // Display digits 0-7
+    send_spi_command(MAX6954_CONTROL_REG, 0x01);     // Normal operation
+
+    send_spi_command(MAX6954_DIGIT_ADDRESS_DS5, 0xFF);
+    send_spi_command(MAX6954_DIGIT_ADDRESS_DS8, 0xFF);
+    send_spi_command(MAX6954_DIGIT_ADDRESS_DS11, 0xFF);
+    send_spi_command(MAX6954_DIGIT_ADDRESS_DS13, 0xFF);
+    send_spi_command(MAX6954_DIGIT_ADDRESS_DS15, 0xFF);
 }
 
 /**

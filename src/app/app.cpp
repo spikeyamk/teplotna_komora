@@ -47,9 +47,31 @@ namespace max6549 {
     }
 
     void test() {
-        std::printf("write(0x20, 0xFF): 0x%02X\n", write(0x20, (0xEF << 1)));
-        std::printf("read(0x20): 0x%02X\n", read(0x20));
+        std::printf("write(0x01, (0x01 )): 0x%02X\n", write(0x01, (0x01 )));
+        std::printf("read(0x01): 0x%02X\n", read(0x01));
+
+        std::printf("write(0x02, (0xFF )): 0x%02X\n", write(0x02, (0xFF )));
+        std::printf("read(0x02): 0x%02X\n", read(0x02));
+
+        std::printf("write(0x03, (0x05 )): 0x%02X\n", write(0x03, (0xFF)));
+        std::printf("read(0x03): 0x%02X\n", read(0x03));
+
+        std::printf("write(0x04, (0x01 )): 0x%02X\n", write(0x04, (0x01 )));
+        std::printf("read(0x04): 0x%02X\n", read(0x04));
+
+        /*
+        for(uint8_t i = 0x20; i <= 0x2F; i++) {
+            std::printf("write(0x%02X, 0xFF): 0x%02X\n", i, write(i, (0xFF )));
+            std::printf("read(0x%02X): 0x%02X\n", i, read(i));
+        }
+
+        for(uint8_t i = 0x40; i <= 0x4F; i++) {
+            std::printf("write(0x%02X, 0xEF): 0x%02X\n", i, write(i, (0xFF )));
+            std::printf("read(0x%02X): 0x%02X\n", i, read(i));
+        }
+        */
     }
+
 }
 
 namespace max31865 {
@@ -142,7 +164,7 @@ void app_main(void* arg) {
     //actu::bridge::a::cool();
     //actu::bridge::b::cool();
     Trielo::trielo<max6549::test>();
-    Trielo::trielo<max31865::test>();
+    //Trielo::trielo<max31865::test>();
     for(
         uint16_t dac_value = 0;
         true;

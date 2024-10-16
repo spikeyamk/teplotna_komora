@@ -6,6 +6,10 @@
 namespace sens {
     namespace spi_display {
         /**
+         * Initialize the MAX6954 display
+         */
+        void initializeDisplay();
+        /**
          * Write a float number to the MAX6954 display
          *
          * @param number The number to write

@@ -25,7 +25,10 @@
 // MAX6954 configuration registers
 #define MAX6954_WRITE 0x00          // 0 for write
 #define MAX6954_CONFIG_REG 0x00     // Address for the configuration register
-#define MAX6954_BRIGHTNESS_REG 0x01 // Address for the brightness register
+#define MAX6954_BRIGHTNESS_REG 0x02 // Address for the brightness register
+#define MAX6954_DECODE_MODE_REG 0x01
+#define MAX6954_SCAN_LIMIT_REG 0x03
+#define MAX6954_CONTROL_REG 0x04
 
 // Configurations for the yellow 7-segment display with 5 digits (DS4, DS7, DS10, DS12, DS14)
 #define MAX6954_DIGIT_ADDRESS_DS4 0x20
