@@ -1,6 +1,5 @@
 #include "stm32f2xx_hal.h"
-
-extern UART_HandleTypeDef huart1;
+#include "usart.h"
 
 int __io_putchar(int ch) {
     if (ch == '\n') {
