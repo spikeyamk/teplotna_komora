@@ -59,6 +59,7 @@ namespace max6549 {
         std::printf("write(0x04, (0x01 )): 0x%02X\n", write(0x04, (0x01 )));
         std::printf("read(0x04): 0x%02X\n", read(0x04));
 
+        /*
         for(uint8_t i = 0x20; i <= 0x2F; i++) {
             std::printf("write(0x%02X, 0xFF): 0x%02X\n", i, write(i, (0xFF )));
             std::printf("read(0x%02X): 0x%02X\n", i, read(i));
@@ -68,6 +69,7 @@ namespace max6549 {
             std::printf("write(0x%02X, 0xEF): 0x%02X\n", i, write(i, (0xFF )));
             std::printf("read(0x%02X): 0x%02X\n", i, read(i));
         }
+        */
     }
 
 }
