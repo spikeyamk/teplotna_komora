@@ -1,5 +1,5 @@
 #pragma once
 
-namespace submodule {
+namespace example_submodule {
     void bar();
 }
