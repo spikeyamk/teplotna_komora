@@ -1,5 +1,3 @@
-#pragma once
-
 #include "peripheral/gpio/pump.hpp"
 
 namespace peripheral {

@@ -1,8 +1,8 @@
 #include <trielo/trielo.hpp>
 #include "private.hpp"
-#include "submodule/public.hpp"
+#include "example_submodule/public.hpp"
 
-namespace submodule {
+namespace example_submodule {
     void foo() {
         Trielo::trielo<bar>();
     }

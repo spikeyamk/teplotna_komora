@@ -4,7 +4,7 @@
 
 namespace actu {
 namespace lin_source {
-    void start_dac(DAC_HandleTypeDef* hdac);
-    void set_output(DAC_HandleTypeDef* hdac, uint32_t val_a, uint32_t val_b);
+    void start_dac();
+    void set_output(uint32_t val_a, uint32_t val_b);
 }
 }
