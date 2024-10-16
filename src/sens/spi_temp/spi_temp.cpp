@@ -1,9 +1,11 @@
 #include <iostream>
 #include "sens/spi_temp/spi_temp.hpp"
 #include "stm32f2xx_hal.h"
+#include "spi.h"
+#include "gpio.h"
 #ifdef __cplusplus
 extern "C" {
-#include "MAX31865/max31865.h"
+#include "MAX31865.hpp"
 }
 #endif
 
@@ -36,7 +38,22 @@ namespace spi_temp {
     }
 
     void test() {
-        max31865_t TempSensor;
+        Max31865_t TempSensor;
+        Max31865_init(&TempSensor, &hspi3, SPI3_NSS0_GPIO_Port, SPI3_NSS0_Pin, 4, 50);
+        float pt100Temp;
+        while(1) {
+            float t;
+            std::printf(
+                "Max31865_readTempC(&TempSensor, &t): 0x%02X\n",
+                Max31865_readTempC(&TempSensor, &t)
+            );
+            std::printf(
+                "(pt100Temp = Max31865_Filter(t, pt100Temp, 0.1)): %f\n",
+                (pt100Temp = Max31865_Filter(t, pt100Temp, 0.1))
+            );
+            HAL_Delay(1000);
+        }
+        /*
         max31865_init(
             &TempSensor,
             &chipselect_cb,
@@ -53,6 +70,7 @@ namespace spi_temp {
             false
         );
         std::printf("max31865_readADC(&TempSensor): %u\n\r", max31865_readADC(&TempSensor));
+        */
     }
 }
 }
