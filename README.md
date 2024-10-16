@@ -72,6 +72,11 @@ Get-WmiObject Win32_SerialPort | Select-Object DeviceID, Caption, Description
 ```
 or execute the PowerShell script under `misc\list_com.ps1`. Look for device with caption `Silicon Labs CP210x USB to UART Bridge (COM6)`. Launch `PuTTY` and select the `Serial` radio button for `Connection type`, enter `COM6` for `Serial line` and `115200` for `Speed`.
 
+or alternatively issue following command:
+```
+putty -serial COM7 -sercfg 115200,8,n,1,N
+```
+
 ![putty_01](docs/readme_images/putty/putty_01.jpg)
 ![putty_02](docs/readme_images/putty/putty_02.jpg)
 
