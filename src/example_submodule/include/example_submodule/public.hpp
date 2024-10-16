@@ -1,5 +1,5 @@
 #pragma once
 
-namespace inner_submodule {
+namespace example_submodule {
     void foo();
 }

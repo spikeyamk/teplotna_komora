@@ -5,9 +5,9 @@
 namespace panel {
 namespace sevseg {
 namespace white {
-    void init_brightness(TIM_HandleTypeDef* htim2);
-    void dim(TIM_HandleTypeDef* htim2);
-    void bright(TIM_HandleTypeDef* htim2);
+    void init_brightness();
+    void dim();
+    void bright();
     void turn_on_all_segments();
 }
 }

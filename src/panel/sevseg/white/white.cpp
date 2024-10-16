@@ -1,19 +1,20 @@
 #include "stm32f2xx_hal.h"
 #include "panel/sevseg/white/white.hpp"
+#include "tim.h"
 
 namespace panel {
 namespace sevseg {
 namespace white {
-    void init_brightness(TIM_HandleTypeDef* htim2) {
-        HAL_TIM_PWM_Start(htim2, TIM_CHANNEL_1);
+    void init_brightness() {
+        HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
     }
 
-    void dim(TIM_HandleTypeDef* htim2) {
-        __HAL_TIM_SET_COMPARE(htim2, TIM_CHANNEL_1, 50'000);
+    void dim() {
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 50'000);
     }
 
-    void bright(TIM_HandleTypeDef* htim2) {
-        __HAL_TIM_SET_COMPARE(htim2, TIM_CHANNEL_1, 60'000);
+    void bright() {
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 60'000);
     }
 
     void turn_on_all_segments() {

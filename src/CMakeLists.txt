@@ -1,62 +1,15 @@
 add_subdirectory("actu")
+add_subdirectory("app")
 add_subdirectory("comm")
+add_subdirectory("core")
+add_subdirectory("example_submodule")
 add_subdirectory("panel")
 add_subdirectory("peripheral")
 add_subdirectory("sens")
-add_subdirectory("submodule")
-
-set(CMAKE_EXECUTABLE_SUFFIX ".elf")
-add_executable(${CMAKE_PROJECT_NAME}
-    "core/startup_stm32f205xx.s"
-    "core/stm32f2xx_hal_msp.c"
-    "core/stm32f2xx_it.c"
-    "core/syscalls.c"
-    "core/sysmem.c"
-    "core/system_stm32f2xx.c"
-
-    "main.c"
-    "printf_redirect.c"
-    "app.cpp"
-    "button_it.cpp"
-)
-
-target_compile_definitions("${CMAKE_PROJECT_NAME}" PRIVATE STM32F205xx)
-target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE
-    actu::bridge
-    actu::buzzer
-    actu::fan
-    actu::lin_source
-    actu::pump
-
-    comm::usb_uart
-
-    panel::button
-    panel::encoder
-    panel::led
-    panel::green_yellow
-    panel::white
-
-    peripheral::dac
-    peripheral::gpio
-    peripheral::it
-    peripheral::spi
-    peripheral::tim
-    peripheral::uart
-
-    sens::i2c_common
-    sens::i2c_light
-    sens::i2c_temp_hum
-    #sens::spi_temp
-
-    submodule
-)
-target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE trielo)
-target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE stm32cubef2)
-target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "core/include")
 
 # Define the ELF and binary file locations
-set(ELF_FILE "${CMAKE_BINARY_DIR}/src/${CMAKE_PROJECT_NAME}.elf")
-set(BIN_FILE "${CMAKE_BINARY_DIR}/src/${CMAKE_PROJECT_NAME}.bin")
+set(ELF_FILE "${CMAKE_BINARY_DIR}/src/core/${CMAKE_PROJECT_NAME}.elf")
+set(BIN_FILE "${CMAKE_BINARY_DIR}/src/core/${CMAKE_PROJECT_NAME}.bin")
 set(SILENT_BIN_FILE "${CMAKE_SOURCE_DIR}/misc/silent_firmware.bin")
 
 # Add a custom command to generate the .bin file from the .elf file
