@@ -1,3 +1,4 @@
+#include <array>
 #include <string_view>
 #include <limits>
 #include <trielo/trielo.hpp>
@@ -15,6 +16,39 @@
 #include "main.h"
 #include "app/app.hpp"
 #include "dac.h"
+#include "gpio.h"
+#include "spi.h"
+
+void select() {
+    HAL_GPIO_WritePin(SPI2_NSS_GPIO_Port, SPI2_NSS_Pin, GPIO_PIN_RESET);
+}
+
+void deselect() {
+    HAL_GPIO_WritePin(SPI2_NSS_GPIO_Port, SPI2_NSS_Pin, GPIO_PIN_SET);
+}
+
+auto write(const uint8_t address, const uint8_t value) {
+    select();
+    const std::array<uint8_t, 2> buf { ((address) & 0x7E), value };
+    const auto ret { HAL_SPI_Transmit(&hspi2, buf.data(), buf.size(), 1000) };
+    deselect();
+    return ret;
+}
+
+uint8_t read(const uint8_t address) {
+    select();
+    const uint8_t buf { ((address) | 0x80) };
+    HAL_SPI_Transmit(&hspi2, &buf, sizeof(buf), 1000);
+    uint8_t ret { 0x00 };
+    HAL_SPI_Receive(&hspi2, &ret, sizeof(ret), 1000);
+    deselect();
+    return ret;
+}
+
+void test_max6549() {
+    std::printf("write(0x20, 0xFF): 0x%02X\n", write(0x20, (0xEF << 1)));
+    std::printf("read(0x20): 0x%02X\n", read(0x20));
+}
 
 /// This function calculates the area of a rectangle.
 void app_main(void* arg) {
@@ -38,7 +72,7 @@ void app_main(void* arg) {
 
     //actu::bridge::a::cool();
     //actu::bridge::b::cool();
-
+    Trielo::trielo<test_max6549>();
     for(
         uint16_t dac_value = 0;
         true;
