@@ -61,9 +61,6 @@ namespace fan {
         }
         /* USER CODE END Error_Handler_Debug */
     }
-    void init_tim() {
-        MX_TIM5_Init();
-    }
 
     void init_ctl() {
         HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
