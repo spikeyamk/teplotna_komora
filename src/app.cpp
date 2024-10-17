@@ -23,7 +23,6 @@ int run(int width, int height) {
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_2);
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_3);
-        std::printf("Hello World!\n\r");
         HAL_Delay(500);
     }
     return 0;
