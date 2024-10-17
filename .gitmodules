@@ -34,3 +34,6 @@
 [submodule "docs/max31865/STM32F334_MAX31865"]
 	path = docs/max31865/STM32F334_MAX31865
 	url = https://github.com/Vishi100/STM32F334_MAX31865
+[submodule "deps/3rdparty/STM32CubeF2"]
+	path = deps/3rdparty/STM32CubeF2
+	url = https://github.com/STMicroelectronics/STM32CubeF2
