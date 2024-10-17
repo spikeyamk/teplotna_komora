@@ -103,7 +103,7 @@ namespace common {
         std::for_each(
             ret.rbegin(),
             ret.rend(),
-            [&buf, index = static_cast<size_t>(ret.size())](auto& e) mutable {
+            [&buf, index = ret.size()](auto& e) mutable {
                 if(buf[index] == '-') {
                     e = minus_sign;
                 } else if(buf[index] == '.') {
