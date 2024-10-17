@@ -20,8 +20,6 @@ void turn_every_annoying_peripheral_off() {
 
     actu::bridge::a::turn_off();
     actu::bridge::b::turn_off();
-    actu::lin_source::start_dac();
-    actu::lin_source::set_output(std::numeric_limits<uint32_t>::min(), std::numeric_limits<uint32_t>::min());
 }
 
 /// This function calculates the area of a rectangle.
