@@ -1,76 +1,183 @@
 #include <iostream>
+#include <array>
 #include "sens/spi_temp/spi_temp.hpp"
 #include "stm32f2xx_hal.h"
 #include "spi.h"
 #include "gpio.h"
-#ifdef __cplusplus
-extern "C" {
-#include "MAX31865.hpp"
-}
-#endif
-
-extern SPI_HandleTypeDef hspi3;
 
 namespace sens {
 namespace spi_temp {
-    void chipselect_cb(bool state) {
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, state ? GPIO_PIN_RESET : GPIO_PIN_SET);
+    namespace select {
+        void a() {
+            HAL_GPIO_WritePin(SPI3_NSS0_GPIO_Port, SPI3_NSS0_Pin, GPIO_PIN_RESET);
+        }
+
+        void b() {
+            HAL_GPIO_WritePin(SPI3_NSS1_GPIO_Port, SPI3_NSS1_Pin, GPIO_PIN_RESET);
+        }
     }
 
-    uint8_t spi_trx_cb(uint8_t data) {
-        HAL_SPI_Transmit(&hspi3, &data, 1, HAL_MAX_DELAY);
-        uint8_t RX_data { 0 };
-        HAL_SPI_Receive(&hspi3, &RX_data, 1, HAL_MAX_DELAY);
-        std::printf("spi_trx_cb RX_data: %u\n\r", RX_data);
-        return RX_data;
+    namespace deselect {
+        void a() {
+            HAL_GPIO_WritePin(SPI3_NSS0_GPIO_Port, SPI3_NSS0_Pin, GPIO_PIN_SET);
+        }
+
+        void b() {
+            HAL_GPIO_WritePin(SPI3_NSS1_GPIO_Port, SPI3_NSS1_Pin, GPIO_PIN_SET);
+        }
     }
 
-    void charged_time_delay_cb(void) {
-        // 10.5*tau delay
+    namespace write {
+        auto a(const uint8_t address, const uint8_t value) {
+            select::a();
+            //HAL_Delay(10);
+            const std::array<uint8_t, 2> buf { (address | 0x80), value };
+            const auto ret { HAL_SPI_Transmit(&hspi3, buf.data(), buf.size(), 500) };
+            deselect::a();
+            return ret;
+        }
+
+        auto b(const uint8_t address, const uint8_t value) {
+            select::b();
+            //HAL_Delay(10);
+            const std::array<uint8_t, 2> buf { (address | 0x80), value };
+            const auto ret { HAL_SPI_Transmit(&hspi3, buf.data(), buf.size(), 500) };
+            deselect::b();
+            return ret;
+        }
     }
 
-    void conversion_timer_delay_cb(void) {
-        // 10.5*tau delay
+    namespace read {
+        uint8_t a(const uint8_t address) {
+            select::a();
+            //HAL_Delay(10);
+            const uint8_t buf { (address & 0x7F) };
+            HAL_SPI_Transmit(&hspi3, &buf, sizeof(buf), 500);
+            uint8_t ret { 0x00 };
+            HAL_SPI_Receive(&hspi3, &ret, sizeof(ret), 500);
+            deselect::a();
+            return ret;
+        }
+
+        uint8_t b(const uint8_t address) {
+            select::b();
+            //HAL_Delay(10);
+            const uint8_t buf { (address & 0x7F) };
+            HAL_SPI_Transmit(&hspi3, &buf, sizeof(buf), 500);
+            uint8_t ret { 0x00 };
+            HAL_SPI_Receive(&hspi3, &ret, sizeof(ret), 500);
+            deselect::b();
+            return ret;
+        }
     }
 
-    void threshold_fault(void) {
-        // handle threshold fault
+    namespace init {
+        static const std::array<uint8_t, 2> defaults_config_reset_fault { 0x00, 0xC2 };
+        void a() {
+            select::a();
+            HAL_Delay(10);
+            HAL_SPI_Transmit(&hspi3, defaults_config_reset_fault.data(), defaults_config_reset_fault.size(), 500);
+            deselect::a();
+        }
+
+        void b() {
+            select::b();
+            HAL_Delay(10);
+            HAL_SPI_Transmit(&hspi3, defaults_config_reset_fault.data(), defaults_config_reset_fault.size(), 500);
+            deselect::b();
+        }
+    }
+
+    namespace dump {
+        void a() {
+            select::a();
+
+            const uint8_t buf { 0x00 };
+            HAL_SPI_Transmit(&hspi3, &buf, sizeof(buf), 500);
+            std::array<uint8_t, 8> ret_regs {};
+            for(auto& e: ret_regs) {
+                HAL_SPI_Receive(&hspi3, &e, sizeof(e), 500);
+            }
+            for(uint8_t i = 0; i < ret_regs.size(); i++) {
+                std::printf("max31865::dump::a: ret_regs[%u]: 0x%02X\n", i, ret_regs[i]);
+            }
+
+            deselect::a();
+        }
+
+        void b() {
+            select::b();
+
+            const uint8_t buf { 0x00 };
+            HAL_SPI_Transmit(&hspi3, &buf, sizeof(buf), 500);
+            std::array<uint8_t, 8> ret_regs {};
+            for(auto& e: ret_regs) {
+                HAL_SPI_Receive(&hspi3, &e, sizeof(e), 500);
+            }
+            for(uint8_t i = 0; i < ret_regs.size(); i++) {
+                std::printf("max31865::dump::b: ret_regs[%u]: 0x%02X\n", i, ret_regs[i]);
+            }
+
+            deselect::b();
+        }
     }
 
     void test() {
-        Max31865_t TempSensor;
-        Max31865_init(&TempSensor, &hspi3, SPI3_NSS0_GPIO_Port, SPI3_NSS0_Pin, 4, 50);
-        float pt100Temp;
-        while(1) {
-            float t;
-            std::printf(
-                "Max31865_readTempC(&TempSensor, &t): 0x%02X\n",
-                Max31865_readTempC(&TempSensor, &t)
-            );
-            std::printf(
-                "(pt100Temp = Max31865_Filter(t, pt100Temp, 0.1)): %f\n",
-                (pt100Temp = Max31865_Filter(t, pt100Temp, 0.1))
-            );
-            HAL_Delay(1000);
-        }
-        /*
-        max31865_init(
-            &TempSensor,
-            &chipselect_cb,
-            &spi_trx_cb,
-            &charged_time_delay_cb,
-            &conversion_timer_delay_cb,
-            &threshold_fault,
-            &threshold_fault,
-            0,
-            0,
-            0,
-            0,
-            false,
-            false
+        init::a();
+        HAL_Delay(1000);
+        init::b();
+        HAL_Delay(1000);
+
+        dump::a();
+        dump::b();
+        // For sensor A
+        std::printf(
+            "read::a(0x00): 0x%02X\n", 
+            read::a(0x00)
         );
-        std::printf("max31865_readADC(&TempSensor): %u\n\r", max31865_readADC(&TempSensor));
-        */
+
+        std::printf(
+            "write::a(0x00, 0xC2): 0x%02X\n", 
+            write::a(0x00, 0xC2)
+        );
+        std::printf(
+            "read::a(0x00): 0x%02X\n", 
+            read::a(0x00)
+        );
+
+        std::printf(
+            "write::a(0x00, 0x40): 0x%02X\n", 
+            write::a(0x00, 0x40)
+        );
+        std::printf(
+            "read::a(0x00): 0x%02X\n", 
+            read::a(0x00)
+        );
+
+
+        // For sensor B
+        std::printf(
+            "read::b(0x00): 0x%02X\n", 
+            read::b(0x00)
+        );
+
+        std::printf(
+            "write::b(0x00, 0xC2): 0x%02X\n", 
+            write::b(0x00, 0xC2)
+        );
+        std::printf(
+            "read::b(0x00): 0x%02X\n", 
+            read::b(0x00)
+        );
+
+        std::printf(
+            "write::b(0x00, 0x40): 0x%02X\n", 
+            write::b(0x00, 0x40)
+        );
+        std::printf(
+            "read::b(0x00): 0x%02X\n", 
+            read::b(0x00)
+        );
     }
 }
 }
