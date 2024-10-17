@@ -25,6 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
 #include "app/app_main.hpp"
 /* USER CODE END Includes */
 
@@ -113,6 +114,7 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
+  (void) argument;
   /* USER CODE BEGIN StartDefaultTask */
   const osThreadAttr_t app_main_attr = {
     .name = "app_main",
@@ -120,7 +122,7 @@ void StartDefaultTask(void *argument)
     .priority = (osPriority_t) osPriorityNormal,
   };
   osThreadId_t app_main_task_handle = osThreadNew(app_main, NULL, &app_main_attr);
-  printf("freertos: osThreadNew(app_main: %p, %p, %p): %p\n", &app_main, NULL, &app_main_attr, app_main_task_handle);
+  printf("freertos: osThreadNew(app_main: %p, %p, %p): %p\n", (void*) &app_main, NULL, (void*) &app_main_attr, (void*) app_main_task_handle);
   /* Infinite loop */
   for(;;)
   {
