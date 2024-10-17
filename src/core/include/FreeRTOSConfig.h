@@ -50,6 +50,9 @@
 #if defined(__ICCARM__) || defined(__CC_ARM) || defined(__GNUC__)
   #include <stdint.h>
   extern uint32_t SystemCoreClock;
+#ifndef CMSIS_device_header
+#define CMSIS_device_header "stm32f2xx.h"
+#endif /* CMSIS_device_header */
 #endif
 #define configUSE_PREEMPTION                     1
 #define configSUPPORT_STATIC_ALLOCATION          1
