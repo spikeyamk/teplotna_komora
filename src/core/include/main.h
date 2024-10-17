@@ -57,14 +57,14 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define FAN1_PWM_Pin GPIO_PIN_0
-#define FAN1_PWM_GPIO_Port GPIOA
-#define FAN1_FB_Pin GPIO_PIN_1
-#define FAN1_FB_GPIO_Port GPIOA
-#define FAN2_PWM_Pin GPIO_PIN_2
-#define FAN2_PWM_GPIO_Port GPIOA
-#define FAN2_FB_Pin GPIO_PIN_3
-#define FAN2_FB_GPIO_Port GPIOA
+#define FAN_BR_CTL_Pin GPIO_PIN_0
+#define FAN_BR_CTL_GPIO_Port GPIOA
+#define FAN_BR_FB_Pin GPIO_PIN_1
+#define FAN_BR_FB_GPIO_Port GPIOA
+#define FAN_FR_CTL_Pin GPIO_PIN_2
+#define FAN_FR_CTL_GPIO_Port GPIOA
+#define FAN_FR_FB_Pin GPIO_PIN_3
+#define FAN_FR_FB_GPIO_Port GPIOA
 #define ENCA_EXTI_Pin GPIO_PIN_10
 #define ENCA_EXTI_GPIO_Port GPIOB
 #define ENCA_EXTI_EXTI_IRQn EXTI15_10_IRQn
@@ -72,6 +72,24 @@ void Error_Handler(void);
 #define ENCB_GPIO_Port GPIOB
 #define SPI2_NSS_Pin GPIO_PIN_12
 #define SPI2_NSS_GPIO_Port GPIOB
+#define FAN_RR_CTL_Pin GPIO_PIN_12
+#define FAN_RR_CTL_GPIO_Port GPIOD
+#define FAN_RR_FB_Pin GPIO_PIN_13
+#define FAN_RR_FB_GPIO_Port GPIOD
+#define FAN_BL_CTL_Pin GPIO_PIN_14
+#define FAN_BL_CTL_GPIO_Port GPIOD
+#define FAN_BL_CTLD15_Pin GPIO_PIN_15
+#define FAN_BL_CTLD15_GPIO_Port GPIOD
+#define FAN_RL_CTL_Pin GPIO_PIN_6
+#define FAN_RL_CTL_GPIO_Port GPIOC
+#define FAN_RL_FB_Pin GPIO_PIN_7
+#define FAN_RL_FB_GPIO_Port GPIOC
+#define FAN_FL_CTL_Pin GPIO_PIN_8
+#define FAN_FL_CTL_GPIO_Port GPIOC
+#define FAN_FL_FB_Pin GPIO_PIN_9
+#define FAN_FL_FB_GPIO_Port GPIOC
+#define SEVW_BKLT_Pin GPIO_PIN_15
+#define SEVW_BKLT_GPIO_Port GPIOA
 #define SPI3_DRDY0_Pin GPIO_PIN_4
 #define SPI3_DRDY0_GPIO_Port GPIOD
 #define SPI3_DRDY0_EXTI_IRQn EXTI4_IRQn
