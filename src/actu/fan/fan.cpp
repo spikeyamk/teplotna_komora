@@ -1,5 +1,5 @@
 #include <limits>
-#include <iostream>
+#include <trielo/trielo.hpp>
 #include "tim.h"
 #include "actu/fan/fan.hpp"
 
@@ -84,31 +84,32 @@ namespace fan {
         */
     }
 
+    void test_speed() {
+        for(uint8_t i = 0; true; i = (i > 99 ? 0 : (i + 10))) {
+            Trielo::trielo<set_speed>(i);
+            HAL_Delay(5'000);
+        }
+    }
+
+    void set_speed(const uint8_t speed_0_to_100) {
+        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, speed_0_to_100);
+        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, speed_0_to_100);
+        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, speed_0_to_100);
+        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, speed_0_to_100);
+        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, speed_0_to_100);
+        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, speed_0_to_100);
+    }
+
     void stop_all() {
-        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 99);
-        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, 99);
-        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 99);
-        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, 99);
-        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 99);
-        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, 99);
+        set_speed(99);
     }
 
     void start_all() {
-        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 0);
-        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, 0);
-        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
-        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, 0);
-        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 0);
-        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, 0);
+        set_speed(0);
     }
 
     void start_all_half_speed() {
-        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 50);
-        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, 50);
-        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 50);
-        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, 50);
-        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 50);
-        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, 50);
+        set_speed(50);
     }
 }
 }

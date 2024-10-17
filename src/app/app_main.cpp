@@ -29,6 +29,7 @@ void app_main(void* arg) {
     (void) arg;
     turn_every_annoying_peripheral_off();
 
+    actu::fan::test_speed();
     for(uint32_t tick = 0; true; tick++) {
         std::printf("app_main: tick: %lu\n", tick);
         HAL_Delay(5000);
