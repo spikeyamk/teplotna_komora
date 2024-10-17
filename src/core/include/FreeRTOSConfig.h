@@ -146,8 +146,8 @@ standard names. */
 
 /* IMPORTANT: This define is commented when used with STM32Cube firmware, when the timebase source is SysTick,
               to prevent overwriting SysTick_Handler defined within STM32Cube HAL */
+#define USE_CUSTOM_SYSTICK_HANDLER_IMPLEMENTATION 0
 
-#define xPortSysTickHandler SysTick_Handler
 
 /* USER CODE BEGIN Defines */
 /* Section where parameter definitions can be added (for instance, to override default ones in FreeRTOS.h) */
