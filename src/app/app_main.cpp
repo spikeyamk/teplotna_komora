@@ -15,11 +15,11 @@
 #include "sens/spi_temp/spi_temp.hpp"
 #include "stm32f2xx_hal.h"
 #include "main.h"
-#include "app/app.hpp"
 #include "dac.h"
 #include "gpio.h"
 #include "spi.h"
 #include "MAX31865.hpp"
+#include "app/app_main.hpp"
 
 namespace max6549 {
     void select() {

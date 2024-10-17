@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "app/app_main.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -114,6 +114,12 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
+  const osThreadAttr_t app_main_attr = {
+    .name = "app_main",
+    .stack_size = 4 * 1024,
+    .priority = (osPriority_t) osPriorityNormal,
+  };
+  osThreadId_t app_main_task_handle = osThreadNew(app_main, NULL, &app_main_attr);
   /* Infinite loop */
   for(;;)
   {
