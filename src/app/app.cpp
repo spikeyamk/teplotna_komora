@@ -70,8 +70,6 @@ namespace max6549 {
         std::printf("read(0x%02X): 0x%02X\n", address, read(address));
     }
 
-
-
     class MAX6549 {
     private:
         static constexpr uint8_t DECODE_MODE { 0x01 };
