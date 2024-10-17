@@ -19,6 +19,7 @@
 #include "gpio.h"
 #include "spi.h"
 #include "MAX31865.hpp"
+#include "cmsis_os2.h"
 #include "app/app_main.hpp"
 
 namespace max6549 {
@@ -411,13 +412,40 @@ namespace max31865 {
     }
 }
 
+void produce(void* arg) {
+    uint32_t* product { reinterpret_cast<uint32_t*>(arg) };
+    while(1) {
+        std::printf("produce: product: %lu\n", (*product)--);
+        osDelay(500);
+    }
+}
+
+void consume(void* arg) {
+    uint32_t* product { reinterpret_cast<uint32_t*>(arg) };
+    while(1) {
+        std::printf("consume: product: %lu\n", (*product)++);
+        osDelay(150);
+    }
+}
+
+void launch_producer_consumer_test(uint32_t& product) {
+    const osThreadAttr_t producer_attr {
+        .name = "producer",
+        .stack_size = 4 * 1024,
+        .priority = (osPriority_t) osPriorityNormal,
+    };
+    osThreadNew(produce, &product, &producer_attr);
+    const osThreadAttr_t consumer_attr {
+        .name = "consumer",
+        .stack_size = 4 * 1024,
+        .priority = (osPriority_t) osPriorityNormal,
+    };
+    osThreadNew(consume, &product, &consumer_attr);
+}
+
 /// This function calculates the area of a rectangle.
 void app_main(void* arg) {
     (void) arg;
-
-    /* STM32H503x has 128K FLASH only these functions don't fit into it */
-    //Trielo::trielo<submodule::foo>();
-
     actu::fan::init_tim();
     Trielo::trielo<actu::fan::init_ctl>();
     panel::sevseg::white::init_brightness();
@@ -431,23 +459,10 @@ void app_main(void* arg) {
     actu::lin_source::start_dac();
     actu::lin_source::set_output(std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::max());
 
-    //actu::bridge::a::cool();
-    //actu::bridge::b::cool();
-    //Trielo::trielo<max6549::test>();
-    //Trielo::trielo<sens::spi_temp::test>();
-    Trielo::trielo<max31865::test>();
-    for(
-        uint16_t dac_value = 0;
-        true;
-        dac_value = [](const uint16_t in) {
-            static constexpr uint16_t inc { 2 << 9 };
-            static constexpr uint16_t stopper { 2 << 11 };
-            return (in + inc) > stopper ? 0 : in + inc;
-        }(dac_value)
-    ) {
-        //HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dac_value);
-        //HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, dac_value);
-        //std::printf("dac_value: %u\n", dac_value);
+    uint32_t product { 0 };
+    Trielo::trielo<launch_producer_consumer_test>(product);
+    for(uint32_t tick = 0; true; tick++) {
+        std::printf("app_main: tick: %lu\n", tick);
         HAL_Delay(5000);
     }
 }

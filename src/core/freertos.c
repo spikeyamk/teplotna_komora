@@ -120,6 +120,7 @@ void StartDefaultTask(void *argument)
     .priority = (osPriority_t) osPriorityNormal,
   };
   osThreadId_t app_main_task_handle = osThreadNew(app_main, NULL, &app_main_attr);
+  printf("freertos: osThreadNew(app_main: %p, %p, %p): %p\n", &app_main, NULL, &app_main_attr, app_main_task_handle);
   /* Infinite loop */
   for(;;)
   {
