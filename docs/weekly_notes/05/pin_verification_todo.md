@@ -41,7 +41,7 @@
 
 # actu
 ## fan
-| Pin   | Signál  | Typ  | Popis                                         | Status | Notes |
+| Pin   | Signál  | Typ  | Popis                                         | Status | Location |
 |-------|---------|------|-----------------------------------------------| --- | --- |
 | PA0 | FC4 | DO | Riadenie ventilátora 4 | ✔️ | BR |
 | PA1 | FF4 | DI | Spätná väzba ventilátora 4 | ⬜️ | BR |
