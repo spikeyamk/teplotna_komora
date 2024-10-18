@@ -111,5 +111,9 @@ namespace fan {
     void start_all_half_speed() {
         set_speed(50);
     }
+
+    void start_min_speed() {
+        set_speed(95);
+    }
 }
 }

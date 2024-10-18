@@ -1,5 +1,6 @@
 #include <optional>
 #include <cmath>
+#include <cstdint>
 #include "panel/sevseg/common/common.hpp"
 
 namespace panel {
