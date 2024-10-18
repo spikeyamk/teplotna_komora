@@ -1,0 +1,5 @@
+include(${CMAKE_SOURCE_DIR}/cmake/unset_arm_toolchain.cmake)
+add_library(${SUBMODULE_NAME}_test_lib ${SUBMODULE_SOURCE_FILES})
+target_include_directories(${SUBMODULE_NAME}_test_lib PUBLIC ${CMAKE_CURRENT_LIST_DIR}/../include)
+add_executable(${SUBMODULE_NAME}_test test.cpp)
+target_link_libraries(${SUBMODULE_NAME}_test PUBLIC ${SUBMODULE_NAME}_test_lib)
