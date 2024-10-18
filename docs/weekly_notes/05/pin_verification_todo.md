@@ -50,13 +50,13 @@
 | PB8 | FC7 | DO | Riadenie ventilátora 7 | 🔎 | $$ |
 | PB9 | FF7 | DI | Spätná väzba ventilátora 7 | 🔎 | $$ |
 | PC6 | FC0 | DO | Riadenie ventilátora 0 | ✔️ | RL |
-| PC7 | FF0 | DI | Spätná väzba ventilátora 0 | ❌ | RL |
+| PC7 | FF0 | DI | Spätná väzba ventilátora 0 | ⬜️ | RL |
 | PC8 | FC1 | DO | Riadenie ventilátora 0 | ✔️ | FL | 
-| PC9 | FF1 | DI | Spätná väzba ventilátora 0 | ❌ | FL |
+| PC9 | FF1 | DI | Spätná väzba ventilátora 0 | ⬜️ | FL |
 | PD12 | FC2 | DO | Riadenie ventilátora 2 | ✔️ | RR |
-| PD13 | FF2 | DI | Spätná väzba ventilátora 2 | ❌ | RR |
+| PD13 | FF2 | DI | Spätná väzba ventilátora 2 | ⬜️ | RR |
 | PD14 | FC3 | DO | Riadenie ventilátora 3 | ✔️ | BL |
-| PD15 | FF3 | DI | Spätná väzba ventilátora 3 | ❌ | BL |
+| PD15 | FF3 | DI | Spätná väzba ventilátora 3 | ⬜️ | BL |
 | PE5 | FC6 | DO | Riadenie ventilátora 6 | 🔎 | $$ | 
 | PE6 | FF6 | DI | Spätná väzba ventilátora 6 | 🔎 | $$ |
 ## pump
@@ -67,7 +67,7 @@
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
 | PA4 | AOUTB | AO | Výstup B z DAC | ⚠️ |
-| PA5 | AOUTA | AO | Výstup A z DAC | ⚠️ |
+| PA5 | AOUTA | AO | Výstup A z DAC | ✔️ |
 ## bridge
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
