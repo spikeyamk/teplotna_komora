@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/cmake/gcc-arm-none-eabi.cmake")
+include(ExternalProject)
 
 set(CMAKE_PROJECT_NAME teplotna_komora)
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
@@ -14,7 +15,6 @@ set(CMAKE_CXX_STANDARD 23)
 
 # Add dependencies and subdirectories
 add_subdirectory("deps")
-enable_testing()
 add_subdirectory("src")
 
 # Apply stricter warnings for Debug builds
