@@ -64,15 +64,15 @@ namespace fan {
 
     void init_ctl() {
         HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
+        HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
         HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_3);
+        HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_4);
         HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
         HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
-        HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
-        HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
     }
 
     void init_fb() {
-        HAL_TIM_IC_Start_IT(&htim5, TIM_CHANNEL_2);
+        //HAL_TIM_IC_Start_IT(&htim5, TIM_CHANNEL_2);
         /*
         HAL_TIM_IC_Start_IT(&htim5, TIM_CHANNEL_4);
         HAL_TIM_IC_Start_IT(htim11, TIM_CHANNEL_1);
@@ -93,11 +93,11 @@ namespace fan {
 
     void set_speed(const uint8_t speed_0_to_100) {
         __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, speed_0_to_100);
+        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, speed_0_to_100);
         __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, speed_0_to_100);
+        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_4, speed_0_to_100);
         __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, speed_0_to_100);
         __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, speed_0_to_100);
-        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, speed_0_to_100);
-        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, speed_0_to_100);
     }
 
     void stop_all() {
