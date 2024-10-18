@@ -1,2 +1,3 @@
+add_subdirectory(sevseg_common)
 add_subdirectory(green_yellow)
 add_subdirectory(white)
