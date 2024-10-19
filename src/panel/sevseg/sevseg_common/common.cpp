@@ -1,4 +1,3 @@
-#include <iostream>
 #include <optional>
 #include <cmath>
 #include <cstdint>
@@ -112,7 +111,6 @@ namespace common {
 
     sevmap float_to_sevmap(const float value) {
         if(std::isnormal(value) == false) {
-            std::cout << "first_error\n";
             return exception_sevmap::error;
         } else if(value > 9999.9f) {
             return exception_sevmap::positive_overflow;
@@ -126,11 +124,9 @@ namespace common {
 
         std::array<char, 20> buf { 0x00 };
         if(std::snprintf(buf.data(), buf.size(), "%05.4f", value) < 0) {
-            std::cout << "second_error\n";
             return exception_sevmap::error;
         }
         if(check_snprintf_output(buf) == false) {
-            std::cout << "third_error\n";
             return exception_sevmap::error;
         }
 
