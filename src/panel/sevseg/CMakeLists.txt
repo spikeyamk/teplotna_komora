@@ -1,4 +1,6 @@
-set(sevseg_common_TEST TRUE)
+if(ENABLE_TESTS)
+    set(sevseg_common_TEST TRUE)
+endif()
 add_subdirectory(sevseg_common)
 add_subdirectory(green_yellow)
 add_subdirectory(white)

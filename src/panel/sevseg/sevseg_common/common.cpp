@@ -40,35 +40,60 @@ namespace common {
     const sevset minus_sign { 0b0000'0001 };
     const sevset dp_or_mask { 0b1000'0000 };
 
-    const sevmap overflow_sevmap {
-        []() {
-            sevmap ret;
-            ret.fill(hex_map[0xf]);
-            return ret;
-        }()
-    };
+    namespace exception_sevmaps {
+        const sevmap error {
+            []() {
+                sevmap ret;
+                ret.fill(hex_map[0xe]);
+                return ret;
+            }()
+        };
 
-    const sevmap underflow_sevmap {
-        []() {
-            sevmap ret;
-            ret.fill(hex_map[0x0]);
-            return ret;
-        }()
-    };
+        const sevmap zero {
+            []() {
+                sevmap ret;
+                ret.fill(hex_map[0x0]);
+                ret.front() |= minus_sign;
+                return ret;
+            }()
+        };
 
-    const sevmap error_map {
-        []() {
-            sevmap ret;
-            ret.fill(hex_map[0xe]);
-            return ret;
-        }()
-    };
+        const sevmap positive_overflow {
+            []() {
+                sevmap ret;
+                ret.fill(hex_map[0xF]);
+                ret.back() |= dp_or_mask;
+                return ret;
+            }()
+        };
+
+        const sevmap negative_overflow {
+            []() {
+                sevmap ret { minus_sign };
+                std::fill(ret.begin() + 1, ret.end(), hex_map[0xF]);
+                ret.back() |= dp_or_mask;
+                return ret;
+            }()
+        };
+
+
+        const sevmap& positive_underflow { zero };
+        
+        const sevmap negative_underflow {
+            []() {
+                sevmap ret { minus_sign };
+                std::fill(ret.begin() + 1, ret.end(), hex_map[0x0]);
+                *(ret.begin() + 1) |= dp_or_mask;
+                return ret;
+            }()
+        };
+    }
 
     inline uint8_t numerical_char_to_uint8_t(const char value) {
         return static_cast<uint8_t>(value - '0');
     }
 
-    inline bool check_snprintf(const std::string_view& buf) {
+    inline bool check_snprintf_output(const std::string_view& buf) {
         for(size_t i = 0; i < 6; i++) {
             if(
                 buf[i] != '-'
@@ -84,22 +109,28 @@ namespace common {
 
     sevmap float_to_sevmap(const float value) {
         if(std::isnormal(value) == false) {
-            return error_map;
+            return exception_sevmaps::error;
+        } else if(value == 0.0f) {
+            return exception_sevmaps::zero;
         } else if(value > 9999.9f) {
-            return overflow_sevmap;
+            return exception_sevmaps::positive_overflow;
         } else if(value < -999.9f) {
-            return underflow_sevmap;
+            return exception_sevmaps::negative_overflow;
+        } else if(value < 0.0001) {
+            return exception_sevmaps::positive_underflow;
+        } else if(value > -0.001) {
+            return exception_sevmaps::negative_underflow;
         }
 
         std::string_view buf { "xxxxxxxxxxx" };
         if(std::snprintf(const_cast<char*>(buf.data()), buf.size(), "%05.4f", value) < 0) {
-            return error_map;
+            return exception_sevmaps::error;
         }
-        if(check_snprintf(buf) == false) {
-            return error_map;
+        if(check_snprintf_output(buf) == false) {
+            return exception_sevmaps::error;
         }
 
-        std::array<std::bitset<8>, 5> ret {};
+        sevmap ret {};
         std::for_each(
             ret.rbegin(),
             ret.rend(),
