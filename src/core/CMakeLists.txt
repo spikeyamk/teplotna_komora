@@ -1,6 +1,6 @@
 set(CMAKE_EXECUTABLE_SUFFIX ".elf")
-file(GLOB_RECURSE SUBMODULE_SOURCE_FILES "*.s" "*.c" "*.cpp")
-add_executable(${CMAKE_PROJECT_NAME} ${SUBMODULE_SOURCE_FILES})
+file(GLOB_RECURSE SUBDIRECTORY_SOURCES "*.s" "*.c" "*.cpp")
+add_executable(${CMAKE_PROJECT_NAME} ${SUBDIRECTORY_SOURCES})
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE STM32F205xx)
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "include")
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE stm32cubef2)
