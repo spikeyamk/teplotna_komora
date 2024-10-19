@@ -16,10 +16,9 @@ namespace common {
 
     namespace exception_sevmap {
         extern const sevmap error;
-        extern const sevmap zero;
         extern const sevmap positive_overflow;
         extern const sevmap negative_overflow;
-        extern const sevmap& positive_underflow;
+        extern const sevmap positive_underflow;
         extern const sevmap negative_underflow;
     }
 

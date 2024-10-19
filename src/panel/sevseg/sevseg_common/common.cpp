@@ -1,7 +1,9 @@
+#include <iostream>
 #include <optional>
 #include <cmath>
 #include <cstdint>
 #include <algorithm>
+#include <span>
 #include "panel/sevseg/common/common.hpp"
 
 namespace panel {
@@ -40,20 +42,11 @@ namespace common {
     const sevset minus_sign { 0b0000'0001 };
     const sevset dp_or_mask { 0b1000'0000 };
 
-    namespace exception_sevmaps {
+    namespace exception_sevmap {
         const sevmap error {
             []() {
                 sevmap ret;
                 ret.fill(hex_map[0xe]);
-                return ret;
-            }()
-        };
-
-        const sevmap zero {
-            []() {
-                sevmap ret;
-                ret.fill(hex_map[0x0]);
-                ret.front() |= minus_sign;
                 return ret;
             }()
         };
@@ -77,7 +70,14 @@ namespace common {
         };
 
 
-        const sevmap& positive_underflow { zero };
+        const sevmap positive_underflow { 
+            []() {
+                sevmap ret;
+                std::fill(ret.begin(), ret.end(), hex_map[0x0]);
+                ret.front() |= dp_or_mask;
+                return ret;
+            }()
+        };
         
         const sevmap negative_underflow {
             []() {
@@ -93,14 +93,17 @@ namespace common {
         return static_cast<uint8_t>(value - '0');
     }
 
-    inline bool check_snprintf_output(const std::string_view& buf) {
-        for(size_t i = 0; i < 6; i++) {
-            if(
-                buf[i] != '-'
-                || buf[i] != '.'
-                || (!(buf[i] >= '0' && buf[i] <= '9'))
-            ) {
-                return false;
+    inline bool is_valid_char_in_snprintf_output(const char value) {
+        if(value != '-' && value != '.' && (!(value >= '0' && value <= '9')) && value != '\0') {
+            return false;
+        }
+        return true;
+    }
+
+    inline bool check_snprintf_output(const std::span<char>& buf) {
+        for(const char e: buf) {
+            if(is_valid_char_in_snprintf_output(e) == false) {
+                return false; 
             }
         }
         
@@ -109,25 +112,26 @@ namespace common {
 
     sevmap float_to_sevmap(const float value) {
         if(std::isnormal(value) == false) {
-            return exception_sevmaps::error;
-        } else if(value == 0.0f) {
-            return exception_sevmaps::zero;
+            std::cout << "first_error\n";
+            return exception_sevmap::error;
         } else if(value > 9999.9f) {
-            return exception_sevmaps::positive_overflow;
+            return exception_sevmap::positive_overflow;
         } else if(value < -999.9f) {
-            return exception_sevmaps::negative_overflow;
-        } else if(value < 0.0001) {
-            return exception_sevmaps::positive_underflow;
-        } else if(value > -0.001) {
-            return exception_sevmaps::negative_underflow;
+            return exception_sevmap::negative_overflow;
+        } else if(value < 0.0001f && value > 0.0f) {
+            return exception_sevmap::positive_underflow;
+        } else if(value > -0.001f && value < 0.0f) {
+            return exception_sevmap::negative_underflow;
         }
 
-        std::string_view buf { "xxxxxxxxxxx" };
-        if(std::snprintf(const_cast<char*>(buf.data()), buf.size(), "%05.4f", value) < 0) {
-            return exception_sevmaps::error;
+        std::array<char, 20> buf { 0x00 };
+        if(std::snprintf(buf.data(), buf.size(), "%05.4f", value) < 0) {
+            std::cout << "second_error\n";
+            return exception_sevmap::error;
         }
         if(check_snprintf_output(buf) == false) {
-            return exception_sevmaps::error;
+            std::cout << "third_error\n";
+            return exception_sevmap::error;
         }
 
         sevmap ret {};
