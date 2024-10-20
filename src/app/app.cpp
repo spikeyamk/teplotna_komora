@@ -3,6 +3,7 @@
 #include "example_submodule/public.hpp"
 #include "util.hpp"
 #include "tim.h"
+#include "producer_consumer_test.hpp"
 
 /**
  * @brief App entry point. This function cannot exit.
@@ -13,9 +14,12 @@ extern "C" void app_main(void* arg) {
     redirect_printf();
     std::printf("Hello from app_main\r\n");
 
+    uint32_t i = 0;
+    launch_producer_consumer_test(i);
+
     for(size_t tick = 0; true; tick++) {
-        std::printf("app_main: tick: %zu\r\n", tick);
-        HAL_Delay(5000);
+        if(tick % 1000 == 0)
+            std::printf("app_main: tick: %zu\r\n", tick);
         osDelay(1);
     }
 
