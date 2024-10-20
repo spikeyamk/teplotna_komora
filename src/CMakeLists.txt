@@ -7,6 +7,7 @@ add_subdirectory("example_submodule")
 add_subdirectory("panel")
 add_subdirectory("peripheral")
 add_subdirectory("sens")
+add_subdirectory("util")
 
 # Define the ELF and binary file locations
 set(ELF_FILE "${CMAKE_BINARY_DIR}/src/core/${CMAKE_PROJECT_NAME}.elf")
