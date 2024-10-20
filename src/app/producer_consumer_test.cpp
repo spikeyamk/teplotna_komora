@@ -23,11 +23,14 @@ void launch_producer_consumer_test(uint32_t& product) {
     static StaticTask_t producer_control_block;
     const osThreadAttr_t producer_attr {
         .name = "producer",
+        .attr_bits = osThreadDetached,
         .cb_mem = &producer_control_block,
         .cb_size = sizeof(producer_control_block),
         .stack_mem = &producer_buffer[0],
         .stack_size = sizeof(producer_buffer),
         .priority = (osPriority_t) osPriorityNormal,
+        .tz_module = 0,
+        .reserved = 0,
     };
     osThreadNew(produce, &product, &producer_attr);
 
@@ -35,11 +38,14 @@ void launch_producer_consumer_test(uint32_t& product) {
     static StaticTask_t consumer_control_block;
     const osThreadAttr_t consumer_attr {
         .name = "consumer",
+        .attr_bits = osThreadDetached,
         .cb_mem = &consumer_control_block,
         .cb_size = sizeof(consumer_control_block),
         .stack_mem = &consumer_buffer[0],
         .stack_size = sizeof(consumer_buffer),
         .priority = (osPriority_t) osPriorityNormal,
+        .tz_module = 0,
+        .reserved = 0,
     };
     osThreadNew(consume, &product, &consumer_attr);
 }
