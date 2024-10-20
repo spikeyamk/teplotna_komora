@@ -159,7 +159,7 @@ void vApplicationDaemonTaskStartupHook(void)
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-  HAL_TIM_Base_Start_IT(&htim6);
+  //HAL_TIM_Base_Start_IT(&htim6);
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */

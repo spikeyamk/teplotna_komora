@@ -3,18 +3,18 @@
 #include "producer_consumer_test.hpp"
 
 void produce(void* arg) {
-    uint32_t* product { reinterpret_cast<uint32_t*>(arg) };
+    uint32_t& product { *reinterpret_cast<uint32_t*>(arg) };
     while(1) {
-        std::printf("produce: product: %lu\r\n", (*product)--);
-        osDelay(500);
+        std::printf("produce: product: %lu\r\n", product++);
+        osDelay(1);
     }
 }
 
 void consume(void* arg) {
-    uint32_t* product { reinterpret_cast<uint32_t*>(arg) };
+    uint32_t& product { *reinterpret_cast<uint32_t*>(arg) };
     while(1) {
-        std::printf("consume: product: %lu\r\n", (*product)++);
-        osDelay(150);
+        std::printf("consume: product: %lu\r\n", product--);
+        //osDelay(1);
     }
 }
 
