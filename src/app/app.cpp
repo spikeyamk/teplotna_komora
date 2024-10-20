@@ -2,6 +2,7 @@
 #include <cmsis_os2.h>
 #include "example_submodule/public.hpp"
 #include "util.hpp"
+#include "tim.h"
 
 /**
  * @brief App entry point. This function cannot exit.
@@ -10,11 +11,11 @@
 extern "C" void app_main(void* arg) {
     (void) arg;
     redirect_printf();
-    Trielo::trielo<example_submodule::foo>();
+    std::printf("Hello from app_main\r\n");
 
     for(size_t tick = 0; true; tick++) {
-        if(tick % 1'000 == 0)
-            std::printf("app_main: tick: %zu\r\n", tick);
+        std::printf("app_main: tick: %zu\r\n", tick);
+        HAL_Delay(5000);
         osDelay(1);
     }
 
