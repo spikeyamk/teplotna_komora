@@ -34,5 +34,7 @@ target_link_libraries("${SUBMODULE_NAME}" PRIVATE
     sens::i2c_temp_hum
     sens::spi_temp
 
+    util
+
     example_submodule
 )
