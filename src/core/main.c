@@ -102,7 +102,8 @@ int main(void)
   MX_SPI2_Init();
   MX_SPI3_Init();
   MX_USART3_UART_Init();
-  //MX_IWDG_Init();
+  MX_IWDG_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */

@@ -4,12 +4,14 @@
 #include <limits>
 #include <trielo/trielo.hpp>
 
+#include "cmsis_os2.h"
+
 #include "actu/fan/fan.hpp"
 #include "actu/bridge/bridge.hpp"
 #include "actu/buzzer/buzzer.hpp"
 #include "actu/lin_source/lin_source.hpp"
 #include "actu/pump/pump.hpp"
-#include "app/app_main.hpp"
+#include "bksram/bksram.hpp"
 
 void turn_every_annoying_peripheral_off() {
     actu::fan::init_ctl();
@@ -22,8 +24,11 @@ void turn_every_annoying_peripheral_off() {
     actu::bridge::b::turn_off();
 }
 
-/// This function calculates the area of a rectangle.
-void app_main(void* arg) {
+/**
+ * @brief App entry point. This function cannot exit.
+ * @param arg is necessary in oder for app_main's function pointer to be of type osThreadFunc_t. Remains unused, nullptr is injected into it. DO NOT DEREFERENCE!
+ */
+extern "C" void app_main(void* arg) {
     (void) arg;
     turn_every_annoying_peripheral_off();
 
@@ -33,6 +38,8 @@ void app_main(void* arg) {
 
     for(uint32_t tick = 0; true; tick++) {
         std::printf("app_main: tick: %lu\n", tick);
-        HAL_Delay(5000);
+        osDelay(5000);
     }
+
+    // we should never get here...
 }

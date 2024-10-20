@@ -1,5 +1,6 @@
 add_subdirectory("actu")
 add_subdirectory("app")
+add_subdirectory("bksram")
 add_subdirectory("comm")
 add_subdirectory("core")
 add_subdirectory("example_submodule")
