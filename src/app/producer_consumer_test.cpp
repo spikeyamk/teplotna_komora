@@ -14,7 +14,7 @@ void consume(void* arg) {
     uint32_t& product { *reinterpret_cast<uint32_t*>(arg) };
     while(1) {
         std::printf("consume: product: %lu\r\n", product--);
-        //osDelay(1);
+        osDelay(1);
     }
 }
 

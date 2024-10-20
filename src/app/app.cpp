@@ -14,9 +14,6 @@ extern "C" void app_main(void* arg) {
     redirect_printf();
     std::printf("Hello from app_main\r\n");
 
-    uint32_t i = 0;
-    launch_producer_consumer_test(i);
-
     for(size_t tick = 0; true; tick++) {
         if(tick % 1000 == 0)
             std::printf("app_main: tick: %zu\r\n", tick);
