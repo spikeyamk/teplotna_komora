@@ -32,16 +32,20 @@ void turn_every_annoying_peripheral_off() {
  */
 extern "C" void app_main(void* arg) {
     (void) arg;
+    /*
     if(Trielo::trielo<bksram::read>() != bksram::magic) {
         Trielo::trielo<util::reset>(bksram::magic);
     } else {
         Trielo::trielo<bksram::write>(0x00);
     }
+    */
 
     Trielo::trielo<turn_every_annoying_peripheral_off>();
-    TRIELO_VOID(util::RedirectStdout::get_instance().init());
-
+    Trielo::trielo<actu::bridge::a::cool>();
+    Trielo::trielo<actu::bridge::b::cool>();
+    Trielo::trielo<actu::lin_source::set_output>(4095, 4095);
     Trielo::trielo<actu::fan::start_min_speed>();
+
     for(uint32_t tick = 0; true; tick++) {
         std::printf("app_main: tick: %lu\n", tick);
         osDelay(5000);

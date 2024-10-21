@@ -1,8 +1,10 @@
 #include "usart.h"
+#include "cmsis_os2.h"
 
 #include "util/reset.hpp"
 #include "util/self_ref.hpp"
 #include "util/redirect_stdout.hpp"
+#include "util/is_irq.hpp"
 
 namespace util {
     RedirectStdout& RedirectStdout::get_instance() {
@@ -93,10 +95,27 @@ namespace util {
     }
 
     bool RedirectStdout::get_threadsafe() const {
+        /*
+        if(is_irq()) {
+            const auto tmp { taskENTER_CRITICAL_FROM_ISR() };
+            const bool ret { threadsafe };
+            taskEXIT_CRITICAL_FROM_ISR(tmp);
+            return ret;
+        }
+
+        taskENTER_CRITICAL();
+        const bool ret { threadsafe };
+        taskEXIT_CRITICAL();
+        return ret;
+        */
         return threadsafe;
     }
 
     void RedirectStdout::turn_off_threadsafe() {
         threadsafe = false;
+    }
+
+    void RedirectStdout::lock() {
+
     }
 }

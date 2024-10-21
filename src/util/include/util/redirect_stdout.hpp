@@ -32,5 +32,6 @@ namespace util {
         bool push(int ch);
         bool get_threadsafe() const;
         void turn_off_threadsafe();
+        void lock();
     };
 }
