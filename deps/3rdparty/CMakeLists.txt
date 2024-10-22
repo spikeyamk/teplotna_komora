@@ -1,6 +1,5 @@
 add_subdirectory(pfr)
-add_library(sml INTERFACE)
-target_include_directories(sml INTERFACE sml)
+add_subdirectory(sml)
 
 add_library(stm32cubef2
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_dac.c
