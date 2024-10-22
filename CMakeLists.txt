@@ -18,6 +18,7 @@ set(CMAKE_C_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD 23)
 
 # Add dependencies and subdirectories
+add_subdirectory("common")
 add_subdirectory("deps")
 add_subdirectory("src")
 
