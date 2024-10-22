@@ -46,6 +46,3 @@
 [submodule "admin/deps/3rdparty/serial"]
 	path = admin/deps/3rdparty/serial
 	url = https://github.com/yan9a/serial
-[submodule "deps/3rdparty/sml"]
-	path = deps/3rdparty/sml
-	url = https://github.com/qlibs/sml.git
