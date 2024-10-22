@@ -11,8 +11,7 @@
 #include "actu/buzzer/buzzer.hpp"
 #include "actu/lin_source/lin_source.hpp"
 #include "actu/pump/pump.hpp"
-#include "util/reset.hpp"
-#include "util/redirect_stdout.hpp"
+#include "util/util.hpp"
 #include "bksram/magic.hpp"
 
 void turn_every_annoying_peripheral_off() {
