@@ -3,8 +3,9 @@ project("admin" C CXX)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 20)
 
-add_subdirectory("deps")
 enable_testing()
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../common)
+add_subdirectory("deps")
 add_subdirectory("src")
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
