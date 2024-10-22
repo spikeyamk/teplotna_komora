@@ -17,8 +17,8 @@
 ## lse
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PC14 | XI | Vstup | pre 32.768 kHz signál z kryštálu | ⬜️ |
-| PC15 | XO | Budiaci | výstup pre 32.768 kHz kryštál | ⬜ |
+| PC14 | XI | Vstup | pre 32.768 kHz signál z kryštálu | ✔️ |
+| PC15 | XO | Budiaci | výstup pre 32.768 kHz kryštál | ✔️ |
 
 # comm
 ## usb_uart
@@ -129,8 +129,8 @@
 ### encoder
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
-| PB10 | ENCA | DI | Vstup A z kvadratúrneho enkodéra | ⬜ |
-| PB11 | ENCB | DI | Vstup B z kvadratúrneho enkodéra | ⬜ |
+| PB10 | ENCA | DI | Vstup A z kvadratúrneho enkodéra | ✔️ |
+| PB11 | ENCB | DI | Vstup B z kvadratúrneho enkodéra | ✔️ |
 | PE15 | SWENC | DI | Vstup zo spínača integrovaného v kvadratúrnom enkodéri | ❌ |
 
 # sens

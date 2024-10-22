@@ -34,4 +34,5 @@ target_link_libraries("${SUBMODULE_NAME}" PRIVATE
     sens::spi_temp
 
     example_submodule
+    rtc
 )

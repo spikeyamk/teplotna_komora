@@ -68,8 +68,9 @@ void Error_Handler(void);
 #define ENCA_EXTI_Pin GPIO_PIN_10
 #define ENCA_EXTI_GPIO_Port GPIOB
 #define ENCA_EXTI_EXTI_IRQn EXTI15_10_IRQn
-#define ENCB_Pin GPIO_PIN_11
-#define ENCB_GPIO_Port GPIOB
+#define ENCB_EXTI_Pin GPIO_PIN_11
+#define ENCB_EXTI_GPIO_Port GPIOB
+#define ENCB_EXTI_EXTI_IRQn EXTI15_10_IRQn
 #define SPI2_NSS_Pin GPIO_PIN_12
 #define SPI2_NSS_GPIO_Port GPIOB
 #define FAN_RR_CTL_Pin GPIO_PIN_12
