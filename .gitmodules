@@ -40,9 +40,6 @@
 [submodule "deps/3rdparty/pfr"]
 	path = deps/3rdparty/pfr
 	url = https://github.com/boostorg/pfr.git
-[submodule "deps/3rdparty/sml"]
-	path = deps/3rdparty/sml
-	url = https://github.com/boost-ext/sml.git
 [submodule "deps/serde"]
 	path = deps/serde
 	url = https://github.com/spikeyamk/serde.git
