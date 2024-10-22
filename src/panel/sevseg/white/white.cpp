@@ -51,7 +51,7 @@ namespace white {
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_14, GPIO_PIN_SET); //DP
     }
 
-    void display_pins() {
+    /*void display_pins() {
         const std::array<uint16_t, 8> active_segment {
             GPIO_PIN_13, //stred
             GPIO_PIN_9,  //vlavo hore
@@ -70,7 +70,7 @@ namespace white {
             GPIO_PIN_3, 
             GPIO_PIN_4
         };
-    }
+    }*/
 
     uint8_t set_digit(float number, uint8_t position) {
         uint8_t digit = 0;
@@ -81,6 +81,24 @@ namespace white {
     }
     
     void display_refresh(float number) {
+        const std::array<uint16_t, 8> active_segment {
+            GPIO_PIN_13, //stred
+            GPIO_PIN_9,  //vlavo hore
+            GPIO_PIN_8,  //vlavo dole
+            GPIO_PIN_12, //dole
+            GPIO_PIN_11, //vpravo dole
+            GPIO_PIN_10, //vpravo hore
+            GPIO_PIN_7,  //hore
+            GPIO_PIN_14  //decimal point
+        };
+        const std::array<uint16_t, 5> active_cathodes {
+            GPIO_PIN_1, 
+            GPIO_PIN_0, 
+            GPIO_PIN_2, 
+            GPIO_PIN_3, 
+            GPIO_PIN_4
+        };
+        
         uint8_t Mask = 0b1000'0000;
         uint8_t CurrentDigit = 0;
         static uint8_t RefreshedDigit = 0;
