@@ -1,4 +1,5 @@
 #include <iostream>
+#include "cmsis_os2.h"
 #include "actu/lin_source/lin_source.hpp"
 #include "dac.h"
 
@@ -31,7 +32,7 @@ namespace lin_source {
             HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dac_value);
             HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, dac_value);
             std::printf("dac_value: %u\n", dac_value);
-            HAL_Delay(10'000);
+            HAL_Delay(10000);
         }
     }
 }

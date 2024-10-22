@@ -74,7 +74,7 @@ namespace white {
 
     uint8_t set_digit(float number, uint8_t position) {
         uint8_t digit = 0;
-        for (;position > 0; position--){
+        for (;position >= 0; position--){
             digit = fmod(number, 10);
         }
         return digit;

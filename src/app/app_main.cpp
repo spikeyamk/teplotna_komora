@@ -35,10 +35,10 @@ void app_main(void* arg) {
 
     actu::lin_source::test_dac();
     
-    for (;;) {
+    /*for (;;) {
         panel::sevseg::white::display_refresh(12345);
         panel::encoder::encoder_test();
-    }
+    }*/
 
     /*for(uint32_t tick = 0; true; tick++) {
         std::printf("app_main: tick: %lu\n", tick);
