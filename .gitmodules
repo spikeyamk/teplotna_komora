@@ -49,3 +49,6 @@
 [submodule "deps/3rdparty/sml"]
 	path = deps/3rdparty/sml
 	url = https://github.com/boost-ext/sml.git
+[submodule "admin/deps/3rdparty/json"]
+	path = admin/deps/3rdparty/json
+	url = https://github.com/nlohmann/json
