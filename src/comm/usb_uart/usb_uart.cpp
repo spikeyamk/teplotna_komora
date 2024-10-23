@@ -49,6 +49,7 @@ namespace usb_uart {
             return false;
         }
 
+        threadsafe = true;
         return true;
     }
 
@@ -77,6 +78,7 @@ namespace usb_uart {
 
     bool RedirectStdout::get_threadsafe() const {
         const bool ret { threadsafe };
+        return ret;
     }
 
     void RedirectStdout::turn_off_threadsafe() {

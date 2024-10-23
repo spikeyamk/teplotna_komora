@@ -3,10 +3,7 @@
 
 extern "C" int __io_putchar(int ch) {
     using namespace comm::usb_uart;
-    RedirectStdout::transmit(ch);
-    return ch;
 
-    /*
     if(xPortIsInsideInterrupt()) {
         RedirectStdout::transmit(ch);
         return ch;
@@ -16,10 +13,7 @@ extern "C" int __io_putchar(int ch) {
     RedirectStdout& redirect_stdout { RedirectStdout::get_instance() };
     const bool threadsafe { redirect_stdout.get_threadsafe() };
     taskEXIT_CRITICAL();
-    return ch;
-    */
 
-    /*
     if(threadsafe == false) {
         RedirectStdout::transmit(ch);
         return ch;
@@ -38,5 +32,6 @@ extern "C" int __io_putchar(int ch) {
         redirect_stdout.flush();
         redirect_stdout.release_mutex();
     }
-    */
+    
+    return ch;
 }
