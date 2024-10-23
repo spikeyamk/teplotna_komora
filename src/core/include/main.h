@@ -107,10 +107,10 @@ void Error_Handler(void);
 #define SEVW_SG_GPIO_Port GPIOE
 #define SEVW_SDP_Pin GPIO_PIN_14
 #define SEVW_SDP_GPIO_Port GPIOE
-#define ENCA_Pin GPIO_PIN_10
-#define ENCA_GPIO_Port GPIOB
-#define ENCB_EXTI_Pin GPIO_PIN_11
-#define ENCB_EXTI_GPIO_Port GPIOB
+#define ENCA_EXTI10_Pin GPIO_PIN_10
+#define ENCA_EXTI10_GPIO_Port GPIOB
+#define ENCB_Pin GPIO_PIN_11
+#define ENCB_GPIO_Port GPIOB
 #define SPI2_SEVYG_NSS_Pin GPIO_PIN_12
 #define SPI2_SEVYG_NSS_GPIO_Port GPIOB
 #define SPI2_SEVYG_SCK_Pin GPIO_PIN_13
