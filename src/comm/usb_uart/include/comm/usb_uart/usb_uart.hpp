@@ -4,6 +4,7 @@
 
 #include "cmsis_os.h"
 #include "cmsis_os2.h"
+#include "usart.h"
 
 namespace comm {
 namespace usb_uart {

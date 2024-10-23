@@ -11,8 +11,10 @@
 #include "actu/buzzer/buzzer.hpp"
 #include "actu/lin_source/lin_source.hpp"
 #include "actu/pump/pump.hpp"
+#include "panel/led/led.hpp"
 #include "util/util.hpp"
 #include "bksram/magic.hpp"
+#include "comm/usb_uart/usb_uart.hpp"
 
 void turn_every_annoying_peripheral_off() {
     actu::fan::init_ctl();
@@ -31,6 +33,13 @@ void turn_every_annoying_peripheral_off() {
  */
 extern "C" void app_main(void* arg) {
     (void) arg;
+    comm::usb_uart::RedirectStdout& redirect_stdout { comm::usb_uart::RedirectStdout::get_instance() };
+    /*
+    if(redirect_stdout.init() == false) {
+        redirect_stdout.turn_off_threadsafe();
+        std::printf("redirect_stdout.init() == false\n");
+    }
+    */
     /*
     if(Trielo::trielo<bksram::read>() != bksram::magic) {
         Trielo::trielo<util::reset>(bksram::magic);
@@ -40,13 +49,9 @@ extern "C" void app_main(void* arg) {
     */
 
     Trielo::trielo<turn_every_annoying_peripheral_off>();
-    Trielo::trielo<actu::bridge::a::cool>();
-    Trielo::trielo<actu::bridge::b::cool>();
-    Trielo::trielo<actu::lin_source::set_output>(4095, 4095);
-    Trielo::trielo<actu::fan::start_min_speed>();
-
     for(uint32_t tick = 0; true; tick++) {
         std::printf("app_main: tick: %lu\n", tick);
+        panel::led::toggle_all();
         osDelay(5000);
     }
 
