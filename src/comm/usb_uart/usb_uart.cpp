@@ -17,7 +17,7 @@ namespace usb_uart {
     }
 
     osStatus_t RedirectStdout::acquire_mutex() {
-        const auto ret { osMutexAcquire(&mutex, 1'000) };
+        const auto ret { osMutexAcquire(&mutex, 10'000) };
         if(ret == osOK) {
             mutex_acquires++;
         }
