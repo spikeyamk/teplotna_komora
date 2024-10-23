@@ -4,6 +4,7 @@
 #include <limits>
 #include <trielo/trielo.hpp>
 
+#include "example_subdirectory/public.hpp"
 #include "actu/fan/fan.hpp"
 #include "actu/bridge/bridge.hpp"
 #include "actu/buzzer/buzzer.hpp"
@@ -26,6 +27,7 @@ void turn_every_annoying_peripheral_off() {
 /// This function calculates the area of a rectangle.
 void app_main(void* arg) {
     (void) arg;
+    Trielo::trielo<example_subdirectory::foo>();
     turn_every_annoying_peripheral_off();
     //Trielo::trielo<rtc::set_time>(11, 27, 0);
     //Trielo::trielo<rtc::set_date>(24, 10, 22, 2);

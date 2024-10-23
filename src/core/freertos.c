@@ -152,6 +152,7 @@ void MX_FREERTOS_Init(void) {
 __weak void app_main(void *argument)
 {
   /* USER CODE BEGIN app_main */
+
   /* Infinite loop */
   for(;;)
   {
