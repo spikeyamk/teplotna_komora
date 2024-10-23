@@ -2,13 +2,13 @@
 
 namespace actu {
 namespace bridge {
-namespace a {
+namespace front {
     void turn_off();
     void heat();
     void cool();
 }
 
-namespace b {
+namespace rear {
     void turn_off();
     void heat();
     void cool();
