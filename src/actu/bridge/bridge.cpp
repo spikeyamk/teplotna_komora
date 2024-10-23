@@ -3,7 +3,7 @@
 
 namespace actu {
 namespace bridge {
-namespace a {
+namespace front {
     void turn_off() {
         // Uses NOT gate should turn off with LOG_HIGH
         //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
@@ -32,7 +32,7 @@ namespace a {
     }
 }
 
-namespace b {
+namespace rear {
     void turn_off() {
         //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_RESET);
         //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_RESET);

@@ -19,8 +19,8 @@ void turn_every_annoying_peripheral_off() {
     actu::pump::stop();
     actu::buzzer::stop();
 
-    actu::bridge::a::turn_off();
-    actu::bridge::b::turn_off();
+    actu::bridge::front::turn_off();
+    actu::bridge::rear::turn_off();
 }
 
 /// This function calculates the area of a rectangle.
@@ -31,7 +31,14 @@ void app_main(void* arg) {
     //Trielo::trielo<rtc::set_date>(24, 10, 22, 2);
 
     actu::fan::start_min_speed();
-    rtc::get_time_date_test();
+
+    actu::lin_source::front::start_dac();
+    actu::lin_source::front::set_output(4095);
+    actu::lin_source::rear::start_dac();
+    actu::lin_source::rear::set_output(4095);
+
+    actu::bridge::front::cool();
+    actu::bridge::rear::heat();
 
     for(uint32_t tick = 0; true; tick++) {
         std::printf("app_main: tick: %lu\n", tick);

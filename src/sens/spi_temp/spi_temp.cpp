@@ -9,21 +9,21 @@ namespace sens {
 namespace spi_temp {
     namespace select {
         void a() {
-            HAL_GPIO_WritePin(SPI3_NSS0_GPIO_Port, SPI3_NSS0_Pin, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin(SPI3_TEMP_NSS0_GPIO_Port, SPI3_TEMP_NSS0_Pin, GPIO_PIN_RESET);
         }
 
         void b() {
-            HAL_GPIO_WritePin(SPI3_NSS1_GPIO_Port, SPI3_NSS1_Pin, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin(SPI3_TEMP_NSS1_GPIO_Port, SPI3_TEMP_NSS1_Pin, GPIO_PIN_RESET);
         }
     }
 
     namespace deselect {
         void a() {
-            HAL_GPIO_WritePin(SPI3_NSS0_GPIO_Port, SPI3_NSS0_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(SPI3_TEMP_NSS0_GPIO_Port, SPI3_TEMP_NSS0_Pin, GPIO_PIN_SET);
         }
 
         void b() {
-            HAL_GPIO_WritePin(SPI3_NSS1_GPIO_Port, SPI3_NSS1_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(SPI3_TEMP_NSS1_GPIO_Port, SPI3_TEMP_NSS1_Pin, GPIO_PIN_SET);
         }
     }
 

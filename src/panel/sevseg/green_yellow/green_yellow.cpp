@@ -9,11 +9,11 @@ namespace sevseg {
 namespace green_yellow {
 namespace max6549 {
     void select() {
-        HAL_GPIO_WritePin(SPI2_NSS_GPIO_Port, SPI2_NSS_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(SPI2_SEVYG_NSS_GPIO_Port, SPI2_SEVYG_NSS_Pin, GPIO_PIN_RESET);
     }
 
     void deselect() {
-        HAL_GPIO_WritePin(SPI2_NSS_GPIO_Port, SPI2_NSS_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(SPI2_SEVYG_NSS_GPIO_Port, SPI2_SEVYG_NSS_Pin, GPIO_PIN_SET);
     }
 
     auto write(const uint8_t address, const uint8_t value) {

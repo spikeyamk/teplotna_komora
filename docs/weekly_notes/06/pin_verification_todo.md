@@ -43,22 +43,22 @@
 ## fan
 | Pin   | Signál  | Typ  | Popis                                         | Status | Location |
 |-------|---------|------|-----------------------------------------------| --- | --- |
-| PA0 | FC4 | DO | Riadenie ventilátora 4 | ✔️ | BR |
-| PA1 | FF4 | DI | Spätná väzba ventilátora 4 | ⬜️ | BR |
-| PA2 | FC5 | DO | Riadenie ventilátora 5 | ✔️ | FR |
-| PA3 | FF5 | DI | Spätná väzba ventilátora 5 | ⬜️ | FR |
-| PB8 | FC7 | DO | Riadenie ventilátora 7 | 🔎 | $$ |
-| PB9 | FF7 | DI | Spätná väzba ventilátora 7 | 🔎 | $$ |
-| PC6 | FC0 | DO | Riadenie ventilátora 0 | ✔️ | RL |
-| PC7 | FF0 | DI | Spätná väzba ventilátora 0 | ⬜️ | RL |
-| PC8 | FC1 | DO | Riadenie ventilátora 0 | ✔️ | FL | 
-| PC9 | FF1 | DI | Spätná väzba ventilátora 0 | ⬜️ | FL |
-| PD12 | FC2 | DO | Riadenie ventilátora 2 | ✔️ | RR |
-| PD13 | FF2 | DI | Spätná väzba ventilátora 2 | ⬜️ | RR |
-| PD14 | FC3 | DO | Riadenie ventilátora 3 | ✔️ | BL |
-| PD15 | FF3 | DI | Spätná väzba ventilátora 3 | ⬜️ | BL |
-| PE5 | FC6 | DO | Riadenie ventilátora 6 | 🔎 | $$ | 
-| PE6 | FF6 | DI | Spätná väzba ventilátora 6 | 🔎 | $$ |
+| PA0 | FC4 | DO | Riadenie ventilátora 5 | ✔️ | BR |
+| PA1 | FF4 | DI | Spätná väzba ventilátora 5 | ⬜️ | BR |
+| PA2 | FC5 | DO | Riadenie ventilátora 6 | ✔️ | FR |
+| PA3 | FF5 | DI | Spätná väzba ventilátora 6 | ⬜️ | FR |
+| PB8 | FC7 | DO | Riadenie ventilátora 8 | 🔎 | $$ |
+| PB9 | FF7 | DI | Spätná väzba ventilátora 8 | 🔎 | $$ |
+| PC6 | FC0 | DO | Riadenie ventilátora 1 | ✔️ | RL |
+| PC7 | FF0 | DI | Spätná väzba ventilátora 1 | ⬜️ | RL |
+| PC8 | FC1 | DO | Riadenie ventilátora 2 | ✔️ | FL | 
+| PC9 | FF1 | DI | Spätná väzba ventilátora 2 | ⬜️ | FL |
+| PD12 | FC2 | DO | Riadenie ventilátora 3 | ✔️ | RR |
+| PD13 | FF2 | DI | Spätná väzba ventilátora 3 | ⬜️ | RR |
+| PD14 | FC3 | DO | Riadenie ventilátora 4 | ✔️ | BL |
+| PD15 | FF3 | DI | Spätná väzba ventilátora 4 | ⬜️ | BL |
+| PE5 | FC6 | DO | Riadenie ventilátora 7 | 🔎 | $$ | 
+| PE6 | FF6 | DI | Spätná väzba ventilátora 7 | 🔎 | $$ |
 ## pump
 | Pin   | Signál  | Typ  | Popis                                         | Status |
 |-------|---------|------|-----------------------------------------------| --- |
