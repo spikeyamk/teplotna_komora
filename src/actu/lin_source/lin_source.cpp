@@ -4,21 +4,9 @@
 
 namespace actu {
 namespace lin_source {
-    void start_dac() {
-        HAL_DAC_Start(&hdac, DAC_CHANNEL_1);  // Start DAC on PA4
-        HAL_DAC_Start(&hdac, DAC_CHANNEL_2);  // Start DAC on PA5
-    }
-
-    void set_output(uint32_t val_a, uint32_t val_b) {
-        // Write value to DAC channel 2 (PA5)
-        HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, val_a);
-
-        // Write value to DAC channel 1 (PA4)
-        HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, val_b);
-    }
-
     void test_dac() {
-        start_dac();
+        front::start_dac();
+        rear::start_dac();
         for(
             uint16_t dac_value = 0;
             true;
@@ -28,11 +16,30 @@ namespace lin_source {
                 return (in + inc) > stopper ? 0 : in + inc;
             }(dac_value)
         ) {
-            HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dac_value);
-            HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, dac_value);
+            front::set_output(dac_value);
+            rear::set_output(dac_value);
             std::printf("dac_value: %u\n", dac_value);
             HAL_Delay(10'000);
         }
     }
+namespace front {
+    void start_dac() {
+        HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
+    }
+
+    void set_output(const uint32_t value) {
+        HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, value);
+    }
+}
+namespace rear {
+    void start_dac() {
+        HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
+    }
+
+    void set_output(const uint32_t value) {
+        HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, value);
+    }
 }
 }
+}
+
