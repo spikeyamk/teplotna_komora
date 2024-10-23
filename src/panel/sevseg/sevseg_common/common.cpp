@@ -1,6 +1,8 @@
 #include <optional>
 #include <cmath>
 #include <cstdint>
+#include <algorithm>
+#include <span>
 #include "panel/sevseg/common/common.hpp"
 
 namespace panel {
@@ -22,76 +24,129 @@ namespace common {
         0b0100'1110, // C
         0b0011'1101, // d
         0b0100'1111, // E
-        0b0100'0111  // F
+        0b0100'0111, // F
+    };
+
+    const std::array<sevset, 8> single_segment_map {
+        0b0000'0001, // stred
+        0b0000'0010, // lavo hore
+        0b0000'0100, // lavo dole
+        0b0000'1000, // dole
+        0b0001'0000, // vpravo dole
+        0b0010'0000, // vpravo hore
+        0b0100'0000, // hore
+        0b1000'0000, // bodka
     };
 
     const sevset minus_sign { 0b0000'0001 };
-    const sevset dp_mask { 0b1000'0000 };
+    const sevset dp_or_mask { 0b1000'0000 };
+
+    namespace exception_sevmap {
+        const sevmap error {
+            []() {
+                sevmap ret;
+                ret.fill(hex_map[0xe]);
+                return ret;
+            }()
+        };
+
+        const sevmap positive_overflow {
+            []() {
+                sevmap ret;
+                ret.fill(hex_map[0xF]);
+                ret.back() |= dp_or_mask;
+                return ret;
+            }()
+        };
+
+        const sevmap negative_overflow {
+            []() {
+                sevmap ret { minus_sign };
+                std::fill(ret.begin() + 1, ret.end(), hex_map[0xF]);
+                ret.back() |= dp_or_mask;
+                return ret;
+            }()
+        };
 
 
-    std::optional<uint8_t> get_dp_index(const float value) {
-        if(value == 0.0f) {
-            return 0;
-        }
-
-        const float log10_value { std::log10(std::fabs(value)) };
-
-        if(log10_value < -3.0f || log10_value >= 4.0f) {
-            return std::nullopt;
-        }
-
-        if(log10_value >= 1.0f && log10_value < 2.0f) {
-            return 1;
-        } else if (log10_value >= 2 && log10_value < 3) {
-            return 2;
-        } else if (log10_value >= 3 && log10_value < 4) {
-            return 3;
-        }
-
-        return 0;
+        const sevmap positive_underflow { 
+            []() {
+                sevmap ret;
+                std::fill(ret.begin(), ret.end(), hex_map[0x0]);
+                ret.front() |= dp_or_mask;
+                return ret;
+            }()
+        };
+        
+        const sevmap negative_underflow {
+            []() {
+                sevmap ret { minus_sign };
+                std::fill(ret.begin() + 1, ret.end(), hex_map[0x0]);
+                *(ret.begin() + 1) |= dp_or_mask;
+                return ret;
+            }()
+        };
     }
 
-    const sevmap overflow_sevmap {
-        []() {
-            sevmap ret;
-            ret.fill(hex_map[0xf]);
-            return ret;
-        }()
-    };
+    inline uint8_t numerical_char_to_uint8_t(const char value) {
+        return static_cast<uint8_t>(value - '0');
+    }
 
-    const sevmap underflow_sevmap {
-        []() {
-            sevmap ret;
-            ret.fill(hex_map[0x0]);
-            return ret;
-        }()
-    };
+    inline bool is_valid_char_in_snprintf_output(const char value) {
+        if(value != '-' && value != '.' && (!(value >= '0' && value <= '9')) && value != '\0') {
+            return false;
+        }
+        return true;
+    }
+
+    inline bool check_snprintf_output(const std::span<char>& buf) {
+        for(const char e: buf) {
+            if(is_valid_char_in_snprintf_output(e) == false) {
+                return false; 
+            }
+        }
+        
+        return true;
+    }
 
     sevmap float_to_sevmap(const float value) {
-        std::array<std::bitset<8>, 5> ret {};
-
-        const auto dp_index { get_dp_index(value) };
-
-
-        const uint8_t zeroth_digit { 0 };
-        const uint8_t first_digit { 0 };
-        const uint8_t second_digit { 0 };
-        const uint8_t third_digit { 0 };
-
-        if(value < 0.0f) {
-            ret[0] = minus_sign;
-            ret[1] = hex_map[zeroth_digit];
-            ret[2] = hex_map[first_digit];
-            ret[3] = hex_map[second_digit];
-            ret[4] = hex_map[third_digit];
-        } else {
-            ret[0] = hex_map[zeroth_digit];
-            ret[1] = hex_map[first_digit];
-            ret[2] = hex_map[second_digit];
-            ret[3] = hex_map[third_digit];
-            const uint8_t fourth_digit { 0 };
-            ret[3] = hex_map[fourth_digit];
+        if(std::isnormal(value) == false) {
+            return exception_sevmap::error;
+        } else if(value > 9999.9f) {
+            return exception_sevmap::positive_overflow;
+        } else if(value < -999.9f) {
+            return exception_sevmap::negative_overflow;
+        } else if(value < 0.0001f && value > 0.0f) {
+            return exception_sevmap::positive_underflow;
+        } else if(value > -0.001f && value < 0.0f) {
+            return exception_sevmap::negative_underflow;
         }
+
+        std::array<char, 20> buf { 0x00 };
+        if(std::snprintf(buf.data(), buf.size(), "%05.4f", value) < 0) {
+            return exception_sevmap::error;
+        }
+        if(check_snprintf_output(buf) == false) {
+            return exception_sevmap::error;
+        }
+
+        sevmap ret {};
+        std::for_each(
+            ret.rbegin(),
+            ret.rend(),
+            [&buf, index = ret.size()](auto& e) mutable {
+                if(buf[index] == '-') {
+                    e = minus_sign;
+                } else if(buf[index] == '.') {
+                    index--;
+                    e = hex_map[numerical_char_to_uint8_t(buf[index])];
+                    e |= dp_or_mask;
+                } else {
+                    e = hex_map[numerical_char_to_uint8_t(buf[index])];
+                }
+                index--;
+            }
+        );
 
         return ret;
     }

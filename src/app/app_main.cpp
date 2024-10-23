@@ -23,8 +23,8 @@ void turn_every_annoying_peripheral_off() {
     actu::pump::stop();
     actu::buzzer::stop();
 
-    actu::bridge::a::turn_off();
-    actu::bridge::b::turn_off();
+    actu::bridge::front::turn_off();
+    actu::bridge::rear::turn_off();
 }
 
 /**

@@ -99,7 +99,7 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, signed char *pcTaskName)
    /* Run time stack overflow checking is performed if
    configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
    called if a stack overflow is detected. */
-  printf("vApplicationStackOverflowHook: xTask: %p pcTaskName: %s\r\n", (void*) xTask, pcTaskName);
+  printf("vApplicationStackOverflowHook: xTask: %p, pcTaskName: %s\n", (void*) xTask, pcTaskName);
 }
 /* USER CODE END 4 */
 
@@ -153,6 +153,10 @@ void MX_FREERTOS_Init(void) {
 __weak void app_main(void *argument)
 {
   /* USER CODE BEGIN app_main */
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/devel
   /* Infinite loop */
   for(;;)
   {
