@@ -33,6 +33,6 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     sens::i2c_temp_hum
     sens::spi_temp
 
-    example_submodule
+    example_subdirectory
     rtc
 )
