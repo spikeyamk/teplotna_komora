@@ -110,7 +110,7 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, signed char *pcTaskName)
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-  //HAL_TIM_Base_Start_IT(&htim6);
+  HAL_TIM_Base_Start_IT(&htim6);
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -153,10 +153,6 @@ void MX_FREERTOS_Init(void) {
 __weak void app_main(void *argument)
 {
   /* USER CODE BEGIN app_main */
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/devel
   /* Infinite loop */
   for(;;)
   {

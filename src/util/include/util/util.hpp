@@ -20,4 +20,6 @@ namespace util {
         bksram::write(magic);
         NVIC_SystemReset();
     }
+
+    void turn_every_annoying_peripheral_off();
 }

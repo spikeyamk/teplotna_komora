@@ -3,7 +3,6 @@
 #include <limits>
 
 #include "usart.h"
-#include "util/util.hpp"
 #include "comm/usb_uart/usb_uart.hpp"
 
 namespace comm {

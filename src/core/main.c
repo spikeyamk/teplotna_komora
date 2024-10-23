@@ -107,7 +107,6 @@ int main(void)
   MX_TIM6_Init();
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
-
   /* USER CODE END 2 */
 
   /* Init scheduler */

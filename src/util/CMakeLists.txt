@@ -1,5 +1,12 @@
 get_filename_component(SUBMODULE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 file(GLOB_RECURSE SUBMODULE_SOURCE_FILES "*.cpp")
-add_library(${SUBMODULE_NAME} INTERFACE ${SUBMODULE_SOURCE_FILES})
-target_include_directories(${SUBMODULE_NAME} INTERFACE "include")
-target_link_libraries(${SUBMODULE_NAME} INTERFACE stm32cubef2 bksram)
+add_library(${SUBMODULE_NAME} ${SUBMODULE_SOURCE_FILES})
+target_include_directories(${SUBMODULE_NAME} PUBLIC "include")
+target_link_libraries(${SUBMODULE_NAME} PRIVATE
+    stm32cubef2
+    bksram
+    actu::fan
+    actu::bridge
+    actu::pump
+    actu::buzzer
+)
