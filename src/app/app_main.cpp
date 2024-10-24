@@ -45,13 +45,21 @@ extern "C" void app_main(void* arg) {
     Trielo::trielo<example_subdirectory::foo>();
     Trielo::trielo<util::turn_every_annoying_peripheral_off>();
 
-    Trielo::trielo<actu::fan::ctl::start_all_min_speed>();
-    Trielo::trielo<actu::fan::fb::init>();
+    Trielo::trielo<actu::fan::ctl::all::start_full_speed>();
+    Trielo::trielo<actu::fan::fb::all::init>();
 
     for(uint32_t tick = 0; true; tick++) {
-        std::printf("app_main: tick: %lu\n", tick);
         panel::led::toggle_all();
-        osDelay(5000);
+        std::printf("app_main: tick: %lu\n", tick);
+        for(size_t i = 0; i < actu::fan::fb::fbs.size(); i++) {
+            std::printf(
+                "app_main: actu::fan::fb::fbs[%zu].get().consume_rpm().value_or(static_cast<float>(0xFFFF'FFFF)): %f\n",
+                i,
+                actu::fan::fb::fbs[i].get().consume_rpm().value_or(static_cast<float>(0xFFFF'FFFF))
+            );
+        }
+        osDelay(5'000);
     }
+
     // we should never get here...
 }
