@@ -143,7 +143,7 @@ namespace spi_temp {
         void deselect() const {
             HAL_GPIO_WritePin(nss_port, nss_pin, GPIO_PIN_SET);
         }
-        
+
         HAL_StatusTypeDef init() const {
             select();
             osDelay(10);
@@ -210,6 +210,20 @@ namespace spi_temp {
 
             deselect();
             return ret_regs;
+        }
+
+        std::expected<HAL_StatusTypeDef, bool> set_vbias(const bool state) {
+            const auto before { read(RegAddrs::RW_RO::CONFIGURATION) };
+            if(before.has_value() == false) {
+                return std::unexpected(before.error());
+            }
+
+            /*
+            if(state) {
+
+            }
+            */
+            return HAL_OK;
         }
     };
 }
