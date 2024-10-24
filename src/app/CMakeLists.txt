@@ -21,6 +21,7 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     panel::encoder
     panel::led
     panel::green_yellow
+    sevseg_common
     panel::white
 
     peripheral::dac

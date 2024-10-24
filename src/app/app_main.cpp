@@ -18,6 +18,8 @@
 #include "bksram/magic.hpp"
 #include "producer_consumer_test.hpp"
 #include "comm/usb_uart/usb_uart.hpp"
+#include "example_subdirectory/public.hpp"
+#include "util/util.hpp"
 
 void bksram_test() {
     if(Trielo::trielo<bksram::read>() != bksram::magic) {
@@ -33,32 +35,25 @@ void bksram_test() {
  */
 extern "C" void app_main(void* arg) {
     (void) arg;
-
-    Trielo::trielo<example_subdirectory::foo>();
-    turn_every_annoying_peripheral_off();
-
-    actu::fan::start_min_speed();
-
-    //actu::lin_source::test_dac();
-    
-    for (;;) {
-        panel::sevseg::white::display_refresh(12345);
-        panel::encoder::encoder_test();
-        osDelay(1);
-    }
-
-    /*for(uint32_t tick = 0; true; tick++) {
-        std::printf("app_main: tick: %lu\n", tick);
-        HAL_Delay(5000);
-    }*/
-
     comm::usb_uart::RedirectStdout& redirect_stdout { comm::usb_uart::RedirectStdout::get_instance() };
     if(redirect_stdout.init() == false) {
         redirect_stdout.turn_off_threadsafe();
         std::printf("app_main: redirect_stdout.init() == false\n");
     }
 
+    Trielo::trielo<example_subdirectory::foo>();
     Trielo::trielo<util::turn_every_annoying_peripheral_off>();
+    
+    float number = -999.00f;
+    panel::sevseg::white::launch_display_task(number);
+
+    /*for(uint32_t tick = 0; true; tick++) {
+        std::printf("app_main: tick: %lu\n", tick);
+        HAL_Delay(5000);
+    }*/
+
+
+
     for(uint32_t tick = 0; true; tick++) {
         std::printf("app_main: tick: %lu\n", tick);
         panel::led::toggle_all();

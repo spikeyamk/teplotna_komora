@@ -3,8 +3,9 @@
 #include <iostream>
 #include <cmath>
 #include "stm32f2xx_hal.h"
+#include "cmsis_os.h"
 #include "panel/sevseg/white/white.hpp"
-#include "panel/sevseg/common/common.hpp"
+
 #include "tim.h"
 
 namespace panel {
@@ -22,17 +23,7 @@ namespace white {
         __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 60'000);
     }
 
-    void brightness_on() {
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
-    }
-
-    void brightness_off() {
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
-    }
-
     void turn_on_all_segments() {
-        brightness_on();
-
         //cathodes
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_RESET); //4th digit
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_RESET);
@@ -51,10 +42,9 @@ namespace white {
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_14, GPIO_PIN_SET); //DP
     }
 
-    /*void display_pins() {
-        const std::array<uint16_t, 8> active_segment {
-            GPIO_PIN_13, //stred
-            GPIO_PIN_9,  //vlavo hore
+    const std::array<uint16_t, 8> active_segment {
+        GPIO_PIN_13, //stred
+        GPIO_PIN_9,  //vlavo hore
             GPIO_PIN_8,  //vlavo dole
             GPIO_PIN_12, //dole
             GPIO_PIN_11, //vpravo dole
@@ -62,75 +52,51 @@ namespace white {
             GPIO_PIN_7,  //hore
             GPIO_PIN_14  //decimal point
         };
-        
         const std::array<uint16_t, 5> active_cathodes {
-            GPIO_PIN_1, 
-            GPIO_PIN_0, 
+            GPIO_PIN_4,
+            GPIO_PIN_3,
             GPIO_PIN_2, 
-            GPIO_PIN_3, 
-            GPIO_PIN_4
+            GPIO_PIN_0,
+            GPIO_PIN_1,
         };
-    }*/
-
-    uint8_t set_digit(float number, uint8_t position) {
-        uint8_t digit = 0;
-        for (;position >= 0; position--){
-            digit = fmod(number, 10);
-        }
-        return digit;
-    }
     
-    void display_refresh(float number) {
-        const std::array<uint16_t, 8> active_segment {
-            GPIO_PIN_13, //stred
-            GPIO_PIN_9,  //vlavo hore
-            GPIO_PIN_8,  //vlavo dole
-            GPIO_PIN_12, //dole
-            GPIO_PIN_11, //vpravo dole
-            GPIO_PIN_10, //vpravo hore
-            GPIO_PIN_7,  //hore
-            GPIO_PIN_14  //decimal point
-        };
-        const std::array<uint16_t, 5> active_cathodes {
-            GPIO_PIN_1, 
-            GPIO_PIN_0, 
-            GPIO_PIN_2, 
-            GPIO_PIN_3, 
-            GPIO_PIN_4
-        };
-        
-        uint8_t Mask = 0b1000'0000;
-        uint8_t CurrentDigit = 0;
-        static uint8_t RefreshedDigit = 0;
-        
-        //turn off last cathode
-        HAL_GPIO_WritePin(GPIOE, active_cathodes[RefreshedDigit], GPIO_PIN_SET);
-        
-        //go to next digit
-        RefreshedDigit++;
-        if (RefreshedDigit >= 5) {
-            RefreshedDigit = 0;
-        }
-
-        //set current digit
-        CurrentDigit = set_digit(number, RefreshedDigit);
-
-        //turn on next cathode
-        HAL_GPIO_WritePin(GPIOE, active_cathodes[RefreshedDigit], GPIO_PIN_RESET);
-
-        //set anodes to digit
-        for (const auto i: active_segment) {
-            if (common::hex_map[CurrentDigit].to_ulong() & Mask) {
-                HAL_GPIO_WritePin(GPIOE, active_segment[i], GPIO_PIN_SET);
+    void display_refresh(const common::sevmap& sevmap) {
+        for(size_t i = 0; i < sevmap.size(); i++) {
+            for(size_t j = 0; j < sevmap[i].size(); j++) {
+                HAL_GPIO_WritePin(GPIOE, active_segment[j], sevmap[i][j] == true ? GPIO_PIN_SET : GPIO_PIN_RESET);
             }
-            else {
-                HAL_GPIO_WritePin(GPIOE, active_segment[i], GPIO_PIN_RESET);
-            }
-            Mask = Mask >> 1;
+            HAL_GPIO_WritePin(GPIOE, active_cathodes[i], GPIO_PIN_RESET);
+            HAL_Delay(1);
+            HAL_GPIO_WritePin(GPIOE, active_cathodes[i], GPIO_PIN_SET);
         }
+    }
 
-        //possible delay, 1 or 2 ms
-        //HAL_Delay(1)
+    void display_worker(void *argument) {
+        float& number { *reinterpret_cast<float*>(argument)};
+        const auto sevmap {common::float_to_sevmap(number)};
+        init_brightness();
+        dim();
+        while (1) {
+            display_refresh(sevmap);
+            osDelay(1);
+        }
+    }
+
+    void launch_display_task(float& number) {
+    static uint32_t sevw_buffer[2048];
+    static StaticTask_t sevw_refresh;
+    const osThreadAttr_t sevw_attr {
+        .name = "sevw_display",
+        .attr_bits = osThreadDetached,
+        .cb_mem = &sevw_refresh,
+        .cb_size = sizeof(sevw_refresh),
+        .stack_mem = &sevw_buffer[0],
+        .stack_size = sizeof(sevw_buffer),
+        .priority = (osPriority_t) osPriorityNormal,
+        .tz_module = 0,
+        .reserved = 0,
+    };
+    osThreadNew(display_worker, reinterpret_cast<void*>(&number), &sevw_attr);
     }
 }
 }

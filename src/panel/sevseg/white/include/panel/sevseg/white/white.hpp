@@ -1,23 +1,19 @@
 #pragma once
 
 #include "stm32f2xx_hal.h"
-#include <bitset>
+#include "panel/sevseg/common/common.hpp"
 
 namespace panel {
 namespace sevseg {
-namespace white {
-    //extern const std::array<uint8_t, 8> active_segment;
-    //extern const std::array<uint8_t, 5> active_cathodes;
-    
+namespace white {    
     void init_brightness();
     void dim();
     void bright();
-    void brightness_on();
-    void brightness_off();
     void turn_on_all_segments();
     void display_pins();
+    void launch_display_task(float& number);
     uint8_t set_digit(float number, uint8_t position);
-    void display_refresh(float number);
+    void display_refresh(const common::sevmap& sevmap);
 }
 }
 }
