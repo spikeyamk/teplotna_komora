@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stm32f2xx_hal.h"
+#include "util/util.hpp"
 #include "panel/sevseg/common/common.hpp"
 
 namespace panel {
@@ -23,7 +24,7 @@ namespace white {
                 HAL_GPIO_WritePin(GPIOE, active_segment[j], sevmap[i][j] == true ? GPIO_PIN_SET : GPIO_PIN_RESET);
             }
             HAL_GPIO_WritePin(GPIOE, active_cathodes[i], GPIO_PIN_RESET);
-            HAL_Delay(1);
+            util::microsec_blocking_delay(100);
             HAL_GPIO_WritePin(GPIOE, active_cathodes[i], GPIO_PIN_SET);
         }
     }
