@@ -1,5 +1,0 @@
-get_filename_component(SUBMODULE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-file(GLOB_RECURSE SUBMODULE_SOURCE_FILES "*.cpp" "*.c")
-add_library(${SUBMODULE_NAME} ${SUBMODULE_SOURCE_FILES})
-target_include_directories(${SUBMODULE_NAME} PUBLIC "include")
-target_link_libraries(${SUBMODULE_NAME} PRIVATE stm32cubef2)

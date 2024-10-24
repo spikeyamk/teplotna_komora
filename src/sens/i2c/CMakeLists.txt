@@ -1,0 +1,3 @@
+add_subdirectory(i2c_common)
+add_subdirectory(light)
+add_subdirectory(temp_hum)
