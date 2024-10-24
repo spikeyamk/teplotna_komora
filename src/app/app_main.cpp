@@ -45,17 +45,10 @@ extern "C" void app_main(void* arg) {
     Trielo::trielo<util::turn_every_annoying_peripheral_off>();
     
     float number = -999.00f;
-    panel::sevseg::white::launch_display_task(number);
-
-    /*for(uint32_t tick = 0; true; tick++) {
-        std::printf("app_main: tick: %lu\n", tick);
-        HAL_Delay(5000);
-    }*/
-
-
+    Trielo::trielo<panel::sevseg::white::launch_display_task>(number);
 
     for(uint32_t tick = 0; true; tick++) {
-        std::printf("app_main: tick: %lu\n", tick);
+        //std::printf("app_main: tick: %lu\n", tick);
         panel::led::toggle_all();
         osDelay(5000);
     }
