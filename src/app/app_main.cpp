@@ -11,17 +11,13 @@
 #include "actu/buzzer/buzzer.hpp"
 #include "actu/lin_source/lin_source.hpp"
 #include "actu/pump/pump.hpp"
-<<<<<<< HEAD
 #include "panel/sevseg/white/white.hpp"
 #include "panel/encoder/encoder.hpp"
-#include "app/app_main.hpp"
-=======
 #include "panel/led/led.hpp"
 #include "util/util.hpp"
 #include "bksram/magic.hpp"
 #include "producer_consumer_test.hpp"
 #include "comm/usb_uart/usb_uart.hpp"
->>>>>>> master
 
 void bksram_test() {
     if(Trielo::trielo<bksram::read>() != bksram::magic) {
@@ -48,6 +44,7 @@ extern "C" void app_main(void* arg) {
     for (;;) {
         panel::sevseg::white::display_refresh(12345);
         panel::encoder::encoder_test();
+        osDelay(1);
     }
 
     /*for(uint32_t tick = 0; true; tick++) {
