@@ -11,11 +11,15 @@
 #include "actu/buzzer/buzzer.hpp"
 #include "actu/lin_source/lin_source.hpp"
 #include "actu/pump/pump.hpp"
+#include "panel/sevseg/white/white.hpp"
+#include "panel/encoder/encoder.hpp"
 #include "panel/led/led.hpp"
 #include "util/util.hpp"
 #include "bksram/magic.hpp"
 #include "producer_consumer_test.hpp"
 #include "comm/usb_uart/usb_uart.hpp"
+#include "example_subdirectory/public.hpp"
+#include "util/util.hpp"
 
 void bksram_test() {
     if(Trielo::trielo<bksram::read>() != bksram::magic) {
@@ -37,7 +41,19 @@ extern "C" void app_main(void* arg) {
         std::printf("app_main: redirect_stdout.init() == false\n");
     }
 
+    Trielo::trielo<example_subdirectory::foo>();
     Trielo::trielo<util::turn_every_annoying_peripheral_off>();
+    
+    float number = -999.00f;
+    panel::sevseg::white::launch_display_task(number);
+
+    /*for(uint32_t tick = 0; true; tick++) {
+        std::printf("app_main: tick: %lu\n", tick);
+        HAL_Delay(5000);
+    }*/
+
+
+
     for(uint32_t tick = 0; true; tick++) {
         std::printf("app_main: tick: %lu\n", tick);
         panel::led::toggle_all();
