@@ -7,7 +7,7 @@ target_link_libraries(${SUBMODULE_NAME} PUBLIC
 )
 target_link_libraries(${SUBMODULE_NAME} PRIVATE
     stm32cubef2
-    actu::fan
+    actu::fan_ctl
     actu::bridge
     actu::pump
     actu::buzzer
