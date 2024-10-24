@@ -51,7 +51,8 @@ namespace white {
         GPIO_PIN_10, //vpravo hore
         GPIO_PIN_7,  //hore
         GPIO_PIN_14  //decimal point
-        };
+    };
+
     const std::array<uint16_t, 5> active_cathodes {
         GPIO_PIN_4,
         GPIO_PIN_3,
@@ -61,8 +62,8 @@ namespace white {
     };
 
     void display_worker(void *argument) {
-        float& number { *reinterpret_cast<float*>(argument)};
-        const auto sevmap {common::float_to_sevmap(number)};
+        float& number { *reinterpret_cast<float*>(argument) };
+        const auto sevmap { common::float_to_sevmap(number) };
         init_brightness();
         dim();
         while (1) {
@@ -72,20 +73,20 @@ namespace white {
     }
 
     void launch_display_task(float& number) {
-    static uint32_t sevw_buffer[2048];
-    static StaticTask_t sevw_refresh;
-    const osThreadAttr_t sevw_attr {
-        .name = "sevw_display",
-        .attr_bits = osThreadDetached,
-        .cb_mem = &sevw_refresh,
-        .cb_size = sizeof(sevw_refresh),
-        .stack_mem = &sevw_buffer[0],
-        .stack_size = sizeof(sevw_buffer),
-        .priority = (osPriority_t) osPriorityNormal,
-        .tz_module = 0,
-        .reserved = 0,
-    };
-    osThreadNew(display_worker, reinterpret_cast<void*>(&number), &sevw_attr);
+        static uint32_t sevw_buffer[2048];
+        static StaticTask_t sevw_refresh;
+        const osThreadAttr_t sevw_attr {
+            .name = "sevw_display",
+            .attr_bits = osThreadDetached,
+            .cb_mem = &sevw_refresh,
+            .cb_size = sizeof(sevw_refresh),
+            .stack_mem = &sevw_buffer[0],
+            .stack_size = sizeof(sevw_buffer),
+            .priority = (osPriority_t) osPriorityNormal,
+            .tz_module = 0,
+            .reserved = 0,
+        };
+        osThreadNew(display_worker, reinterpret_cast<void*>(&number), &sevw_attr);
     }
 }
 }
