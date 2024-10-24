@@ -1,5 +1,6 @@
 add_subdirectory("actu")
 add_subdirectory("app")
+add_subdirectory("bksram")
 add_subdirectory("comm")
 add_subdirectory("core")
 if(ENABLE_TESTS)
@@ -9,6 +10,8 @@ add_subdirectory("example_subdirectory")
 add_subdirectory("panel")
 add_subdirectory("peripheral")
 add_subdirectory("sens")
+add_subdirectory("rtc")
+add_subdirectory("util")
 
 # Define the ELF and binary file locations
 set(ELF_FILE "${CMAKE_BINARY_DIR}/src/core/${CMAKE_PROJECT_NAME}.elf")

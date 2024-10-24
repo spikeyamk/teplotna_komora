@@ -4,30 +4,40 @@
 #include <limits>
 #include <trielo/trielo.hpp>
 
-#include "example_subdirectory/public.hpp"
+#include "cmsis_os2.h"
+
 #include "actu/fan/fan.hpp"
 #include "actu/bridge/bridge.hpp"
 #include "actu/buzzer/buzzer.hpp"
 #include "actu/lin_source/lin_source.hpp"
 #include "actu/pump/pump.hpp"
+<<<<<<< HEAD
 #include "panel/sevseg/white/white.hpp"
 #include "panel/encoder/encoder.hpp"
 #include "app/app_main.hpp"
+=======
+#include "panel/led/led.hpp"
+#include "util/util.hpp"
+#include "bksram/magic.hpp"
+#include "producer_consumer_test.hpp"
+#include "comm/usb_uart/usb_uart.hpp"
+>>>>>>> master
 
-void turn_every_annoying_peripheral_off() {
-    actu::fan::init_ctl();
-    actu::fan::stop_all();
-
-    actu::pump::stop();
-    actu::buzzer::stop();
-
-    actu::bridge::a::turn_off();
-    actu::bridge::b::turn_off();
+void bksram_test() {
+    if(Trielo::trielo<bksram::read>() != bksram::magic) {
+        Trielo::trielo<util::reset>(bksram::magic);
+    } else {
+        Trielo::trielo<bksram::write>(0x00);
+    }
 }
 
-/// This function calculates the area of a rectangle.
-void app_main(void* arg) {
+/**
+ * @brief App entry point. This function cannot exit.
+ * @param arg is necessary in oder for app_main's function pointer to be of type osThreadFunc_t. Remains unused, nullptr is injected into it. DO NOT DEREFERENCE!
+ */
+extern "C" void app_main(void* arg) {
     (void) arg;
+
     Trielo::trielo<example_subdirectory::foo>();
     turn_every_annoying_peripheral_off();
 
@@ -44,4 +54,18 @@ void app_main(void* arg) {
         std::printf("app_main: tick: %lu\n", tick);
         HAL_Delay(5000);
     }*/
+
+    comm::usb_uart::RedirectStdout& redirect_stdout { comm::usb_uart::RedirectStdout::get_instance() };
+    if(redirect_stdout.init() == false) {
+        redirect_stdout.turn_off_threadsafe();
+        std::printf("app_main: redirect_stdout.init() == false\n");
+    }
+
+    Trielo::trielo<util::turn_every_annoying_peripheral_off>();
+    for(uint32_t tick = 0; true; tick++) {
+        std::printf("app_main: tick: %lu\n", tick);
+        panel::led::toggle_all();
+        osDelay(5000);
+    }
+    // we should never get here...
 }
