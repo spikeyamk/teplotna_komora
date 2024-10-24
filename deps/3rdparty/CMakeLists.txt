@@ -31,7 +31,6 @@ add_library(stm32cubef2
     STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/tasks.c
     STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/timers.c
     STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c
-    STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c
     STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c
 )
 
