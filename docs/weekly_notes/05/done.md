@@ -8,7 +8,7 @@
 - TIMx_FANy_zw_CTL a TIMx_FANy_zw_FB piny nakonfigurované, povolené TIMx interrupty, všetky TIMx ovládajúce ventilátory majú nastavený CLK z vnútorného zdroja na 25 kHz PWM výstup, pomocou 24-násobnej deličky
 - všetky ventilátory sa začínajú točiť pri DUTY_CYCLE = 5% pri 25 kHz PWM, generujú na spätnej väzbe pravouhlý signál f ≈ 28 Hz
 - všetky ventilátory pri DUTY_CYCLE = 100% pri 25 kHz PWM, generujú na spätnej väzbe pravouhlý signál f ≈ 307 Hz
-- kábliky ventilátorov nemožno poprehadzovať a použiť niektoré z pinov, ktoré boli buď pôvodne určené na chýbajúce 2 vnútorné ventilátory, pretože tieto vnútorné ventilátory boli pôvodne určené iba na ON/OFF ovládanie pomocou spínača ktorý ich spína na GND a na ostatných pinoch, je vstupný RC filter a delič, ktorý znemožňuje použitie pinov určeného na ovládanie rýchlosti na čítanie spätnej väzby
+- kábliky ventilátorov nemožno poprehadzovať a použiť niektoré z pinov, ktoré boli buď pôvodne určené na chýbajúce 2 vnútorné ventilátory, pretože tieto vnútorné ventilátory boli pôvodne určené iba na ON/OFF ovládanie pomocou spínača, ktorý ich spína na GND a na ostatných pinoch, alebo na pinoch určených na čítanie spätnej väzby je vstupný RC filter a delič, ktorý znemožňuje ich použitie na ovládanie rýchlosti
 - možnosť vytvárať individuálne testy vo vnútri CMake podadresároch pomocou CMake ExternalProject_Add, ktorý kompiluje jednotlivé testy pomocou rozdielneho toolchainu nezávislého od firmvéru
 - funkcia panel::sevseg::common::float_to_sevmap úspešne otestovaná pomocou CMake ExternalProject_Add
 - úspešná komunikácia s MAX31865, bolo potrebné pridať 10 ms HAL_Delay(10) do inicializačnej funkcie pri pokuse o komunikáciu
