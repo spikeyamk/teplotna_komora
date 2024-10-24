@@ -131,8 +131,8 @@
 ### encoder
 | Pin   | Signál  | Typ  | Popis                                         | Status | User Label |
 |-------|---------|------|-----------------------------------------------| --- | ------------- |
-| PB10 | ENCA | DI | Vstup A z kvadratúrneho enkodéra | ✔️ | ENCA |
-| PB11 | ENCB | DI | Vstup B z kvadratúrneho enkodéra | ✔️ | ENCB_EXTI11 |
+| PB10 | ENCA | DI | Vstup A z kvadratúrneho enkodéra | ✔️ | ENCA_EXTI10  |
+| PB11 | ENCB | DI | Vstup B z kvadratúrneho enkodéra | ✔️ | ENCB |
 | PE15 | SWENC | DI | Vstup zo spínača integrovaného v kvadratúrnom enkodéri | ❌ | N/A |
 
 # sens
@@ -143,10 +143,10 @@
 | PB3 | SCLK1 | DO | Hodinový výstup pre SPI pripojené k obom R/T prevodníkom | ✔️ | SPI3_TEMP_SCK |
 | PB4 | MISO1 | DI | Dátový vstup pre SPI pripojené k obom R/T prevodníkom | ✔️ | SPI3_TEMP_MISO |
 | PB5 | MOSI1 | DO | Dátový výstup pre SPI pripojené k obom R/T prevodníkom | ✔️ | SPI3_TEMP_MOSI |
-| PD7 | MCS1 | DO | Selektovací výstup pre SPI pripojené k druhému R/T prevodníku | ✔️ | SPI3_TEMP_NSS1 |
-| PD4 | DRDY0 | DI | Vstup z prvého R/T prevodníka indikujúci pripravenosť dát na čítanie | ⬜️ | SPI3_TEMP_SCK |
+| PD4 | DRDY0 | DI | Vstup z prvého R/T prevodníka indikujúci pripravenosť dát na čítanie | ⬜️ | SPI3_TEMP_NDRDY0 |
 | PD5 | MCS0 | DO | Selektovací výstup pre SPI pripojené k prvému R/T prevodníku | ✔️ | SPI3_TEMP_NSS0 |
-| PD6 | DRDY1 | DI | Vstup z druhého R/T prevodníka indikujúci pripravenosť dát na čítanie | ⬜️ | SPI3_TEMP_SCK |
+| PD6 | DRDY1 | DI | Vstup z druhého R/T prevodníka indikujúci pripravenosť dát na čítanie | ⬜️ | SPI3_TEMP_NDRDY1 |
+| PD7 | MCS1 | DO | Selektovací výstup pre SPI pripojené k druhému R/T prevodníku | ✔️ | SPI3_TEMP_NSS1 |
 ## i2c
 | Pin   | Signál  | Typ  | Popis                                         | Status | User Label |
 |-------|---------|------|-----------------------------------------------| --- | ------------- |

@@ -36,7 +36,6 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     sens::spi_temp
 
     util
-
     example_subdirectory
     rtc
 )
