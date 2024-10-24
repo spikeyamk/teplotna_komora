@@ -45,31 +45,20 @@ namespace white {
     const std::array<uint16_t, 8> active_segment {
         GPIO_PIN_13, //stred
         GPIO_PIN_9,  //vlavo hore
-            GPIO_PIN_8,  //vlavo dole
-            GPIO_PIN_12, //dole
-            GPIO_PIN_11, //vpravo dole
-            GPIO_PIN_10, //vpravo hore
-            GPIO_PIN_7,  //hore
-            GPIO_PIN_14  //decimal point
+        GPIO_PIN_8,  //vlavo dole
+        GPIO_PIN_12, //dole
+        GPIO_PIN_11, //vpravo dole
+        GPIO_PIN_10, //vpravo hore
+        GPIO_PIN_7,  //hore
+        GPIO_PIN_14  //decimal point
         };
-        const std::array<uint16_t, 5> active_cathodes {
-            GPIO_PIN_4,
-            GPIO_PIN_3,
-            GPIO_PIN_2, 
-            GPIO_PIN_0,
-            GPIO_PIN_1,
-        };
-    
-    void display_refresh(const common::sevmap& sevmap) {
-        for(size_t i = 0; i < sevmap.size(); i++) {
-            for(size_t j = 0; j < sevmap[i].size(); j++) {
-                HAL_GPIO_WritePin(GPIOE, active_segment[j], sevmap[i][j] == true ? GPIO_PIN_SET : GPIO_PIN_RESET);
-            }
-            HAL_GPIO_WritePin(GPIOE, active_cathodes[i], GPIO_PIN_RESET);
-            HAL_Delay(1);
-            HAL_GPIO_WritePin(GPIOE, active_cathodes[i], GPIO_PIN_SET);
-        }
-    }
+    const std::array<uint16_t, 5> active_cathodes {
+        GPIO_PIN_4,
+        GPIO_PIN_3,
+        GPIO_PIN_2, 
+        GPIO_PIN_0,
+        GPIO_PIN_1,
+    };
 
     void display_worker(void *argument) {
         float& number { *reinterpret_cast<float*>(argument)};
