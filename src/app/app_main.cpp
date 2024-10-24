@@ -14,6 +14,7 @@
 #include "panel/led/led.hpp"
 #include "util/util.hpp"
 #include "bksram/magic.hpp"
+#include "producer_consumer_test.hpp"
 #include "comm/usb_uart/usb_uart.hpp"
 
 void bksram_test() {

@@ -5,7 +5,7 @@
 void produce(void* arg) {
     uint32_t& product { *reinterpret_cast<uint32_t*>(arg) };
     while(1) {
-        std::printf("produce: product: %lu\r\n", product++);
+        std::printf("produce: product: %lu\n", product++);
         osDelay(1);
     }
 }
@@ -13,7 +13,7 @@ void produce(void* arg) {
 void consume(void* arg) {
     uint32_t& product { *reinterpret_cast<uint32_t*>(arg) };
     while(1) {
-        std::printf("consume: product: %lu\r\n", product--);
+        std::printf("consume: product: %lu\n", product--);
         osDelay(1);
     }
 }

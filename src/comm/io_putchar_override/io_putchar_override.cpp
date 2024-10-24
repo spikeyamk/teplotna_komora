@@ -19,10 +19,11 @@ extern "C" int __io_putchar(int ch) {
         return ch;
     }
 
-    if(redirect_stdout.acquire_mutex() != osOK) {
+    const osStatus acquire_mutex { redirect_stdout.acquire_mutex() };
+    if(acquire_mutex != osOK) {
         redirect_stdout.turn_off_threadsafe();
         RedirectStdout::transmit(ch);
-        static constexpr std::string_view error_message { "\r\n__io_putchar: osMutexAcquire(&redirect_stdout.mutex, 1'000) != osOK\r\n" };
+        static constexpr std::string_view error_message { "\r\n__io_putchar: acquire_mutex != osOK\r\n" };
         HAL_UART_Transmit(&huart1, reinterpret_cast<const uint8_t*>(error_message.data()), error_message.size(), HAL_MAX_DELAY);
         Error_Handler();
         return ch;

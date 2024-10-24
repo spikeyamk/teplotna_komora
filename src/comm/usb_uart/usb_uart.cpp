@@ -17,7 +17,7 @@ namespace usb_uart {
     }
 
     osStatus_t RedirectStdout::acquire_mutex() {
-        const auto ret { osMutexAcquire(&mutex, 10'000) };
+        const auto ret { osMutexAcquire(mutex, 10'000) };
         if(ret == osOK) {
             mutex_acquires++;
         }
@@ -26,7 +26,7 @@ namespace usb_uart {
 
     osStatus_t RedirectStdout::release_mutex() {
         for(size_t i = 0; i < mutex_acquires; i++) {
-            const auto ret { osMutexRelease(&mutex) };
+            const auto ret { osMutexRelease(mutex) };
             if(ret != osOK) {
                 return ret;
             }
@@ -74,6 +74,7 @@ namespace usb_uart {
             data_count * sizeof(std::remove_reference_t<decltype(data_buffer)>::value_type),
             HAL_MAX_DELAY
         );
+        data_count = 0;
     }
 
     bool RedirectStdout::get_threadsafe() const {
