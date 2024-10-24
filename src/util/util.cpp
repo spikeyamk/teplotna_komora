@@ -1,3 +1,4 @@
+#include <trielo/trielo.hpp>
 #include "actu/fan/ctl/ctl.hpp"
 #include "actu/pump/pump.hpp"
 #include "actu/buzzer/buzzer.hpp"
@@ -6,8 +7,8 @@
 
 namespace util {
     void turn_every_annoying_peripheral_off() {
-        actu::fan::ctl::init();
-        actu::fan::ctl::stop_all();
+        Trielo::trielo<actu::fan::ctl::all::init>();
+        Trielo::trielo<actu::fan::ctl::all::stop>();
 
         actu::pump::stop();
         actu::buzzer::stop();

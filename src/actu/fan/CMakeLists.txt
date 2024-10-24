@@ -1,3 +1,4 @@
+add_subdirectory(fan_common)
 add_subdirectory(fan_ctl)
 add_subdirectory(fan_fb)
 add_subdirectory(fan_tim_cb_overrides)
