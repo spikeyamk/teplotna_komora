@@ -44,19 +44,19 @@
 | Pin   | Signál  | Typ  | Popis                                         | Status | User Label |
 |-------|---------|------|-----------------------------------------------| --- | ------------- |
 | PA0 | FC4 | DO | Riadenie ventilátora 4 | ✔️ | TIM5_CH1_FAN4_BR_CTL |
-| PA1 | FF4 | DI | Spätná väzba ventilátora 4 | ⬜️ | TIM5_CH2_FAN4_BR_FB |
+| PA1 | FF4 | DI | Spätná väzba ventilátora 4 | ✔️ | TIM5_CH2_FAN4_BR_FB |
 | PA2 | FC5 | DO | Riadenie ventilátora 5 | ✔️ | TIM5_CH3_FAN5_FR_CTL |
-| PA3 | FF5 | DI | Spätná väzba ventilátora 5 | ⬜️ | TIM5_CH4_FAN5_FR_FB |
+| PA3 | FF5 | DI | Spätná väzba ventilátora 5 | ✔️ | TIM5_CH4_FAN5_FR_FB |
 | PB8 | FC7 | DO | Riadenie ventilátora 7 | 🔎 | $$ |
 | PB9 | FF7 | DI | Spätná väzba ventilátora 7 | 🔎 | $$ |
 | PC6 | FC0 | DO | Riadenie ventilátora 0 | ✔️ | TIM3_CH1_FAN0_RL_CTL |
-| PC7 | FF0 | DI | Spätná väzba ventilátora 0 | ⬜️ | TIM3_CH2_FAN0_RL_FB |
+| PC7 | FF0 | DI | Spätná väzba ventilátora 0 | ✔️ | TIM3_CH2_FAN0_RL_FB |
 | PC8 | FC1 | DO | Riadenie ventilátora 1 | ✔️ | TIM3_CH3_FAN1_FL_CTL | 
-| PC9 | FF1 | DI | Spätná väzba ventilátora 1 | ⬜️ | TIM3_CH3_FAN1_FL_FB |
+| PC9 | FF1 | DI | Spätná väzba ventilátora 1 | ✔️ | TIM3_CH3_FAN1_FL_FB |
 | PD12 | FC2 | DO | Riadenie ventilátora 2 | ✔️ | TIM4_CH1_FAN2_RR_CTL |
-| PD13 | FF2 | DI | Spätná väzba ventilátora 2 | ⬜️ | TIM4_CH2_FAN2_RR_FB |
+| PD13 | FF2 | DI | Spätná väzba ventilátora 2 | ✔️ | TIM4_CH2_FAN2_RR_FB |
 | PD14 | FC3 | DO | Riadenie ventilátora 3 | ✔️ | TIM4_CH3_FAN3_BL_CTL |
-| PD15 | FF3 | DI | Spätná väzba ventilátora 3 | ⬜️ | TIM4_CH4_FAN3_BL_FB |
+| PD15 | FF3 | DI | Spätná väzba ventilátora 3 | ✔️ | TIM4_CH4_FAN3_BL_FB |
 | PE5 | FC6 | DO | Riadenie ventilátora 6 | 🔎 | $$ | 
 | PE6 | FF6 | DI | Spätná väzba ventilátora 6 | 🔎 | $$ |
 ## pump

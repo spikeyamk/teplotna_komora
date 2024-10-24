@@ -6,7 +6,8 @@
 
 #include "cmsis_os2.h"
 
-#include "actu/fan/fan.hpp"
+#include "actu/fan/ctl/ctl.hpp"
+#include "actu/fan/fb/fb.hpp"
 #include "actu/bridge/bridge.hpp"
 #include "actu/buzzer/buzzer.hpp"
 #include "actu/lin_source/lin_source.hpp"
@@ -43,12 +44,12 @@ extern "C" void app_main(void* arg) {
 
     Trielo::trielo<example_subdirectory::foo>();
     Trielo::trielo<util::turn_every_annoying_peripheral_off>();
-    
-    float number = -999.00f;
-    Trielo::trielo<panel::sevseg::white::launch_display_task>(number);
+
+    Trielo::trielo<actu::fan::ctl::start_all_min_speed>();
+    Trielo::trielo<actu::fan::fb::init>();
 
     for(uint32_t tick = 0; true; tick++) {
-        //std::printf("app_main: tick: %lu\n", tick);
+        std::printf("app_main: tick: %lu\n", tick);
         panel::led::toggle_all();
         osDelay(5000);
     }

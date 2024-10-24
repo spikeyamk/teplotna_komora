@@ -1,4 +1,4 @@
-#include "actu/fan/fan.hpp"
+#include "actu/fan/ctl/ctl.hpp"
 #include "actu/pump/pump.hpp"
 #include "actu/buzzer/buzzer.hpp"
 #include "actu/bridge/bridge.hpp"
@@ -6,8 +6,8 @@
 
 namespace util {
     void turn_every_annoying_peripheral_off() {
-        actu::fan::init_ctl();
-        actu::fan::stop_all();
+        actu::fan::ctl::init();
+        actu::fan::ctl::stop_all();
 
         actu::pump::stop();
         actu::buzzer::stop();
