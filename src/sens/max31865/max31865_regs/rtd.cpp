@@ -4,7 +4,7 @@ namespace sens {
 namespace max31865 {
     RTD::RTD(const std::array<std::bitset<8>, 2>& serialized) :
         adc_code { serialized },
-        fault { serialized[1][0] == true ? Masks::RTD_LSBs::Fault::Or::FAULT : Masks::RTD_LSBs::Fault::Or::FAULT }
+        fault { (serialized[1][0] == true) ? Masks::RTD_LSBs::Fault::Or::FAULT : Masks::RTD_LSBs::Fault::Or::NOFAULT }
     {}
 
     std::optional<float> RTD::calculate_approx_temp() const {
