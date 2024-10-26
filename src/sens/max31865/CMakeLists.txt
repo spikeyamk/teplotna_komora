@@ -1,0 +1,5 @@
+add_subdirectory(max31865_driver)
+if(ENABLE_TESTS)
+    set(max31865_regs_TEST TRUE)
+endif()
+add_subdirectory(max31865_regs)
