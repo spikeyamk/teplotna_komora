@@ -1,0 +1,2 @@
+- Senzor PT1000
+- Referenčný odpor R<sub>REF</sub> = 402 R

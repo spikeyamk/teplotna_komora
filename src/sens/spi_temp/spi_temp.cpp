@@ -1,18 +1,19 @@
 #include <iostream>
 #include <array>
-#include "sens/spi_temp/spi_temp.hpp"
-#include "stm32f2xx_hal.h"
-#include "spi.h"
-#include "gpio.h"
+#include <bitset>
+#include <expected>
+#include <optional>
+#include <span>
+#include <algorithm>
+#include <string_view>
 
-namespace sens {
-namespace spi_temp {
-    class MAX31865 {
-    public:
-        MAX31865() = default;
-    };
-}
-}
+#include <ubitint.hpp>
+#include "stm32f2xx_hal.h"
+#include "cmsis_os2.h"
+
+#include "sens/spi_temp/spi_temp.hpp"
+#include "gpio.h"
+#include "spi.h"
 
 namespace sens {
 namespace spi_temp {

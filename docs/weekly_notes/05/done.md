@@ -1,0 +1,24 @@
+- nastavený PLL tak aby SYSCLK bol 120 MHz so zdrojom zo 16 MHz HSE
+- USB_UART konečne funguje so SYSCLK 120 MHz predtým bol zle nastavený a UART samovoľne spamoval do USB garbage data
+- úspešná komunikácia s MAX6549
+- uspešné overenie funkčnosti RS232_UART, nastavené presmerovanie stdout do RS232_UART aj do USB_UART
+- na zelenom displeji 2 segmenty na čísliciach 0, 2, 4 pravdepodobne poškodené/vyskratované, zapnutie jedného z pravých zvislých segmentov rozsvieti aj ten druhý pravý zvislý segment
+- DAC_OUT1_CSF stále vyskratovaný s VDD
+- APB2_CLK 2x zmenšený zo 60 MHz na 30 MHz kvôli jednoduchosti nastavenia TIMx pre ventilátory aby sa APB1_CLK rovnalo APB2_CLK
+- TIMx_FANy_zw_CTL a TIMx_FANy_zw_FB piny nakonfigurované, povolené TIMx interrupty, všetky TIMx ovládajúce ventilátory majú nastavený CLK z vnútorného zdroja na 25 kHz PWM výstup, pomocou 24-násobnej deličky
+- všetky ventilátory sa začínajú točiť pri DUTY_CYCLE = 5% pri 25 kHz PWM, generujú na spätnej väzbe pravouhlý signál f ≈ 28 Hz
+- všetky ventilátory pri DUTY_CYCLE = 100% pri 25 kHz PWM, generujú na spätnej väzbe pravouhlý signál f ≈ 307 Hz
+- kábliky ventilátorov nemožno poprehadzovať a použiť niektoré z pinov, ktoré boli buď pôvodne určené na chýbajúce 2 vnútorné ventilátory, pretože tieto vnútorné ventilátory boli pôvodne určené iba na ON/OFF ovládanie pomocou spínača, ktorý ich spína na GND a na ostatných pinoch, alebo na pinoch určených na čítanie spätnej väzby je vstupný RC filter a delič, ktorý znemožňuje ich použitie na ovládanie rýchlosti
+- možnosť vytvárať individuálne testy vo vnútri CMake podadresároch pomocou CMake ExternalProject_Add, ktorý kompiluje jednotlivé testy pomocou rozdielneho toolchainu nezávislého od firmvéru
+- funkcia panel::sevseg::common::float_to_sevmap úspešne otestovaná pomocou CMake ExternalProject_Add
+- úspešná komunikácia s MAX31865, bolo potrebné pridať 10 ms HAL_Delay(10) do inicializačnej funkcie pri pokuse o komunikáciu
+- CMake flash_silent target už nevolá donekonečna periodicky printf, aby zbytočne nespamoval do COM portu pri debugovaní
+- prvotné overenie funkčnosti CMSISV2_FreeRTOS, úspešný producer consumer test s dvoma konkurentnými taskami
+- zapnutý IWDG s timeoutom 8 s a TWDG s timeoutom 1 s
+- FreeRTOS idleTask a jeho idleTaskHook teraz po novom refreshuje IWDG a TWDG na konci behu každého ticku idleTask
+- Timebase Source zmenený zo SysTick na TIM1
+- úspešný test zápisu do a čítania jedného uint32_t z BKSRAM aj po SWRST
+- vo FreeRTOSConfig.h nastavený kooperatívny plánovač, idleTaskHook, taskStackOverFlowHook a pre nich základné implementácie, tasky vytvárané staticky, podpora pre dynamickú alokáciu bola vypnutá
+- TWDG mylne reportuje že nebol do timeoutu zastavený pri každom SWRST a HWRST, pravdepodobne má nesprávne nastavenú prvotnú hodnotu počítadla v TIM6
+- problém s threadsafe wrapper podporou pre newlib vo FreeRTOSConfig.h zapnutá podpora pre NEWLIB_REENTRANT podmienený preklad, automaticky generovaný súbor stm32_lock.h a newlib_glue.c spôsobujú deadlock pravdepodobne niekde ešte krátko po štarte FreeRTOS jadra
+- vytvorený threadsafe wrapper pre definícu __io_putchar na prepísanie __weak __io_putchar, zostáva nedokončený a neotestovaný
