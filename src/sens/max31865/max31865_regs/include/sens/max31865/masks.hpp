@@ -57,7 +57,6 @@ namespace max31865 {
 
                     static constexpr Mask AND { 0b0000'1100 };
                 };
-
             };
 
             struct FaultStatusAutoClear {
@@ -98,10 +97,10 @@ namespace max31865 {
             struct AlwaysActive {
                 enum class Or {
                     NOFAULT                     = 0b0000'0000,
-                    OVERVOLTAGE_OR_UNDERVOLTAGE = 0b0000'0010,
+                    OVERVOLTAGE_OR_UNDERVOLTAGE = 0b0000'0100,
                 };
 
-                static constexpr Mask AND { 0b0000'0010 };
+                static constexpr Mask AND { 0b0000'0100 };
             };
 
             struct MasterInitiated {
