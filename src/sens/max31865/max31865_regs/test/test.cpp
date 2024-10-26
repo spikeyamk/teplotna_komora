@@ -52,11 +52,38 @@ namespace test {
     }
 
     int configuration() {
-        return -1;
+        const Configuration configuration {
+            Masks::Configuration::Vbias::Or::ON,
+            Masks::Configuration::ConversionMode::Or::AUTO,
+            Masks::Configuration::WireMode::Or::TWO_WIRE_OR_FOUR_WIRE,
+            Masks::Configuration::FaultStatusAutoClear::Or::NOCLEAR
+        };
+
+        if(Configuration(configuration.serialize()) != configuration) {
+            return 1;
+        }
+
+        return 0;
     }
 
     int fault_status() {
-        return -1;
+        const std::bitset<8> fault_status_serialized {
+            0b1000'1100
+        };
+
+        const FaultStatus fault_status {
+            Masks::FaultStatus::AlwaysActive::Or::OVERVOLTAGE_OR_UNDERVOLTAGE,
+            Masks::FaultStatus::MasterInitiated::REFIN_MinusIsGreaterThanZeroPointEightFiveTimesVbias::Or::NOFAULT,
+            Masks::FaultStatus::MasterInitiated::REFIN_MinusIsLowerThanZeroPointEightFiveTimesVbiasForceMinusOpen::Or::NOFAULT,
+            Masks::FaultStatus::MasterInitiated::RTDIN_MinusIsLowerThanZeroPointEightFiveTimesVbiasForceMinusOpen::Or::FAULT,
+            Masks::FaultStatus::EveryConversion::Or::RTD_OPEN,
+        };
+
+        if(FaultStatus(fault_status_serialized) != fault_status) {
+            return 1;
+        }
+
+        return 0;
     }
 
     const auto another_number { number - 10 };
