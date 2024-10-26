@@ -59,8 +59,34 @@ namespace test {
         return -1;
     }
 
+    const auto another_number { number - 10 };
+    const std::array<std::bitset<8>, 2> another_number_serialized {{
+        { 0b0010'0110 },
+        { 0b0000'1010 },
+    }};
+
+    const FaultThreshold fault_threshold_value {
+        adc_code_value,
+        { another_number },
+    };
+
+    const std::array<std::bitset<8>, 4> fault_threshold_serialized {
+        number_serialized[0],
+        number_serialized[1],
+        another_number_serialized[0],
+        another_number_serialized[1],
+    };
+
     int fault_threshold() {
-        return -1;
+        if(fault_threshold_value != FaultThreshold(fault_threshold_serialized)) {
+            return 1;
+        }
+
+        if(fault_threshold_value != FaultThreshold(fault_threshold_value.serialize())) {
+            return 2;
+        }
+
+        return 0;
     }
     
     const RTD rtd_nofault { number_serialized };
