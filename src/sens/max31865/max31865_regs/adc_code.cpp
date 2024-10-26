@@ -11,7 +11,7 @@ namespace max31865 {
         value {
             static_cast<uint16_t>(
                 (
-                    (std::bitset<16>(serialized[0].to_ulong()) >> 9)
+                    (std::bitset<16>(serialized[0].to_ulong()) << 7)
                     | (std::bitset<16>((serialized[1] & Masks::RTD_LSBs::Data::AND).to_ulong()) >> 1)
                 ).to_ulong()
             )
