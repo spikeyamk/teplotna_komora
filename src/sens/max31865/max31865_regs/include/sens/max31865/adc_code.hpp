@@ -13,7 +13,7 @@ namespace max31865 {
     public:
         ADC_Code() = default;
 
-        ADC_Code(const uint15_t value) :
+        constexpr ADC_Code(const uint15_t value) :
             value { value }
         {}
 

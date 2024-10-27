@@ -7,6 +7,7 @@ namespace fan {
 namespace ctl {
     HAL_StatusTypeDef init(const common::Fan& fan);
     void set_speed(const common::Fan& fan, const uint8_t speed_0_to_99);
+    uint8_t get_speed(const common::Fan& fan);
 namespace all {
     HAL_StatusTypeDef init();
     /**

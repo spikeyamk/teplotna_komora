@@ -22,4 +22,4 @@ endif()
 
 add_library(${SUBDIRECTORY_NAME} ${SUBDIRECTORY_SOURCES})
 target_include_directories(${SUBDIRECTORY_NAME} PUBLIC "include")
-target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC stm32cubef2 trielo max31865_constants max31865_regs)
+target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC stm32cubef2 trielo max31865_regs)
