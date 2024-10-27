@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include "bksram/bksram.hpp"
 
 namespace util {
     template<typename T>
@@ -16,11 +15,6 @@ namespace util {
         return ret;
     }
 
-    inline void reset(const uint32_t magic) {
-        bksram::write(magic);
-        NVIC_SystemReset();
-    }
-
     void turn_every_annoying_peripheral_off();
 
     inline void microsec_blocking_delay(const uint32_t us) {
@@ -33,4 +27,37 @@ namespace util {
             while((start - SysTick->VAL) < ticks);
         } while (0);
     }
+
+    template <typename T, T First, T... Rest>
+    struct is_unique : std::conditional_t<
+        ((First != Rest) && ...),
+        is_unique<T, Rest...>,
+        std::false_type
+    > {};
+
+    template <typename T, T Last>
+    struct is_unique<T, Last> : std::true_type {};
+
+    template<typename T, T ... Args> requires is_unique<T, Args...>::value
+    class Registry {
+    private:
+        template<T key, T ... Keys>
+        struct contains {};
+
+        template<T key>
+        struct contains<key> : std::false_type {};
+
+        template<T key, T First, T... Rest>
+        struct contains<key, First, Rest...> : std::conditional_t<
+            (key == First),
+            std::true_type,
+            contains<key, Rest...>
+        > {};
+    public:
+        template<T key>
+        static constexpr T get() {
+            static_assert(contains<key, Args...>::value, "key not found");
+            return key;
+        }
+    };
 }

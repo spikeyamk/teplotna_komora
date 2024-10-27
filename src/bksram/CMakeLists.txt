@@ -3,3 +3,7 @@ file(GLOB_RECURSE SUBMODULE_SOURCE_FILES "*.cpp")
 add_library(${SUBMODULE_NAME} ${SUBMODULE_SOURCE_FILES})
 target_include_directories(${SUBMODULE_NAME} PUBLIC "include")
 target_link_libraries(${SUBMODULE_NAME} PUBLIC stm32cubef2)
+target_link_libraries(${SUBMODULE_NAME} PUBLIC
+    util
+    ubitint
+)

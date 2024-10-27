@@ -12,6 +12,7 @@ add_subdirectory("peripheral")
 add_subdirectory("sens")
 add_subdirectory("rtc")
 add_subdirectory("util")
+add_subdirectory("tasks")
 
 # Define the ELF and binary file locations
 set(ELF_FILE "${CMAKE_BINARY_DIR}/src/core/${CMAKE_PROJECT_NAME}.elf")

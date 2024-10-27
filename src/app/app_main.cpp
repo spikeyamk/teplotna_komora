@@ -16,19 +16,15 @@
 #include "panel/encoder/encoder.hpp"
 #include "panel/led/led.hpp"
 #include "util/util.hpp"
-#include "bksram/magic.hpp"
 #include "producer_consumer_test.hpp"
 #include "comm/usb_uart/usb_uart.hpp"
 #include "example_subdirectory/public.hpp"
 #include "util/util.hpp"
 
-void bksram_test() {
-    if(Trielo::trielo<bksram::read>() != bksram::magic) {
-        Trielo::trielo<util::reset>(bksram::magic);
-    } else {
-        Trielo::trielo<bksram::write>(0x00);
-    }
-}
+#include "tasks/panel.hpp"
+#include "tasks/rs232_uart.hpp"
+#include "tasks/senser_killer.hpp"
+#include "tasks/temp_ctl.hpp"
 
 /**
  * @brief App entry point. This function cannot exit.
@@ -47,6 +43,11 @@ extern "C" void app_main(void* arg) {
 
     Trielo::trielo<actu::fan::ctl::all::start_full_speed>();
     Trielo::trielo<actu::fan::fb::all::init>();
+
+    tasks::SenserKiller::get_instance().launch();
+    tasks::Panel::get_instance().launch();
+    tasks::RS232_UART::get_instance().launch();
+    tasks::TempCtl::get_instance().launch();
 
     for(uint32_t tick = 0; true; tick++) {
         panel::led::toggle_all();

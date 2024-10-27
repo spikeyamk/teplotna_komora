@@ -37,6 +37,12 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     sens::i2c_temp_hum
     sens::spi_temp
 
+    tasks::common
+    tasks::panel
+    tasks::rs232_uart
+    tasks::senser_killer
+    tasks::temp_ctl
+
     util
     example_subdirectory
     rtc
