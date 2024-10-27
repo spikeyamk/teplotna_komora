@@ -1,66 +1,73 @@
 #include <nlohmann/json.hpp>
 #include <trielo/trielo.hpp>
-#include <ceserial.h>
 #include "example_subdirectory/public.hpp"
 #include "returns_true.hpp"
 #include "app.hpp"
+#include <ceserial.h>
 
-/// This function calculates the area of a rectangle.
-int run(int width, int height) {
-    (void) width;
-    (void) height;
-    Trielo::trielo<example_subdirectory::foo>();
-    Trielo::trielo<returns_true>();
-    const nlohmann::json object {
-        { "pi", 3.141 },
-        { "happy", true },
-        { "name", "Niels" },
-        { "nothing", nullptr },
-        { "answer",
-            {
-                {"everything", 42}
-            }
-        },
-        { "list", {1, 0, 2} },
-        { "object",
-            {
-                {"currency", "USD"},
-                {"value", 42.99}
-            }
-        }
-    };
-    std::cout << std::setw(4) << object << std::endl;
+extern ceSerial com;
 
+bool write_to_serial(const std::string& data) {
+	std::printf("Sending %s ...\n", com.GetPort().c_str());
 
-#ifdef CE_WINDOWS
-	ceSerial com("\\\\.\\COM4",9600,8,'N',1); // Windows
-#else
-	ceSerial com("/dev/ttyS0",9600,8,'N',1); // Linux
-#endif
+	bool dataSent = com.Write(data.c_str());
 
-	std::printf("Opening port %s.\n",com.GetPort().c_str());
-	if (com.Open() == 0) {
-		std::printf("OK.\n");
+	if (dataSent) {
+		std::printf("Data %s sent succesfully!\n", data.c_str());
 	}
 	else {
-		std::printf("Error.\n");
+		std::printf("Error sending data %s!\n", data.c_str());
+	}
+
+	return dataSent;
+}
+
+bool write_char_to_serial(const char c) {
+	std::printf("Sending %c ...\n", c);
+
+	bool dataSent = com.WriteChar(c);
+
+	if (dataSent) {
+		std::printf("Data %c sent succesfully!\n", c);
+	}
+	else {
+		std::printf("Error sending data %c!\n", c);
+	}
+
+	return dataSent;
+}
+
+bool close_serial() {
+	std::printf("Closing port %s...\n",com.GetPort().c_str());
+	com.Close();
+	std::printf("Port %s closed succesfully!\n",com.GetPort().c_str());
+
+	return true;
+}
+
+int run() {
+	std::printf("Opening port %s.\n", com.GetPort().c_str());
+
+	if (com.Open() == 0) {
+		std::printf("Listening on port %s.\n", com.GetPort().c_str());
+	}
+	else {
+		std::printf("Error opening port %s.\n", com.GetPort().c_str());
 		return 1;
 	}
 
-	bool successFlag;
-	std::printf("Writing.\n");
-	char s[]="Hello";
-	successFlag=com.Write(s); // write string
-	successFlag=com.WriteChar('!'); // write a character
+	bool successFlag = false;
 
-	std::printf("Waiting 3 seconds.\n");
-	ceSerial::Delay(3000); // delay to wait for a character
+	while(1) {
+		char c = com.ReadChar(successFlag); // read a char
+		if (successFlag) {
+			std::printf("%c\n", c);
+		} else {
+			std::printf("Error reading char!\n");
+			close_serial();
+			break;
+		}
+	}
 
-	std::printf("Reading.\n");
-	char c=com.ReadChar(successFlag); // read a char
-	if(successFlag) std::printf("Rx: %c\n",c);
-
-	std::printf("Closing port %s.\n",com.GetPort().c_str());
-	com.Close();
     return 0;
 }
