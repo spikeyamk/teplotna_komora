@@ -2,6 +2,19 @@
 
 namespace sens {
 namespace max31865 {
+    HAL_StatusTypeDef Extension::dump() {
+        const auto ret_read_all { transceiver.read_all() };
+        if(ret_read_all.has_value() == false) {
+            return ret_read_all.error(); 
+        }
+
+        for(size_t i = 0; i < ret_read_all.value().size(); i++) {
+            std::printf("sens::max31865::dump: this: %p, ret_read_all.value()[%zu]: 0x%02lX\n", reinterpret_cast<void*>(this), i, ret_read_all.value()[i].to_ulong());
+        }
+
+        return HAL_OK;
+    }
+
     HAL_StatusTypeDef Extension::configure(const Configuration& configuration, const FaultThreshold& fault_threshold) const {
         HAL_StatusTypeDef err_ret { transceiver.write(RegAddrs::RW::CONFIGURATION, configuration.serialize()) };
         if(err_ret != HAL_OK) {

@@ -31,4 +31,5 @@ target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE
     bksram
     sens::max31865_regs
     sens::max31865_driver
+    panel::green_yellow
 )
