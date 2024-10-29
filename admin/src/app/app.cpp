@@ -8,6 +8,20 @@
 
 extern ceSerial com;
 
+int initialize_serial() {
+	std::printf("Opening port %s.\n", com.GetPort().c_str());
+
+	if (com.Open() == 0) {
+		std::printf("Listening on port %s.\n", com.GetPort().c_str());
+	}
+	else {
+		std::printf("Error opening port %s.\n", com.GetPort().c_str());
+		return 1;
+	}
+
+	return 0;
+}
+
 bool write_to_serial(const std::string& data) {
 	std::printf("\n\nSending: %s", data.c_str());
 
@@ -77,13 +91,7 @@ void rceive_word_from_serial(uint8_t size) {
 }
 
 int run() {
-	std::printf("Opening port %s.\n", com.GetPort().c_str());
-
-	if (com.Open() == 0) {
-		std::printf("Listening on port %s.\n", com.GetPort().c_str());
-	}
-	else {
-		std::printf("Error opening port %s.\n", com.GetPort().c_str());
+	if(initialize_serial()) {
 		return 1;
 	}
 
