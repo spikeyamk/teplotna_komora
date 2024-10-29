@@ -42,8 +42,8 @@ extern "C" void app_main(void* arg) {
     Trielo::trielo<example_subdirectory::foo>();
     Trielo::trielo<util::turn_every_annoying_peripheral_off>();
 
-    tasks::SenserKiller::get_instance().launch();
-    //tasks::Panel::get_instance().launch();
+    //tasks::SenserKiller::get_instance().launch();
+    tasks::Panel::get_instance().launch();
     //tasks::RS232_UART::get_instance().launch();
     //tasks::TempCtl::get_instance().launch();
 
