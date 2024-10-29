@@ -6,7 +6,7 @@
 #include "tasks/prototype.hpp"
 
 namespace tasks {
-    class SenserKiller : public Prototype<SenserKiller, 4092, "senser_killer"> {
+    class SenserKiller : public Prototype<SenserKiller, 4096, "senser_killer"> {
     private:
         float temp_front { 0.0f };
         float temp_rear { 0.0f };

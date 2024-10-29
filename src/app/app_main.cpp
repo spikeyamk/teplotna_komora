@@ -20,6 +20,7 @@
 #include "comm/usb_uart/usb_uart.hpp"
 #include "example_subdirectory/public.hpp"
 #include "util/util.hpp"
+#include "panel/sevseg/green_yellow/green_yellow.hpp"
 
 #include "tasks/panel.hpp"
 #include "tasks/rs232_uart.hpp"
@@ -41,12 +42,14 @@ extern "C" void app_main(void* arg) {
     Trielo::trielo<example_subdirectory::foo>();
     Trielo::trielo<util::turn_every_annoying_peripheral_off>();
 
-    //float counter = -999.0f;
-    float counter = 0.0f;
-    panel::sevseg::white::launch_display_task(counter);
+    tasks::SenserKiller::get_instance().launch();
+    //tasks::Panel::get_instance().launch();
+    //tasks::RS232_UART::get_instance().launch();
+    //tasks::TempCtl::get_instance().launch();
 
     for(uint32_t tick = 0; true; tick++) {
         panel::led::toggle_all();
+        std::printf("app_main: tick: %lu\n", tick);
         osDelay(5'000);
     }
 
