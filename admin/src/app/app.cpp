@@ -4,34 +4,35 @@
 #include "returns_true.hpp"
 #include "app.hpp"
 #include <ceserial.h>
+#include <random>
 
 extern ceSerial com;
 
 bool write_to_serial(const std::string& data) {
-	std::printf("Sending %s ...\n", com.GetPort().c_str());
+	std::printf("\n\nSending: %s", data.c_str());
 
 	bool dataSent = com.Write(data.c_str());
 
 	if (dataSent) {
-		std::printf("Data %s sent succesfully!\n", data.c_str());
+		std::printf("Succesfully sent: %s", data.c_str());
 	}
 	else {
-		std::printf("Error sending data %s!\n", data.c_str());
+		std::printf("Failed sending: %s", data.c_str());
 	}
 
 	return dataSent;
 }
 
 bool write_char_to_serial(const char c) {
-	std::printf("Sending %c ...\n", c);
+	std::printf("\nSending %c ...", c);
 
 	bool dataSent = com.WriteChar(c);
 
 	if (dataSent) {
-		std::printf("Data %c sent succesfully!\n", c);
+		std::printf("Succesfully sent: %c \n", c);
 	}
 	else {
-		std::printf("Error sending data %c!\n", c);
+		std::printf("Failed sending: %c!\n", c);
 	}
 
 	return dataSent;
@@ -45,6 +46,36 @@ bool close_serial() {
 	return true;
 }
 
+std::string getRandomWord(int length = 6) {
+    const std::string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dist(0, chars.size() - 1);
+
+    std::string word;
+    for (int i = 0; i < length; ++i) {
+        word += chars[dist(gen)];
+    }
+    word += '\n';  // Adding \n at the end of the word
+    return word;
+}
+
+void rceive_word_from_serial(uint8_t size) {
+	printf("Received: ");
+
+	for(uint8_t i = 0; i < size; i++) {
+		bool successFlag = false;
+		com.Delay(100);
+		char c = com.ReadChar(successFlag); // read a char
+
+		if(!successFlag || c == '\n') {
+			return;
+		}else {
+			std::printf("%c", c);
+		}
+	}
+}
+
 int run() {
 	std::printf("Opening port %s.\n", com.GetPort().c_str());
 
@@ -56,18 +87,12 @@ int run() {
 		return 1;
 	}
 
-	bool successFlag = false;
-
 	while(1) {
-		char c = com.ReadChar(successFlag); // read a char
-		if (successFlag) {
-			std::printf("%c\n", c);
-		} else {
-			std::printf("Error reading char!\n");
-			close_serial();
-			break;
-		}
+		std::string word = getRandomWord();
+		write_to_serial(getRandomWord());
+		com.Delay(3000);
+		rceive_word_from_serial(word.size());
 	}
 
-    return 0;
+	return 0;
 }
