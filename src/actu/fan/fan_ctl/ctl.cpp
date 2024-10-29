@@ -14,6 +14,10 @@ namespace ctl {
     void set_speed(const common::Fan& fan, const uint8_t speed_0_to_99) {
         __HAL_TIM_SET_COMPARE(fan.htim, fan.ctl_channel.mask_for_init, speed_0_to_99);
     }
+    
+    uint8_t get_speed(const common::Fan& fan) {
+        return static_cast<uint8_t>(__HAL_TIM_GET_COMPARE(fan.htim, fan.ctl_channel.mask_for_init));
+    }
 namespace all {
     HAL_StatusTypeDef init() {
         for(const auto& e: common::fans) {

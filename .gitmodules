@@ -4,30 +4,12 @@
 [submodule "docs/max6954/MAX6954"]
 	path = docs/max6954/MAX6954
 	url = https://github.com/Sebski123/MAX6954
-[submodule "docs/max6954/max6954-rs"]
-	path = docs/max6954/max6954-rs
-	url = https://github.com/embediver/max6954-rs
 [submodule "docs/max31865/Adafruit_MAX31865"]
 	path = docs/max31865/Adafruit_MAX31865
 	url = https://github.com/adafruit/Adafruit_MAX31865.git
-[submodule "docs/max31865/nimaltd_max31865"]
-	path = docs/max31865/nimaltd_max31865
-	url = https://github.com/nimaltd/max31865
-[submodule "docs/max31865/arduino-max31865"]
-	path = docs/max31865/arduino-max31865
-	url = https://github.com/olewolf/arduino-max31865
-[submodule "docs/max31865/Adafruit-MAX31865-PCB"]
-	path = docs/max31865/Adafruit-MAX31865-PCB
-	url = https://github.com/adafruit/Adafruit-MAX31865-PCB
 [submodule "docs/max31865/libdriver_max31865"]
 	path = docs/max31865/libdriver_max31865
 	url = https://github.com/libdriver/max31865.git
-[submodule "docs/max31865/ESP32-MAX31865"]
-	path = docs/max31865/ESP32-MAX31865
-	url = https://github.com/jamieparkinson/ESP32-MAX31865
-[submodule "docs/max31865/MAX31865-Stm32HAL"]
-	path = docs/max31865/MAX31865-Stm32HAL
-	url = https://github.com/4ilo/MAX31865-Stm32HAL
 [submodule "docs/max31865/STM32F334_MAX31865"]
 	path = docs/max31865/STM32F334_MAX31865
 	url = https://github.com/Vishi100/STM32F334_MAX31865
