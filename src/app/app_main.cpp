@@ -48,6 +48,8 @@ extern "C" void app_main(void* arg) {
     Trielo::trielo<actu::fan::ctl::all::start_full_speed>();
     Trielo::trielo<actu::fan::fb::all::init>();
 
+    panel::sevseg::white::launch_display_task(counter);
+
     for(uint32_t tick = 0; true; tick++) {
         panel::led::toggle_all();
         std::printf("app_main: tick: %lu\n", tick);
@@ -58,6 +60,7 @@ extern "C" void app_main(void* arg) {
                 actu::fan::fb::fbs[i].get().consume_rpm().value_or(static_cast<float>(0xFFFF'FFFF))
             );
         }
+        
         osDelay(5'000);
     }
 
