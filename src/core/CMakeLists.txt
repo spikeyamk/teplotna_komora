@@ -9,4 +9,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     util
     comm::io_putchar_override
     actu::fan_tim_cb_overrides
+    gpio_exti_callback_override
 )
