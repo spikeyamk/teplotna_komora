@@ -1,5 +1,6 @@
 #include <iostream>
 #include <array>
+#include "cmsis_os2.h"
 #include "main.h"
 #include "spi.h"
 #include "panel/sevseg/common/common.hpp"
@@ -67,15 +68,15 @@ namespace green_yellow {
 
     void MAX6549::clear_all() {
         for(uint8_t i = 0x20; i <= 0x2F; i++) {
-            write_log(i, 0x00);
+            write(i, 0x00);
         }
 
         for(uint8_t i = 0x40; i <= 0x4F; i++) {
-            write_log(i, 0x00);
+            write(i, 0x00);
         }
         
         for(uint8_t i = 0x60; i <= 0x6F; i++) {
-            write_log(i, 0x00);
+            write(i, 0x00);
         }
     }
 
@@ -84,7 +85,7 @@ namespace green_yellow {
             for(uint8_t segment_address = 0x20; segment_address <= 0x2F; segment_address++) {
                 write_log(segment_address, static_cast<uint8_t>(map.to_ulong()));
             }
-            HAL_Delay(5'000);
+            osDelay(5'000);
         }
     }
 
@@ -93,7 +94,7 @@ namespace green_yellow {
             for(uint8_t segment_address = 0x20; segment_address <= 0x2F; segment_address++) {
                 write_log(segment_address, static_cast<uint8_t>(map.to_ulong()));
             }
-            HAL_Delay(5'000);
+            osDelay(5'000);
         }
     }
 
@@ -101,7 +102,7 @@ namespace green_yellow {
         for(const auto digit_address: digit_address_map) {
             for(const auto segment: common::single_segment_map) {
                 write_log(digit_address, static_cast<uint8_t>(segment.to_ulong()));
-                HAL_Delay(250);
+                osDelay(250);
             }
         }
     }
@@ -111,11 +112,11 @@ namespace green_yellow {
     }
 
     void MAX6549::normal_operation_disable_blink_global_intensity_clear_all() {
-        write_log(CONFIGURATION, 0b0010'0001);
+        write(CONFIGURATION, 0b0010'0001);
     }
 
     void MAX6549::turn_off_decode_mode() {
-        write_log(DECODE_MODE, 0b0000'0000);
+        write(DECODE_MODE, 0b0000'0000);
     }
 
     void MAX6549::set_max_scan_limit() {
@@ -123,11 +124,11 @@ namespace green_yellow {
     }
 
     void MAX6549::set_digit_7_to_0_to_7seg_or_16seg_type() {
-        write_log(DIGIT_TYPE, 0b0000'0000);
+        write(DIGIT_TYPE, 0b0000'0000);
     }
     
     void MAX6549::shutdown() {
-        write_log(CONFIGURATION, 0b0000'0000);
+        write(CONFIGURATION, 0b0000'0000);
     }
 
     void MAX6549::show(const float value, const decltype(green_address_map)& address_map) {
@@ -156,7 +157,7 @@ namespace green_yellow {
             max6549.test_single_segment();
             max6549.test_hex();
             max6549.test_single_segment_single_digit();
-            HAL_Delay(1000);
+            osDelay(1000);
         }
     }
 }

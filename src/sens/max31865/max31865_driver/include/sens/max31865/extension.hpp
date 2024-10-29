@@ -16,6 +16,7 @@ namespace max31865 {
             transceiver { transceiver }
         {}
     public:
+        HAL_StatusTypeDef dump();
         HAL_StatusTypeDef configure(const Configuration& configuration, const FaultThreshold& fault_threshold) const;
         HAL_StatusTypeDef configure_clear() const;
         std::expected<bool, HAL_StatusTypeDef> is_configured_against(const Configuration& configuration, const FaultThreshold& fault_threshold) const;

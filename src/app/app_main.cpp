@@ -20,6 +20,7 @@
 #include "comm/usb_uart/usb_uart.hpp"
 #include "example_subdirectory/public.hpp"
 #include "util/util.hpp"
+#include "panel/sevseg/green_yellow/green_yellow.hpp"
 
 #include "tasks/panel.hpp"
 #include "tasks/rs232_uart.hpp"
@@ -41,24 +42,14 @@ extern "C" void app_main(void* arg) {
     Trielo::trielo<example_subdirectory::foo>();
     Trielo::trielo<util::turn_every_annoying_peripheral_off>();
 
-    Trielo::trielo<actu::fan::ctl::all::start_full_speed>();
-    Trielo::trielo<actu::fan::fb::all::init>();
-
     tasks::SenserKiller::get_instance().launch();
-    tasks::Panel::get_instance().launch();
-    tasks::RS232_UART::get_instance().launch();
-    tasks::TempCtl::get_instance().launch();
+    //tasks::Panel::get_instance().launch();
+    //tasks::RS232_UART::get_instance().launch();
+    //tasks::TempCtl::get_instance().launch();
 
     for(uint32_t tick = 0; true; tick++) {
         panel::led::toggle_all();
         std::printf("app_main: tick: %lu\n", tick);
-        for(size_t i = 0; i < actu::fan::fb::fbs.size(); i++) {
-            std::printf(
-                "app_main: actu::fan::fb::fbs[%zu].get().consume_rpm().value_or(static_cast<float>(0xFFFF'FFFF)): %f\n",
-                i,
-                actu::fan::fb::fbs[i].get().consume_rpm().value_or(static_cast<float>(0xFFFF'FFFF))
-            );
-        }
         osDelay(5'000);
     }
 
