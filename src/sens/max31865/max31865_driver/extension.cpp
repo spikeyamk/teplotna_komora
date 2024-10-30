@@ -2,88 +2,119 @@
 
 namespace sens {
 namespace max31865 {
-    HAL_StatusTypeDef Extension::dump() {
-        const auto ret_read_all { transceiver.read_all() };
-        if(ret_read_all.has_value() == false) {
-            return ret_read_all.error(); 
+    HAL_StatusTypeDef Extension::configure(const Configuration& configuration) const {
+        const auto configuration_register_before { transceiver.read(RegAddrs::RO::CONFIGURATION) };
+
+        if(configuration_register_before.has_value() == false) {
+            return configuration_register_before.error();
         }
 
-        for(size_t i = 0; i < ret_read_all.value().size(); i++) {
-            std::printf("sens::max31865::dump: this: %p, ret_read_all.value()[%zu]: 0x%02lX\n", reinterpret_cast<void*>(this), i, ret_read_all.value()[i].to_ulong());
-        }
+        const auto configuration_register_to_write {
+            (configuration_register_before.value() & (~Masks::Configuration::AND)) | configuration.serialize()
+        };
 
-        return HAL_OK;
+        return transceiver.write(RegAddrs::RW::CONFIGURATION, configuration_register_to_write);
     }
 
-    HAL_StatusTypeDef Extension::configure(const Configuration& configuration, const FaultThreshold& fault_threshold) const {
-        HAL_StatusTypeDef err_ret { transceiver.write(RegAddrs::RW::CONFIGURATION, configuration.serialize()) };
+    HAL_StatusTypeDef Extension::set_fault_threshold(const FaultThreshold& fault_threshold) const {
+        const auto fault_threshold_serialized { fault_threshold.serialize() };
+
+        HAL_StatusTypeDef err_ret = transceiver.write(RegAddrs::RW::HIGH_FAULT_THRESHOLD_MSBS, fault_threshold_serialized[0]);
         if(err_ret != HAL_OK) {
             return err_ret;
         }
 
-        for(const auto& e: fault_threshold.serialize()) {
-            err_ret = transceiver.write(RegAddrs::RW::HIGH_FAULT_THRESHOLD_MSBS, e);
-            if(err_ret != HAL_OK) {
-                return err_ret;
-            }
+        err_ret = transceiver.write(RegAddrs::RW::HIGH_FAULT_THRESHOLD_LSBS, fault_threshold_serialized[1]);
+        if(err_ret != HAL_OK) {
+            return err_ret;
         }
 
-        return err_ret;
+        err_ret = transceiver.write(RegAddrs::RW::LOW_FAULT_THRESHOLD_MSBS, fault_threshold_serialized[2]);
+        if(err_ret != HAL_OK) {
+            return err_ret;
+        }
+
+        return transceiver.write(RegAddrs::RW::LOW_FAULT_THRESHOLD_LSBS, fault_threshold_serialized[3]);
     }
 
-    HAL_StatusTypeDef Extension::configure_clear() const {
-        const Configuration clear_configuration {
-            Masks::Configuration::Vbias::Or::OFF,
-            Masks::Configuration::ConversionMode::Or::OFF,
-            Masks::Configuration::WireMode::Or::TWO_WIRE_OR_FOUR_WIRE,
-            Masks::Configuration::FaultStatusAutoClear::Or::CLEAR
+    std::expected<FaultThreshold, HAL_StatusTypeDef> Extension::read_fault_threshold() const {
+        const auto ret_high_fault_threshold_msbs {
+            transceiver.read(RegAddrs::RO::HIGH_FAULT_THRESHOLD_MSBS)
         };
-
-        return configure(clear_configuration, FaultThreshold());
-    }
-
-
-    std::expected<bool, HAL_StatusTypeDef> Extension::is_clear_configured() const {
-        return is_configured_against(Configuration(), FaultThreshold());
-    }
-
-    HAL_StatusTypeDef Extension::write_configuration(const Configuration& configuration) const {
-        return transceiver.write(RegAddrs::RW::CONFIGURATION, configuration.serialize());
-    }
-
-    std::expected<Configuration, HAL_StatusTypeDef> Extension::read_configuration() const {
-        const auto read { transceiver.read(RegAddrs::RO::CONFIGURATION) };
-        if(read.has_value() == false) {
-            return std::unexpected(read.error());
+        if(ret_high_fault_threshold_msbs.has_value() == false) {
+            return std::unexpected(ret_high_fault_threshold_msbs.error());
         }
 
-        return read.value();
-    }
-
-    HAL_StatusTypeDef Extension::configure_notch_filter_frequency(const Masks::Configuration::FilterSelect::Or filter_select) const {
-        const auto configuration_before { read_configuration() };
-        if(configuration_before.has_value() == false) {
-            return configuration_before.error();
+        const auto ret_high_fault_threshold_lsbs {
+            transceiver.read(RegAddrs::RO::HIGH_FAULT_THRESHOLD_LSBS)
+        };
+        if(ret_high_fault_threshold_lsbs.has_value() == false) {
+            return std::unexpected(ret_high_fault_threshold_lsbs.error());
         }
 
-        if(configuration_before.value().conversion_mode == Masks::Configuration::ConversionMode::Or::AUTO) {
-            const Configuration configuration_before_without_auto_conversion_mode {
-                [&]() {
-                    auto ret { configuration_before.value() };
-                    ret.conversion_mode = Masks::Configuration::ConversionMode::Or::OFF;
-                    return ret;
-                }()
+        const auto ret_low_fault_threshold_msbs {
+            transceiver.read(RegAddrs::RO::LOW_FAULT_THRESHOLD_MSBS)
+        };
+        if(ret_low_fault_threshold_msbs.has_value() == false) {
+            return std::unexpected(ret_low_fault_threshold_msbs.error());
+        }
+
+        const auto ret_low_fault_threshold_lsbs {
+            transceiver.read(RegAddrs::RO::LOW_FAULT_THRESHOLD_LSBS)
+        };
+        if(ret_low_fault_threshold_lsbs.has_value() == false) {
+            return std::unexpected(ret_low_fault_threshold_lsbs.error());
+        }
+
+        return FaultThreshold {{
+            {
+                ret_high_fault_threshold_msbs.value(),
+                ret_high_fault_threshold_lsbs.value(),
+                ret_low_fault_threshold_msbs.value(),
+                ret_low_fault_threshold_lsbs.value(),
+            }
+        }};
+    }
+
+    HAL_StatusTypeDef Extension::set_filter_select(const Masks::FilterSelect::Or filter_select) const {
+        const auto configuration_reg_before { transceiver.read(RegAddrs::RO::CONFIGURATION) };
+        if(configuration_reg_before.has_value() == false) {
+            return configuration_reg_before.error();
+        }
+
+        if(Configuration(configuration_reg_before.value()).conversion_mode == Masks::Configuration::ConversionMode::Or::AUTO) {
+            const auto configuration_reg_before_without_auto_conversion_mode {
+                (configuration_reg_before.value() & (~Masks::Configuration::ConversionMode::AND))
+                | std::bitset<8>(static_cast<uint8_t>(filter_select))
             };
-
-            const auto ret { configure_notch_filter_frequency_unsafe(filter_select, configuration_before_without_auto_conversion_mode) };
+            
+            const auto ret { transceiver.write(RegAddrs::RW::CONFIGURATION, configuration_reg_before_without_auto_conversion_mode) };
             if(ret != HAL_OK) {
                 return ret;
             }
 
-            return write_configuration(configuration_before.value());
+            const auto configuration_reg_to_write {
+                (configuration_reg_before.value() & (~Masks::FilterSelect::AND))
+                | std::bitset<8>(static_cast<uint8_t>(filter_select))
+            };
+
+            return transceiver.write(RegAddrs::RW::CONFIGURATION, configuration_reg_to_write);
         }
 
-        return configure_notch_filter_frequency_unsafe(filter_select, configuration_before.value());
+        const auto configuration_reg_to_write {
+            (configuration_reg_before.value() & (~Masks::FilterSelect::AND))
+            | std::bitset<8>(static_cast<uint8_t>(filter_select))
+        };
+        return transceiver.write(RegAddrs::RW::CONFIGURATION, configuration_reg_to_write);
+    }
+
+    std::expected<Masks::FilterSelect::Or, HAL_StatusTypeDef> Extension::read_filter_select() const {
+        const auto ret { transceiver.read(RegAddrs::RO::CONFIGURATION) };
+        if(ret.has_value() == false) {
+            return std::unexpected(ret.error());
+        }
+        
+        return Masks::FilterSelect::Or(static_cast<uint8_t>((ret.value() & Masks::FilterSelect::AND).to_ulong()));
     }
 
     std::expected<RTD, HAL_StatusTypeDef> Extension::read_rtd() const {
@@ -100,38 +131,45 @@ namespace max31865 {
         return RTD { std::array<std::bitset<8>, 2> { ret_rtd_msbs.value(), ret_rtd_lsbs.value() } };
     }
 
-    HAL_StatusTypeDef Extension::configure_notch_filter_frequency_unsafe(const Masks::Configuration::FilterSelect::Or filter_select, Configuration configuration_before) const { 
-        configuration_before.filter_select = filter_select;
-        return transceiver.write(RegAddrs::RW::CONFIGURATION, configuration_before.serialize());
-    }
-
-    HAL_StatusTypeDef Extension::configure_auto_fault_detection() const {
-        const auto configuration_before { read_configuration() };
-        if(configuration_before.has_value() == false) {
-            return configuration_before.error();
+    std::expected<FaultStatus, HAL_StatusTypeDef> Extension::run_auto_fault_detection() const {
+        const auto configuration_reg_before { transceiver.read(RegAddrs::RO::CONFIGURATION) };
+        if(configuration_reg_before.has_value() == false) {
+            return std::unexpected(configuration_reg_before.error());
         }
 
-        const Configuration run_auto_fault_configuration {
-            [&]() {
-                Configuration ret {
-                    Masks::Configuration::Vbias::Or::ON,
-                    Masks::Configuration::ConversionMode::Or::OFF,
-                    configuration_before.value().wire_mode,
-                    Masks::Configuration::FaultStatusAutoClear::Or::NOCLEAR,
-                };
-                ret.fault_detection_write_action = Masks::Configuration::FaultDetection::WriteAction::Or::FAULT_DETECTION_WITH_AUTOMATIC_DELAY;
-
-                return ret;
-            }()
+        const auto configuration_reg_before_with_auto_fault_detection {
+            (configuration_reg_before.value() & (~Masks::FaultDetection::WriteAction::AND))
+            | std::bitset<8>(static_cast<uint8_t>(Masks::FaultDetection::WriteAction::Or::FAULT_DETECTION_WITH_AUTOMATIC_DELAY))
         };
 
-        const auto ret_write { write_configuration(run_auto_fault_configuration) };
+        const auto ret_write { transceiver.write(RegAddrs::RW::CONFIGURATION, configuration_reg_before_with_auto_fault_detection) };
         if(ret_write != HAL_OK) {
-            return ret_write;
+            return std::unexpected(ret_write);
         }
 
         HAL_Delay(10);
-        return write_configuration(configuration_before.value());
+
+        const auto read_configuration_reg_after_auto_fault_detection_run { transceiver.read(RegAddrs::RO::CONFIGURATION) };
+        if(read_configuration_reg_after_auto_fault_detection_run.has_value() == false) {
+            return std::unexpected(read_configuration_reg_after_auto_fault_detection_run.error());
+        }
+
+        if(
+            (
+                read_configuration_reg_after_auto_fault_detection_run.value()
+                & Masks::FaultDetection::ReadMeaning::AND
+            )
+            == std::bitset<8>(static_cast<uint8_t>(Masks::FaultDetection::ReadMeaning::Or::FAULT_DETECTION_FINISHED))
+        ) {
+            return std::unexpected(HAL_ERROR);
+        }
+
+        const auto read_fault_status { transceiver.read(RegAddrs::RO::FAULT_STATUS) };
+        if(read_fault_status.has_value() == false) {
+            return std::unexpected(read_fault_status.error());
+        }
+
+        return FaultStatus(read_fault_status.value());
     }
 
     std::expected<FaultStatus, HAL_StatusTypeDef> Extension::read_fault_status() const {
@@ -143,28 +181,27 @@ namespace max31865 {
         return FaultStatus { ret.value() };
     }
 
-    std::expected<bool, HAL_StatusTypeDef> Extension::is_configured_against(const Configuration& configuration, const FaultThreshold& fault_threshold) const {
-        const auto ret_read_all { transceiver.read_all() };
-        if(ret_read_all.has_value() == false) {
-            return std::unexpected(ret_read_all.error());
+    std::expected<Configuration, HAL_StatusTypeDef> Extension::read_configuration() const {
+        const auto read_configuration_reg { transceiver.read(RegAddrs::RO::CONFIGURATION) };
+        if(read_configuration_reg.has_value() == false) {
+            return std::unexpected(read_configuration_reg.error());
         }
 
-        if(Configuration(ret_read_all.value()[static_cast<size_t>(RegAddrs::RO::CONFIGURATION)]) != configuration) {
-            return false;
+        return Configuration { read_configuration_reg.value() };
+    }
+
+    HAL_StatusTypeDef Extension::clear_fault_status() const {
+        const auto read_configuration_reg { transceiver.read(RegAddrs::RO::CONFIGURATION) };
+        if(read_configuration_reg.has_value() == false) {
+            return read_configuration_reg.error();
         }
 
-        const std::array<std::bitset<8>, 4> ret_fault_threshold_serialized {
-            ret_read_all.value()[static_cast<size_t>(RegAddrs::RO::HIGH_FAULT_THRESHOLD_MSBS)],
-            ret_read_all.value()[static_cast<size_t>(RegAddrs::RO::HIGH_FAULT_THRESHOLD_LSBS)],
-            ret_read_all.value()[static_cast<size_t>(RegAddrs::RO::LOW_FAULT_THRESHOLD_MSBS)],
-            ret_read_all.value()[static_cast<size_t>(RegAddrs::RO::LOW_FAULT_THRESHOLD_LSBS)],
+        const auto configuration_reg_to_write {
+            read_configuration_reg.value()
+            | std::bitset<8>(static_cast<uint8_t>(Masks::FaultStatusAutoClear::Or::CLEAR))
         };
 
-        if(FaultThreshold(ret_fault_threshold_serialized) != fault_threshold) {
-            return false;
-        }
-
-        return true;
+        return transceiver.write(RegAddrs::RW::CONFIGURATION, configuration_reg_to_write);
     }
 }
 }

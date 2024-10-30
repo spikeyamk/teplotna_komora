@@ -4,7 +4,6 @@
 #include "actu/fan/fb/fb.hpp"
 #include "spi.h"
 #include "main.h"
-#include "sens/max31865/max31865.hpp"
 #include "panel/sevseg/green_yellow/green_yellow.hpp"
 #include "tasks/senser_killer.hpp"
 
@@ -14,81 +13,84 @@ namespace tasks {
         return instance;
     }
 
-    using namespace sens;
-    static const max31865::FaultThreshold fault_threshold {
-        max31865::ADC_Code { max31865::RTD(40.0f).adc_code },
-        max31865::ADC_Code { max31865::RTD(-20.0f).adc_code }
-    };
+    void SenserKiller::init() {
+        Trielo::trielo<actu::fan::ctl::all::start_min_speed>();
+        Trielo::trielo<actu::fan::fb::all::init>();
 
-    static const max31865::Configuration configuration {
-        max31865::Masks::Configuration::Vbias::Or::ON,
-        max31865::Masks::Configuration::ConversionMode::Or::AUTO,
-        max31865::Masks::Configuration::WireMode::Or::TWO_WIRE_OR_FOUR_WIRE,
-        max31865::Masks::Configuration::FaultStatusAutoClear::Or::NOCLEAR
-    };
-
-    max31865::Transceiver transceiver_front { &hspi3, SPI3_TEMP_NSS0_GPIO_Port, SPI3_TEMP_NSS0_Pin };
-    max31865::Transceiver transceiver_rear { &hspi3, SPI3_TEMP_NSS1_GPIO_Port, SPI3_TEMP_NSS1_Pin };
-    max31865::Extension extension_front { transceiver_front };
-    max31865::Extension extension_rear { transceiver_rear };
-
-    static void init() {
         if(transceiver_front.init() != HAL_OK) {
             bksram::write_reset<0xE'50'01>();
         } else if(transceiver_rear.init() != HAL_OK) {
             bksram::write_reset<0xE'50'02>();
         }
 
-        if(extension_front.configure_clear() != HAL_OK) {
+        if(extension_front.configure(sens::max31865::Configuration()) != HAL_OK) {
             bksram::write_reset<0xE'50'03>();
-        } else if(extension_rear.configure_clear() != HAL_OK) {
+        } else if(extension_rear.configure(sens::max31865::Configuration()) != HAL_OK) {
             bksram::write_reset<0xE'50'04>();
         }
 
-        if(extension_front.is_clear_configured().value_or(false) == false) {
+        const auto ret_read_configuration_extension_front { extension_front.read_configuration() };
+        if(
+            (ret_read_configuration_extension_front.has_value() == false)
+            && (ret_read_configuration_extension_front.value() != sens::max31865::Configuration())
+        ) {
             bksram::write_reset<0xE'50'05>();
-        } else if(extension_rear.is_clear_configured().value_or(false) == false) {
+        }
+
+        const auto ret_read_configuration_extension_rear { extension_rear.read_configuration() };
+        if(
+            (ret_read_configuration_extension_rear.has_value() == false)
+            && (ret_read_configuration_extension_rear.value() != sens::max31865::Configuration())
+        ) {
             bksram::write_reset<0xE'50'06>();
         }
 
-        if(extension_front.configure_notch_filter_frequency(max31865::Masks::Configuration::FilterSelect::Or::FIFTY_HZ) != HAL_OK) {
+        if(extension_front.set_filter_select(sens::max31865::Masks::FilterSelect::Or::FIFTY_HZ) != HAL_OK) {
             bksram::write_reset<0xE'50'07>();
-        } else if(extension_rear.configure_notch_filter_frequency(max31865::Masks::Configuration::FilterSelect::Or::FIFTY_HZ) != HAL_OK) {
+        } else if(extension_rear.set_filter_select(sens::max31865::Masks::FilterSelect::Or::FIFTY_HZ) != HAL_OK) {
             bksram::write_reset<0xE'50'08>();
         }
 
-        if(extension_front.configure(configuration, fault_threshold) != HAL_OK) {
+        const sens::max31865::Configuration configuration {
+            sens::max31865::Masks::Configuration::Vbias::Or::ON,
+            sens::max31865::Masks::Configuration::ConversionMode::Or::AUTO,
+            sens::max31865::Masks::Configuration::WireMode::Or::TWO_WIRE_OR_FOUR_WIRE
+        };
+
+        if(extension_front.configure(configuration) != HAL_OK) {
             bksram::write_reset<0xE'50'09>();
-        } else if(extension_rear.configure(configuration, fault_threshold) != HAL_OK) {
+        } else if(extension_rear.configure(configuration) != HAL_OK) {
             bksram::write_reset<0xE'50'10>();
+        }
+
+        if(extension_front.clear_fault_status() != HAL_OK) {
+            bksram::write_reset<0xE'50'11>();
+        } else if(extension_rear.clear_fault_status() != HAL_OK) {
+            bksram::write_reset<0xE'50'12>();
         }
     }
 
     void SenserKiller::worker(void* arg) {
         SenserKiller& self { *static_cast<SenserKiller*>(arg) };
 
-        Trielo::trielo<actu::fan::ctl::all::start_min_speed>();
-        Trielo::trielo<actu::fan::fb::all::init>();
-        panel::sevseg::green_yellow::MAX6549 max6549 {};
-        init();
-
         while(1) {
-            const auto rtd_front { extension_front.read_rtd() };
+            const auto rtd_front { self.extension_front.read_rtd() };
             if(rtd_front.has_value() && rtd_front.value().fault == sens::max31865::Masks::RTD_LSBs::Fault::Or::FAULT) {
-                bksram::write_reset<0xE'50'11>();
+                bksram::write_reset<0xE'51'01>();
             }
             osDelay(1);
 
-            const auto rtd_rear { extension_rear.read_rtd() };
+            const auto rtd_rear { self.extension_rear.read_rtd() };
             if(rtd_rear.has_value() && rtd_rear.value().fault == sens::max31865::Masks::RTD_LSBs::Fault::Or::FAULT) {
-                bksram::write_reset<0xE'50'12>();
+                bksram::write_reset<0xE'51'02>();
             }
             osDelay(1);
 
             self.temp_front = rtd_front.value().calculate_approx_temp().value();
-            max6549.yellow_show(self.temp_front);
+            self.max6549.yellow_show(self.temp_front);
 
             self.temp_rear = rtd_rear.value().calculate_approx_temp().value();
+            self.max6549.green_show(self.temp_rear);
 
             osDelay(1'000);
         }
@@ -116,9 +118,9 @@ namespace tasks {
             bksram::write_reset<0xE'50'06>();
         }
 
-        if(extension_front.configure_notch_filter_frequency(max31865::Masks::Configuration::FilterSelect::Or::FIFTY_HZ) != HAL_OK) {
+        if(extension_front.set_filter_select(max31865::Masks::Configuration::FilterSelect::Or::FIFTY_HZ) != HAL_OK) {
             bksram::write_reset<0xE'50'07>();
-        } else if(extension_rear.configure_notch_filter_frequency(max31865::Masks::Configuration::FilterSelect::Or::FIFTY_HZ) != HAL_OK) {
+        } else if(extension_rear.set_filter_select(max31865::Masks::Configuration::FilterSelect::Or::FIFTY_HZ) != HAL_OK) {
             bksram::write_reset<0xE'50'08>();
         }
 

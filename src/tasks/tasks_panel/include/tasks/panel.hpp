@@ -5,7 +5,7 @@
 #include "tasks/prototype.hpp"
 
 namespace tasks {
-    class Panel : public Prototype<Panel, configMINIMAL_STACK_SIZE, "panel"> {
+    class Panel : public Prototype<Panel, 4 * 1024, "panel"> {
     private:
         float rpm { 0.0f };
         Panel() = default;

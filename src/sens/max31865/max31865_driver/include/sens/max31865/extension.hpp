@@ -16,19 +16,20 @@ namespace max31865 {
             transceiver { transceiver }
         {}
     public:
-        HAL_StatusTypeDef dump();
-        HAL_StatusTypeDef configure(const Configuration& configuration, const FaultThreshold& fault_threshold) const;
-        HAL_StatusTypeDef configure_clear() const;
-        std::expected<bool, HAL_StatusTypeDef> is_configured_against(const Configuration& configuration, const FaultThreshold& fault_threshold) const;
-        std::expected<bool, HAL_StatusTypeDef> is_clear_configured() const;
-        HAL_StatusTypeDef write_configuration(const Configuration& configuration) const;
+        HAL_StatusTypeDef configure(const Configuration& configuration) const;
         std::expected<Configuration, HAL_StatusTypeDef> read_configuration() const;
-        HAL_StatusTypeDef configure_notch_filter_frequency(const Masks::Configuration::FilterSelect::Or filter_select) const;
+
+        HAL_StatusTypeDef set_fault_threshold(const FaultThreshold& fault_threshold) const;
+        std::expected<FaultThreshold, HAL_StatusTypeDef> read_fault_threshold() const;
+
+        HAL_StatusTypeDef set_filter_select(const Masks::FilterSelect::Or filter_select) const;
+        std::expected<Masks::FilterSelect::Or, HAL_StatusTypeDef> read_filter_select() const;
+
         std::expected<RTD, HAL_StatusTypeDef> read_rtd() const;
-        HAL_StatusTypeDef configure_auto_fault_detection() const;
+
+        std::expected<FaultStatus, HAL_StatusTypeDef> run_auto_fault_detection() const;
         std::expected<FaultStatus, HAL_StatusTypeDef> read_fault_status() const;
-    private:
-        HAL_StatusTypeDef configure_notch_filter_frequency_unsafe(const Masks::Configuration::FilterSelect::Or filter_select, Configuration configuration_before) const;
+        HAL_StatusTypeDef clear_fault_status() const;
     };
 }
 }

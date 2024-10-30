@@ -6,8 +6,8 @@ namespace sens {
 namespace max31865 {
     class FaultThreshold {
     public:
-        ADC_Code high_fault_threshold { ADC_Code::uint15_t { 0x7F'FF } };
-        ADC_Code low_fault_threshold  { ADC_Code::uint15_t { 0x00'00 } };
+        ADC_Code high_fault_threshold { ADC_Code::uint15_t { ADC_Code::uint15_t::max_value } };
+        ADC_Code low_fault_threshold  { ADC_Code::uint15_t { 0 } };
     public:
         FaultThreshold() = default;
         FaultThreshold(const ADC_Code high_fault_threshold, const ADC_Code low_fault_threshold);

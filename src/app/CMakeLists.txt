@@ -35,6 +35,7 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     sens::i2c_common
     sens::i2c_light
     sens::i2c_temp_hum
+    sens::max31865_driver
     sens::spi_temp
 
     tasks::common

@@ -12,7 +12,7 @@ namespace bksram {
         // fan
         0xE'F0'01,
 
-        // temp_spi
+        // temp_spi init
         0xE'50'01,
         0xE'50'02,
         0xE'50'03,
@@ -24,7 +24,11 @@ namespace bksram {
         0xE'50'09,
         0xE'50'10,
         0xE'50'11,
-        0xE'50'12
+        0xE'50'12,
+
+        // temp_spi loop
+        0xE'51'01,
+        0xE'51'02
     >;
 
     template<uint20_t value>
@@ -34,8 +38,8 @@ namespace bksram {
         __HAL_RCC_BKPSRAM_CLK_ENABLE();
 
         *reinterpret_cast<uint32_t*>(BKPSRAM_BASE) = ErrorCodes::get<value>().unwrap();
-        std::printf("bksram::write_reset<0x%02X>()\n", value.unwrap());
-        //NVIC_SystemReset();
+        std::printf("bksram::write_reset<0x%02lX>()\n", value.unwrap());
+        NVIC_SystemReset();
     }
 
     inline ubitint_t<20> read() {
