@@ -51,10 +51,8 @@ extern "C" void app_main(void* arg) {
     //tasks::RS232_UART::get_instance().launch();
     //tasks::TempCtl::get_instance().launch();
 
-
-    for(uint32_t tick = 0; true; tick++) {
+    for(uint32_t tick = 10; true; tick++) {
         panel::led::toggle_all();
-        std::printf("app_main: tick: %lu\n", tick);
         osDelay(5'000);
     }
 

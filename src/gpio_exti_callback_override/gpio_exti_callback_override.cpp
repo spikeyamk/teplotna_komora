@@ -20,10 +20,10 @@ extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
         case BUT3_FL_Pin:
             break;
         case SPI3_TEMP_NDRDY0_Pin:
-            std::printf("NDRDY0\n");
+            //std::printf("NDRDY0\n");
             break;
         case SPI3_TEMP_NDRDY1_Pin:
-            std::printf("NDRDY1\n");
+            //std::printf("NDRDY1\n");
             break;
     }
 }

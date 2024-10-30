@@ -15,8 +15,10 @@ namespace tasks {
         float temp_rear { 0.0f };
 
         const sens::max31865::FaultThreshold fault_threshold {
-            sens::max31865::ADC_Code { sens::max31865::RTD(85.0f).adc_code },
-            sens::max31865::ADC_Code { sens::max31865::RTD(-20.0f).adc_code }
+            //sens::max31865::ADC_Code { sens::max31865::RTD(85.0f).adc_code },
+            //sens::max31865::ADC_Code { sens::max31865::RTD(-20.0f).adc_code }
+            sens::max31865::ADC_Code { sens::max31865::ADC_Code { 0xFF'FF } },
+            sens::max31865::ADC_Code { sens::max31865::ADC_Code { 0x00'00 } },
         };
 
         sens::max31865::Transceiver transceiver_front { &hspi3, SPI3_TEMP_NSS0_GPIO_Port, SPI3_TEMP_NSS0_Pin };
