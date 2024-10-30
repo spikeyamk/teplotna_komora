@@ -1,34 +1,33 @@
-#include <iostream>
-#include "panel/encoder/encoder.hpp"
+#include "main.h"
 #include "stm32f2xx_hal.h"
+#include "panel/encoder/encoder.hpp"
+#include "tasks/panel.hpp"
 
 namespace panel {
 namespace encoder {
-    
-    void encoder_test() {
-        int counter = 0;
-        
-        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == GPIO_PIN_RESET) {
-            if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_RESET) {
-
-                while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_RESET) {};
-                std::printf("Counter: %d\n", counter++);
-                while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == GPIO_PIN_RESET) {};
-                HAL_Delay(10);
-            }
-
-            if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_SET) {
-
-                while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_SET) {};
-                std::printf("Counter: %d\n", counter--);
-                while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == GPIO_PIN_RESET) {};
-                while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_RESET) {};
-                HAL_Delay(10);
-            }
-
-            if (counter < 0) counter = 0;
-            if (counter > 16) counter = 16;
+    void enca_ext10_handler() {
+        const GPIO_PinState encoder_A = HAL_GPIO_ReadPin(ENCA_EXTI10_GPIO_Port, ENCA_EXTI10_Pin);
+        const GPIO_PinState encoder_B = HAL_GPIO_ReadPin(ENCB_EXTI11_GPIO_Port, ENCB_EXTI11_Pin);
+        if ((encoder_A == GPIO_PIN_SET) && (encoder_B == GPIO_PIN_RESET))
+            tasks::Panel::get_instance().increment();
+        else if ((encoder_A == GPIO_PIN_RESET) && (encoder_B == GPIO_PIN_SET))
+            tasks::Panel::get_instance().increment();
+        else if ((encoder_A == GPIO_PIN_RESET) && (encoder_B == GPIO_PIN_RESET))
+            tasks::Panel::get_instance().decrement();
+        else if ((encoder_A == GPIO_PIN_SET) && (encoder_B == GPIO_PIN_SET))
+            tasks::Panel::get_instance().decrement();
     }
+    void encb_ext11_handler() {
+        const GPIO_PinState encoder_A = HAL_GPIO_ReadPin(ENCA_EXTI10_GPIO_Port, ENCA_EXTI10_Pin);
+        const GPIO_PinState encoder_B = HAL_GPIO_ReadPin(ENCB_EXTI11_GPIO_Port, ENCB_EXTI11_Pin);
+        if ((encoder_A == GPIO_PIN_SET) && (encoder_B == GPIO_PIN_RESET))
+            tasks::Panel::get_instance().decrement();
+        else if ((encoder_A == GPIO_PIN_RESET) && (encoder_B == GPIO_PIN_SET))
+            tasks::Panel::get_instance().decrement();
+        else if ((encoder_A == GPIO_PIN_RESET) && (encoder_B == GPIO_PIN_RESET))
+            tasks::Panel::get_instance().increment();
+        else if ((encoder_A == GPIO_PIN_SET) && (encoder_B == GPIO_PIN_SET))
+            tasks::Panel::get_instance().increment();
     }
 }
 }

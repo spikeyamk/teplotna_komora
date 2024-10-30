@@ -44,10 +44,10 @@ extern "C" void app_main(void* arg) {
     Trielo::trielo<util::turn_every_annoying_peripheral_off>();
 
     TRIELO_VOID(tasks::SenserKiller::get_instance().init());
-
-
     TRIELO(tasks::SenserKiller::get_instance().launch());
-    //TRIELO(tasks::Panel::get_instance().launch());
+
+    TRIELO(tasks::Panel::get_instance().launch());
+
     //tasks::RS232_UART::get_instance().launch();
     //tasks::TempCtl::get_instance().launch();
 

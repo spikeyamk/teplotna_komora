@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <algorithm>
 #include <span>
+#include <ubitint.hpp>
 #include "panel/sevseg/common/common.hpp"
 
 namespace panel {
@@ -108,7 +109,36 @@ namespace common {
         
         return true;
     }
+    
+    using uint20_t = ubitint_t<20>;
+    
+    sevmap uint20_t_to_sevmap(const uint20_t value) {
+        //max value for uint20_t
+        if(value > 1048575) {
+            return exception_sevmap::positive_overflow;
+        }
 
+        std::array<char, 20> buf { 0x00 };
+        if(std::snprintf(buf.data(), buf.size(), "%05X", value) < 0) {
+            return exception_sevmap::error;
+        }
+        if(check_snprintf_output(buf) == false) {
+            return exception_sevmap::error;
+        }
+
+        sevmap ret {};
+        std::for_each(
+            ret.rbegin(),
+            ret.rend(),
+            [&buf, index = ret.size()](auto& e) mutable {
+                e = hex_map[numerical_char_to_uint8_t(buf[index])];
+                index--;
+            }
+        );
+
+        return ret;
+    }
+    
     sevmap float_to_sevmap(const float value) {
         if(std::isnormal(value) == false) {
             return exception_sevmap::error;
