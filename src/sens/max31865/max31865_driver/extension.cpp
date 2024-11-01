@@ -147,7 +147,7 @@ namespace max31865 {
             return std::unexpected(ret_write);
         }
 
-        HAL_Delay(10);
+        HAL_Delay(1);
 
         const auto read_configuration_reg_after_auto_fault_detection_run { transceiver.read(RegAddrs::RO::CONFIGURATION) };
         if(read_configuration_reg_after_auto_fault_detection_run.has_value() == false) {
