@@ -34,8 +34,6 @@ extern "C" void app_main(void* arg) {
         bksram::write_reset<bksram::ErrorCodes::HWTEST>();
     }
 
-    bksram::write<bksram::ErrorCodes::NOFAULT>();
-
     if(comm::usb_uart::RedirectStdout::get_instance().init() == false) {
         comm::usb_uart::RedirectStdout::get_instance().turn_off_threadsafe();
         std::printf("app_main: redirect_stdout.init() == false\n");

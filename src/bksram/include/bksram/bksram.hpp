@@ -9,12 +9,12 @@
 namespace bksram {
     using uint20_t = ubitint_t<20>;
     struct ErrorCodes {
-        static constexpr uint20_t NOFAULT { 0xE'00'00 };
-        static constexpr uint20_t HWTEST { 0xE'10'00 };
-        static constexpr uint20_t TWDG { 0xE'70'00 };
+        static constexpr uint20_t MISSING_LF { 0xE'01'11 };
+        static constexpr uint20_t HWTEST     { 0xE'10'00 };
+        static constexpr uint20_t TWDG       { 0xE'70'00 };
 
         using Registry = ::util::Registry<uint20_t,
-            NOFAULT,
+            MISSING_LF,
             HWTEST,
             TWDG
         >;
@@ -31,11 +31,7 @@ namespace bksram {
 
     template<uint20_t value>
     inline void write_reset() {
-        HAL_PWR_EnableBkUpAccess();
-        HAL_PWREx_EnableBkUpReg();
-        __HAL_RCC_BKPSRAM_CLK_ENABLE();
-
-        *reinterpret_cast<uint32_t*>(BKPSRAM_BASE) = ErrorCodes::Registry::get<value>().unwrap();
+        write<value>();
         NVIC_SystemReset();
     }
 
