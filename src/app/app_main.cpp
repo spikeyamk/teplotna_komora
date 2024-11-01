@@ -23,11 +23,12 @@ extern "C" void app_main(void* arg) {
     }
 
     Trielo::trielo<example_subdirectory::foo>();
-    tasks::Example::get_instance().launch();
+    //tasks::Example::get_instance().launch();
 
     for(uint32_t tick = 0; true; tick++) {
-        std::printf("app_main: tick: %lu\n", tick);
-        osDelay(5'000);
+        //std::printf("app_main: tick: %lu\n", tick);
+        HAL_Delay(999);
+        osDelay(1);
     }
 
     // we should never get here...

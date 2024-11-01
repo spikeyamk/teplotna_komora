@@ -6,5 +6,5 @@ target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "include")
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     stm32cubef2
     app
-    io_putchar_override
+    callback_overrides
 )

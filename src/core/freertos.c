@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include "iwdg.h"
+#include "tim.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -87,6 +88,7 @@ void vApplicationIdleHook( void )
    important that vApplicationIdleHook() is permitted to return to its calling
    function, because it is the responsibility of the idle task to clean up
    memory allocated by the kernel to any task that has since been deleted. */
+  __HAL_TIM_SET_COUNTER(&htim6, 0);
   HAL_IWDG_Refresh(&hiwdg);
 }
 /* USER CODE END 2 */
@@ -108,7 +110,8 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, signed char *pcTaskName)
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-
+  __HAL_TIM_SET_COUNTER(&htim6, 0);
+  HAL_TIM_Base_Start_IT(&htim6);
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */

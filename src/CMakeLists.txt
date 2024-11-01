@@ -1,5 +1,6 @@
 add_subdirectory(app)
 add_subdirectory(bksram)
+add_subdirectory(callback_overrides)
 add_subdirectory(comm)
 add_subdirectory(core)
 if(ENABLE_TESTS)
