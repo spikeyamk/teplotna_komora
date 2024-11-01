@@ -6,7 +6,6 @@
 
 #include "cmsis_os2.h"
 
-#include "producer_consumer_test.hpp"
 #include "comm/usb_uart/usb_uart.hpp"
 #include "example_subdirectory/public.hpp"
 #include "tasks/example.hpp"
