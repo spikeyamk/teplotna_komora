@@ -10,6 +10,7 @@
 #include "comm/usb_uart/usb_uart.hpp"
 #include "bksram/bksram.hpp"
 #include "tasks/example.hpp"
+#include "rtc/rtc.hpp"
 
 bool hw_test() {
     return true;
@@ -39,7 +40,9 @@ extern "C" void app_main(void* arg) {
         std::printf("app_main: redirect_stdout.init() == false\n");
     }
 
-    TRIELO(tasks::Example::get_instance().launch());
+    //TRIELO(tasks::Example::get_instance().launch());
+
+    rtc::get_time_date_test();
 
     for(uint32_t tick = 0; true; tick++) {
         std::printf("app_main: tick: %lu\n", tick);

@@ -6,4 +6,5 @@ target_link_libraries(${SUBMODULE_NAME} PRIVATE
     trielo
     comm::usb_uart
     bksram
+    rtc
 )
