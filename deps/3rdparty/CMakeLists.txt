@@ -1,18 +1,19 @@
-#add_subdirectory("googletest")
-
 add_library(stm32cubef2
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal.c
-    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_rcc.c
-    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_rcc_ex.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_cortex.c
-    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_flash.c
-    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_flash_ex.c
-    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_pwr.c
-    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_pwr_ex.c
-    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_gpio.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_dma.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_dma_ex.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_exti.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_flash.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_flash_ex.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_gpio.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_iwdg.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_pwr.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_pwr_ex.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_rcc.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_rcc_ex.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_rtc.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_rtc_ex.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_tim.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_tim_ex.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_uart.c
@@ -24,14 +25,12 @@ add_library(stm32cubef2
     STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/tasks.c
     STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/timers.c
     STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c
-    STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c
     STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c
 )
 
 target_compile_definitions(stm32cubef2 PUBLIC 
-	USE_NUCLEO_64 
 	USE_HAL_DRIVER 
-	STM32F205xx
+	STM32F207xx
     $<$<CONFIG:Debug>:DEBUG>
 )
 
@@ -46,14 +45,3 @@ target_include_directories(stm32cubef2 PUBLIC
     STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
     STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3
 )
-
-#file(GLOB STM32H5XX_HAL_DRIVER_SRCS
-#    "STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Src/*.c"  # Adjust the path if necessary
-#)
-#add_library(stm32h5xx_hal_driver ${STM32H5XX_HAL_DRIVER_SRCS})
-#target_compile_definitions(stm32h5xx_hal_driver PRIVATE STM32H503xx)
-#target_compile_definitions(stm32h5xx_hal_driver PRIVATE USE_HAL_DRIVER)
-#target_include_directories(stm32h5xx_hal_driver PUBLIC "STM32CubeH5/Drivers/STM32H5xx_HAL_Driver/Inc")
-#target_include_directories(stm32h5xx_hal_driver PRIVATE "${CMAKE_SOURCE_DIR}/src/core/include")
-#target_include_directories(stm32h5xx_hal_driver PUBLIC "STM32CubeH5/Drivers/CMSIS/Device/ST/STM32H5xx/Include")
-#target_include_directories(stm32h5xx_hal_driver PUBLIC "STM32CubeH5/Drivers/CMSIS/Include")

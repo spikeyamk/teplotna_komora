@@ -57,6 +57,27 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define BUT_USER_Pin GPIO_PIN_13
+#define BUT_USER_GPIO_Port GPIOC
+#define BUT_USER_EXTI_IRQn EXTI15_10_IRQn
+#define MCO_Pin GPIO_PIN_0
+#define MCO_GPIO_Port GPIOH
+#define LED2_GREEN_Pin GPIO_PIN_0
+#define LED2_GREEN_GPIO_Port GPIOB
+#define LED0_RED_Pin GPIO_PIN_14
+#define LED0_RED_GPIO_Port GPIOB
+#define STLK_RX_Pin GPIO_PIN_8
+#define STLK_RX_GPIO_Port GPIOD
+#define STLK_TX_Pin GPIO_PIN_9
+#define STLK_TX_GPIO_Port GPIOD
+#define TMS_Pin GPIO_PIN_13
+#define TMS_GPIO_Port GPIOA
+#define TCK_Pin GPIO_PIN_14
+#define TCK_GPIO_Port GPIOA
+#define SWO_Pin GPIO_PIN_3
+#define SWO_GPIO_Port GPIOB
+#define LED1_BLUE_Pin GPIO_PIN_7
+#define LED1_BLUE_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

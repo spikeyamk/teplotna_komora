@@ -1,6 +1,6 @@
 [submodule "deps/trielo"]
 	path = deps/trielo
 	url = https://github.com/spikeyamk/trielo
-[submodule "deps/3rdparty/googletest"]
-	path = deps/3rdparty/googletest
-	url = https://github.com/google/googletest.git
+[submodule "deps/ubitint"]
+	path = deps/ubitint
+	url = https://www.github.com/spikeyamk/ubitint

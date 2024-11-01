@@ -1,33 +1,18 @@
-add_subdirectory("submodule")
-add_subdirectory("fanctl")
-
-set(CMAKE_EXECUTABLE_SUFFIX ".elf")
-add_executable(${CMAKE_PROJECT_NAME}
-    "main.c"
-    "printf_redirect.c"
-    "core/startup_stm32f205xx.s"
-    "core/stm32f2xx_hal_msp.c"
-    "core/stm32f2xx_hal_timebase_tim.c"
-    "core/stm32f2xx_it.c"
-    "core/syscalls.c"
-    "core/sysmem.c"
-    "core/system_stm32f2xx.c"
-
-    "app.cpp"
-)
-
-target_compile_definitions("${CMAKE_PROJECT_NAME}" PRIVATE STM32F205xx)
-target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE
-    submodule
-    fanctl
-)
-target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE trielo)
-target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE stm32cubef2)
-target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "core/include")
+add_subdirectory(app)
+add_subdirectory(bksram)
+add_subdirectory(comm)
+add_subdirectory(core)
+if(ENABLE_TESTS)
+    #set(example_subdirectory_TEST TRUE)
+endif()
+add_subdirectory(example_subdirectory)
+add_subdirectory(rtc)
+add_subdirectory(tasks)
+add_subdirectory(util)
 
 # Define the ELF and binary file locations
-set(ELF_FILE "${CMAKE_BINARY_DIR}/src/${CMAKE_PROJECT_NAME}.elf")
-set(BIN_FILE "${CMAKE_BINARY_DIR}/src/${CMAKE_PROJECT_NAME}.bin")
+set(ELF_FILE "${CMAKE_BINARY_DIR}/src/core/${CMAKE_PROJECT_NAME}.elf")
+set(BIN_FILE "${CMAKE_BINARY_DIR}/src/core/${CMAKE_PROJECT_NAME}.bin")
 set(FLASH_ADDRESS "0x08000000")
 
 # Add a custom command to generate the .bin file from the .elf file
