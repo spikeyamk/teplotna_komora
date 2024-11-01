@@ -8,24 +8,26 @@
 
 namespace bksram {
     using uint20_t = ubitint_t<20>;
-    using ErrorCodes = ::util::Registry<uint20_t,
-        // fan
-        0xE'F0'01,
+    struct ErrorCodes {
+        static constexpr uint20_t NOFAULT { 0xE'00'00 };
+        static constexpr uint20_t HWTEST { 0xE'10'00 };
+        static constexpr uint20_t TWDG { 0xE'70'00 };
 
-        // temp_spi
-        0xE'50'01,
-        0xE'50'02,
-        0xE'50'03,
-        0xE'50'04,
-        0xE'50'05,
-        0xE'50'06,
-        0xE'50'07,
-        0xE'50'08,
-        0xE'50'09,
-        0xE'50'10,
-        0xE'50'11,
-        0xE'50'12
-    >;
+        using Registry = ::util::Registry<uint20_t,
+            NOFAULT,
+            HWTEST,
+            TWDG
+        >;
+    };
+
+    template<uint20_t value>
+    inline void write() {
+        HAL_PWR_EnableBkUpAccess();
+        HAL_PWREx_EnableBkUpReg();
+        __HAL_RCC_BKPSRAM_CLK_ENABLE();
+
+        *reinterpret_cast<uint32_t*>(BKPSRAM_BASE) = ErrorCodes::Registry::get<value>().unwrap();
+    }
 
     template<uint20_t value>
     inline void write_reset() {
@@ -33,7 +35,7 @@ namespace bksram {
         HAL_PWREx_EnableBkUpReg();
         __HAL_RCC_BKPSRAM_CLK_ENABLE();
 
-        *reinterpret_cast<uint32_t*>(BKPSRAM_BASE) = ErrorCodes::get<value>().unwrap();
+        *reinterpret_cast<uint32_t*>(BKPSRAM_BASE) = ErrorCodes::Registry::get<value>().unwrap();
         NVIC_SystemReset();
     }
 
@@ -44,4 +46,6 @@ namespace bksram {
 
         return *reinterpret_cast<uint32_t*>(BKPSRAM_BASE);
     }
+
+    bool test();
 }

@@ -5,4 +5,5 @@ target_link_libraries(${SUBMODULE_NAME} PRIVATE
     stm32cubef2
     trielo
     comm::usb_uart
+    bksram
 )

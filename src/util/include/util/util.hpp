@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <type_traits>
+#include <array>
 
 #include "stm32f2xx.h"
 
@@ -55,6 +56,8 @@ namespace util {
             contains<key, Rest...>
         > {};
     public:
+        static constexpr std::array<T, sizeof...(Args)> array { Args... };
+
         template<T key>
         static constexpr T get() {
             static_assert(contains<key, Args...>::value, "key not found");

@@ -5,10 +5,15 @@
 #include <trielo/trielo.hpp>
 
 #include "cmsis_os2.h"
+#include "iwdg.h"
 
 #include "comm/usb_uart/usb_uart.hpp"
-#include "example_subdirectory/public.hpp"
+#include "bksram/bksram.hpp"
 #include "tasks/example.hpp"
+
+bool hw_test() {
+    return true;
+}
 
 /**
  * @brief App entry point. This function cannot exit.
@@ -16,19 +21,31 @@
  */
 extern "C" void app_main(void* arg) {
     (void) arg;
-    comm::usb_uart::RedirectStdout& redirect_stdout { comm::usb_uart::RedirectStdout::get_instance() };
-    if(redirect_stdout.init() == false) {
-        redirect_stdout.turn_off_threadsafe();
+
+    if(bksram::test() == false) {
+        std::printf("app_main: bksram::test() == false: bksram::read().unwrap(): 0x%02lX\n", bksram::read().unwrap());
+        __disable_irq();
+        while(1) {
+            HAL_IWDG_Refresh(&hiwdg);
+        }
+    }
+
+    if(hw_test() == false) {
+        bksram::write_reset<bksram::ErrorCodes::HWTEST>();
+    }
+
+    bksram::write<bksram::ErrorCodes::NOFAULT>();
+
+    if(comm::usb_uart::RedirectStdout::get_instance().init() == false) {
+        comm::usb_uart::RedirectStdout::get_instance().turn_off_threadsafe();
         std::printf("app_main: redirect_stdout.init() == false\n");
     }
 
-    Trielo::trielo<example_subdirectory::foo>();
-    //tasks::Example::get_instance().launch();
+    TRIELO(tasks::Example::get_instance().launch());
 
     for(uint32_t tick = 0; true; tick++) {
-        //std::printf("app_main: tick: %lu\n", tick);
-        HAL_Delay(999);
-        osDelay(1);
+        std::printf("app_main: tick: %lu\n", tick);
+        osDelay(5'000);
     }
 
     // we should never get here...

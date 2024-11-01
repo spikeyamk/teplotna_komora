@@ -15,6 +15,5 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     tasks::example
 
     util
-    example_subdirectory
     rtc
 )
