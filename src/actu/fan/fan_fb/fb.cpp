@@ -23,6 +23,22 @@ namespace fb {
     HAL_StatusTypeDef init(const common::Fan& fan) {
         return HAL_TIM_IC_Start_IT(fan.htim, fan.fb_channel.mask_for_init);
     }
+
+    void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
+        for(const auto& e: actu::fan::fb::fbs) {
+            if(htim->Instance == e.get().fan.htim->Instance && htim->Channel == e.get().fan.fb_channel.active_channel_for_interrupt) {
+                e.get().record_input_capture();
+            }
+        }
+    }
+
+    void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
+        for(const auto& e: actu::fan::fb::fbs) {
+            if(htim->Instance == e.get().fan.htim->Instance && htim->Channel == e.get().fan.ctl_channel.active_channel_for_interrupt) {
+                e.get().increment_pwm_pulse_finished_overflows();
+            }
+        }
+    }
 namespace all {
     HAL_StatusTypeDef init() {
         for(const auto& e: common::fans) {

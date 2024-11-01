@@ -25,13 +25,6 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     sevseg_common
     panel::white
 
-    peripheral::dac
-    peripheral::gpio
-    peripheral::it
-    peripheral::spi
-    peripheral::tim
-    peripheral::uart
-
     sens::i2c_common
     sens::i2c_light
     sens::i2c_temp_hum
@@ -44,6 +37,5 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     tasks::temp_ctl
 
     util
-    example_subdirectory
     rtc
 )

@@ -3,4 +3,9 @@ file(GLOB SUBDIRECTORY_SOURCES "*.cpp")
 add_library(${SUBDIRECTORY_NAME} OBJECT ${SUBDIRECTORY_SOURCES})
 target_include_directories(${SUBDIRECTORY_NAME} PUBLIC "include")
 target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE stm32cubef2)
-target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC panel::encoder)
+target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
+    actu::fan_fb
+    bksram
+    panel::encoder
+    comm::usb_uart
+)

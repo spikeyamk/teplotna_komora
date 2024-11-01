@@ -1,5 +1,7 @@
 #include <iostream>
 #include <array>
+#include <bitset>
+
 #include "cmsis_os2.h"
 #include "main.h"
 #include "spi.h"
@@ -28,7 +30,7 @@ namespace green_yellow {
 
     auto MAX6549::write(const uint8_t address, const uint8_t value) {
         select();
-        const std::array<uint8_t, 2> buf { (address & 0x7F), value };
+        const std::array<uint8_t, 2> buf { static_cast<uint8_t>((std::bitset<8>(address) & std::bitset<8>(0x7F)).to_ulong()), value };
         const auto ret { HAL_SPI_Transmit(&hspi2, buf.data(), buf.size(), 1000) };
         deselect();
         return ret;
@@ -37,7 +39,7 @@ namespace green_yellow {
     uint8_t MAX6549::read(const uint8_t address) {
         select();
 
-        const std::array<uint8_t, 2> buf { (address | 0x80), 0x00 };
+        const std::array<uint8_t, 2> buf { static_cast<uint8_t>((std::bitset<8>(address) | std::bitset<8>(0x80)).to_ulong()), 0x00 };
         HAL_SPI_Transmit(&hspi2, buf.data(), buf.size(), 1000);
         deselect();
 

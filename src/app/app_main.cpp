@@ -6,6 +6,8 @@
 
 #include "cmsis_os2.h"
 
+#include "iwdg.h"
+#include "bksram/bksram.hpp"
 #include "actu/fan/ctl/ctl.hpp"
 #include "actu/fan/fb/fb.hpp"
 #include "actu/bridge/bridge.hpp"
@@ -18,9 +20,9 @@
 #include "util/util.hpp"
 #include "producer_consumer_test.hpp"
 #include "comm/usb_uart/usb_uart.hpp"
-#include "example_subdirectory/public.hpp"
 #include "util/util.hpp"
 #include "panel/sevseg/green_yellow/green_yellow.hpp"
+#include "panel/led/led.hpp"
 #include "sens/max31865/test.hpp"
 
 #include "tasks/panel.hpp"
@@ -28,19 +30,57 @@
 #include "tasks/senser_killer.hpp"
 #include "tasks/temp_ctl.hpp"
 
+void shutdown_endless_loop() {
+    const auto bksram_error_code { bksram::read() };
+
+    actu::fan::ctl::all::init();
+    actu::fan::ctl::all::start_full_speed();
+
+    actu::pump::stop();
+    actu::buzzer::stop();
+    
+    actu::lin_source::front::set_output(0);
+    actu::lin_source::front::stop_dac();
+
+    actu::lin_source::rear::set_output(0);
+    actu::lin_source::rear::stop_dac();
+
+    actu::bridge::front::turn_off();
+    actu::bridge::rear::turn_off();
+
+    panel::sevseg::white::init_brightness();
+    panel::sevseg::white::bright();
+    const auto bksram_error_sevmap { panel::sevseg::common::uint20_t_to_sevmap(bksram_error_code) };
+
+    __disable_irq();
+    while(1) {
+        panel::led::all::toggle();
+        actu::buzzer::toggle();
+        for(uint32_t i = 0; i < 250; i++) {
+            panel::sevseg::white::display_refresh(bksram_error_sevmap);
+            HAL_Delay(1);
+        }
+        HAL_IWDG_Refresh(&hiwdg);
+        HAL_Delay(250);
+    }
+}
+
 /**
  * @brief App entry point. This function cannot exit.
  * @param arg is necessary in oder for app_main's function pointer to be of type osThreadFunc_t. Remains unused, nullptr is injected into it. DO NOT DEREFERENCE!
  */
 extern "C" void app_main(void* arg) {
     (void) arg;
-    comm::usb_uart::RedirectStdout& redirect_stdout { comm::usb_uart::RedirectStdout::get_instance() };
-    if(redirect_stdout.init() == false) {
-        redirect_stdout.turn_off_threadsafe();
+
+    if(bksram::test() == false) {
+        shutdown_endless_loop();
+    }
+
+    if(comm::usb_uart::RedirectStdout::get_instance().init_threadsafe() == false) {
+        comm::usb_uart::RedirectStdout::get_instance().turn_off_threadsafe();
         std::printf("app_main: redirect_stdout.init() == false\n");
     }
 
-    Trielo::trielo<example_subdirectory::foo>();
     Trielo::trielo<util::turn_every_annoying_peripheral_off>();
 
     TRIELO_VOID(tasks::SenserKiller::get_instance().init());
@@ -51,8 +91,8 @@ extern "C" void app_main(void* arg) {
     //tasks::RS232_UART::get_instance().launch();
     //tasks::TempCtl::get_instance().launch();
 
-    for(uint32_t tick = 10; true; tick++) {
-        panel::led::toggle_all();
+    for(size_t tick = 10; true; tick++) {
+        std::printf("app_main: tick: %zu\n", tick);
         osDelay(5'000);
     }
 

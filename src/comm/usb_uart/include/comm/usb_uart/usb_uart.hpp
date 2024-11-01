@@ -22,7 +22,7 @@ namespace usb_uart {
         RedirectStdout() = default;
     public:
         osMutexId_t mutex { nullptr };
-        bool init();
+        bool init_threadsafe();
     public:
         static void inline transmit(const int ch) {
             HAL_UART_Transmit(&huart1, reinterpret_cast<const uint8_t *>(&ch), 1, 1000);
@@ -36,5 +36,7 @@ namespace usb_uart {
         size_t get_data_count() const;
         void turn_off_threadsafe();
     };
+
+    int __io_putchar(int ch);
 }
 }

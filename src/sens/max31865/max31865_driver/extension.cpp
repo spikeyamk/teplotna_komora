@@ -1,3 +1,4 @@
+#include "sens/max31865/filter_select.hpp"
 #include "sens/max31865/extension.hpp"
 
 namespace sens {
@@ -82,6 +83,11 @@ namespace max31865 {
             return configuration_reg_before.error();
         }
 
+        const auto configuration_reg_to_restore {
+            (configuration_reg_before.value() & (~Masks::FilterSelect::AND))
+            | std::bitset<8>(static_cast<uint8_t>(filter_select))
+        };
+
         if(Configuration(configuration_reg_before.value()).conversion_mode == Masks::Configuration::ConversionMode::Or::AUTO) {
             const auto configuration_reg_before_without_auto_conversion_mode {
                 (configuration_reg_before.value() & (~Masks::Configuration::ConversionMode::AND))
@@ -92,20 +98,9 @@ namespace max31865 {
             if(ret != HAL_OK) {
                 return ret;
             }
-
-            const auto configuration_reg_to_write {
-                (configuration_reg_before.value() & (~Masks::FilterSelect::AND))
-                | std::bitset<8>(static_cast<uint8_t>(filter_select))
-            };
-
-            return transceiver.write(RegAddrs::RW::CONFIGURATION, configuration_reg_to_write);
         }
 
-        const auto configuration_reg_to_write {
-            (configuration_reg_before.value() & (~Masks::FilterSelect::AND))
-            | std::bitset<8>(static_cast<uint8_t>(filter_select))
-        };
-        return transceiver.write(RegAddrs::RW::CONFIGURATION, configuration_reg_to_write);
+        return transceiver.write(RegAddrs::RW::CONFIGURATION, configuration_reg_to_restore);
     }
 
     std::expected<Masks::FilterSelect::Or, HAL_StatusTypeDef> Extension::read_filter_select() const {
@@ -118,6 +113,10 @@ namespace max31865 {
     }
 
     std::expected<RTD, HAL_StatusTypeDef> Extension::read_rtd() const {
+        if(HAL_GPIO_ReadPin(ndrdy_port, ndrdy_pin) != GPIO_PIN_RESET) {
+            return std::unexpected(HAL_ERROR);
+        }
+
         const auto ret_rtd_lsbs { transceiver.read(RegAddrs::RO::RTD_LSBS) };
         if(ret_rtd_lsbs.has_value() == false) {
             return std::unexpected(ret_rtd_lsbs.error());
@@ -137,12 +136,16 @@ namespace max31865 {
             return std::unexpected(configuration_reg_before.error());
         }
 
-        const auto configuration_reg_before_with_auto_fault_detection {
-            (configuration_reg_before.value() & (~Masks::FaultDetection::WriteAction::AND))
-            | std::bitset<8>(static_cast<uint8_t>(Masks::FaultDetection::WriteAction::Or::FAULT_DETECTION_WITH_AUTOMATIC_DELAY))
+        const Configuration configuration_before { configuration_reg_before.value() };
+        const FilterSelect filter_select_before { configuration_reg_before.value() };
+
+        const auto configuration_reg_with_auto_fault_detection {
+            std::bitset<8>(static_cast<uint8_t>(Masks::Configuration::Vbias::Or::ON))
+            | std::bitset<8>(static_cast<uint8_t>(configuration_before.wire_mode))
+            | std::bitset<8>(static_cast<uint8_t>(filter_select_before.filter_select))
         };
 
-        const auto ret_write { transceiver.write(RegAddrs::RW::CONFIGURATION, configuration_reg_before_with_auto_fault_detection) };
+        const auto ret_write { transceiver.write(RegAddrs::RW::CONFIGURATION, configuration_reg_with_auto_fault_detection) };
         if(ret_write != HAL_OK) {
             return std::unexpected(ret_write);
         }
@@ -167,6 +170,11 @@ namespace max31865 {
         const auto read_fault_status { transceiver.read(RegAddrs::RO::FAULT_STATUS) };
         if(read_fault_status.has_value() == false) {
             return std::unexpected(read_fault_status.error());
+        }
+
+        const auto ret_restore_configuration_reg_before { transceiver.write(sens::max31865::RegAddrs::RW::CONFIGURATION, configuration_reg_before.value()) };
+        if(ret_restore_configuration_reg_before != HAL_OK) {
+            return std::unexpected(ret_restore_configuration_reg_before);
         }
 
         return FaultStatus(read_fault_status.value());

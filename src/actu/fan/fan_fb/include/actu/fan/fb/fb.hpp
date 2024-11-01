@@ -64,6 +64,9 @@ namespace fb {
     extern const std::array<std::reference_wrapper<FB>, 6> fbs;
 
     HAL_StatusTypeDef init(const common::Fan& fan);
+
+    void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim);
+    void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim);
 namespace all {
     HAL_StatusTypeDef init();
 }

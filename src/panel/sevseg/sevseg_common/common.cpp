@@ -113,13 +113,12 @@ namespace common {
     using uint20_t = ubitint_t<20>;
     
     sevmap uint20_t_to_sevmap(const uint20_t value) {
-        //max value for uint20_t
-        if(value > 1048575) {
+        if(value > uint20_t::max_value) {
             return exception_sevmap::positive_overflow;
         }
 
         std::array<char, 20> buf { 0x00 };
-        if(std::snprintf(buf.data(), buf.size(), "%05X", value) < 0) {
+        if(std::snprintf(buf.data(), buf.size(), "%05lX", value.unwrap()) < 0) {
             return exception_sevmap::error;
         }
         if(check_snprintf_output(buf) == false) {
@@ -128,11 +127,11 @@ namespace common {
 
         sevmap ret {};
         std::for_each(
-            ret.rbegin(),
-            ret.rend(),
-            [&buf, index = ret.size()](auto& e) mutable {
+            ret.begin(),
+            ret.end(),
+            [&buf, index = static_cast<size_t>(0)](auto& e) mutable {
                 e = hex_map[numerical_char_to_uint8_t(buf[index])];
-                index--;
+                index++;
             }
         );
 

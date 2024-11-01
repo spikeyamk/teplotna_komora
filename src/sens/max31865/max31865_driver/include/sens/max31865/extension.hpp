@@ -9,10 +9,15 @@
 namespace sens {
 namespace max31865 {
     class Extension {
+    private:
+        GPIO_TypeDef* ndrdy_port;
+        const uint16_t ndrdy_pin;
     public:
         Transceiver& transceiver;
     public:
-        Extension(Transceiver& transceiver) :
+        Extension(GPIO_TypeDef* ndrdy_port, const uint16_t ndrdy_pin, Transceiver& transceiver) :
+            ndrdy_port { ndrdy_port },
+            ndrdy_pin { ndrdy_pin },
             transceiver { transceiver }
         {}
     public:

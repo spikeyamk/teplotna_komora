@@ -7,7 +7,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE stm32cubef2)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     app
     util
-    comm::io_putchar_override
-    actu::fan_tim_cb_overrides
-    gpio_exti_callback_override
+    callback_overrides
 )
