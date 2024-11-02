@@ -17,8 +17,6 @@ namespace tasks {
         const sens::max31865::FaultThreshold fault_threshold {
             sens::max31865::ADC_Code { sens::max31865::RTD(100.0f).adc_code },
             sens::max31865::ADC_Code { sens::max31865::RTD(-30.0f).adc_code }
-            //sens::max31865::ADC_Code { sens::max31865::ADC_Code { 0xFF'FF } },
-            //sens::max31865::ADC_Code { sens::max31865::ADC_Code { 0x00'00 } },
         };
 
         const sens::max31865::Configuration configuration {
@@ -33,7 +31,7 @@ namespace tasks {
         sens::max31865::Transceiver transceiver_rear { &hspi3, SPI3_TEMP_NSS1_GPIO_Port, SPI3_TEMP_NSS1_Pin };
         sens::max31865::Extension extension_rear { SPI3_TEMP_NDRDY1_GPIO_Port, SPI3_TEMP_NDRDY1_Pin, transceiver_rear };
 
-        panel::sevseg::green_yellow::MAX6549 max6549 {};
+        panel::sevseg::green_yellow::MAX6549 max6549 { &hspi2, SPI2_SEVYG_NSS_GPIO_Port, SPI2_SEVYG_NSS_Pin };
     private:
         SenserKiller() = default;
     public:

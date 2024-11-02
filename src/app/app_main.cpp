@@ -31,8 +31,6 @@
 #include "tasks/temp_ctl.hpp"
 
 void shutdown_endless_loop() {
-    const auto bksram_error_code { bksram::read() };
-
     actu::fan::ctl::all::init();
     actu::fan::ctl::all::start_full_speed();
 
@@ -50,7 +48,8 @@ void shutdown_endless_loop() {
 
     panel::sevseg::white::init_brightness();
     panel::sevseg::white::bright();
-    const auto bksram_error_sevmap { panel::sevseg::common::uint20_t_to_sevmap(bksram_error_code) };
+
+    const auto bksram_error_sevmap { panel::sevseg::common::uint20_t_to_sevmap(bksram::read()) };
 
     __disable_irq();
     while(1) {
