@@ -1,5 +1,4 @@
 #include "serde/deserializer.hpp"
-
 # pragma once
 
 namespace decoder {
