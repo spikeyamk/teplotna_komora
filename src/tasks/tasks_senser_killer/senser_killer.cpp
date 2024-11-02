@@ -1,9 +1,11 @@
+#include <trielo/trielo.hpp>
 #include "bksram/bksram.hpp"
 #include "actu/fan/ctl/ctl.hpp"
 #include "actu/fan/fb/fb.hpp"
 #include "spi.h"
 #include "main.h"
 #include "sens/max31865/max31865.hpp"
+#include "panel/sevseg/green_yellow/green_yellow.hpp"
 #include "tasks/senser_killer.hpp"
 
 namespace tasks {
@@ -30,6 +32,69 @@ namespace tasks {
     max31865::Extension extension_front { transceiver_front };
     max31865::Extension extension_rear { transceiver_rear };
 
+    static void init() {
+        if(transceiver_front.init() != HAL_OK) {
+            bksram::write_reset<0xE'50'01>();
+        } else if(transceiver_rear.init() != HAL_OK) {
+            bksram::write_reset<0xE'50'02>();
+        }
+
+        if(extension_front.configure_clear() != HAL_OK) {
+            bksram::write_reset<0xE'50'03>();
+        } else if(extension_rear.configure_clear() != HAL_OK) {
+            bksram::write_reset<0xE'50'04>();
+        }
+
+        if(extension_front.is_clear_configured().value_or(false) == false) {
+            bksram::write_reset<0xE'50'05>();
+        } else if(extension_rear.is_clear_configured().value_or(false) == false) {
+            bksram::write_reset<0xE'50'06>();
+        }
+
+        if(extension_front.configure_notch_filter_frequency(max31865::Masks::Configuration::FilterSelect::Or::FIFTY_HZ) != HAL_OK) {
+            bksram::write_reset<0xE'50'07>();
+        } else if(extension_rear.configure_notch_filter_frequency(max31865::Masks::Configuration::FilterSelect::Or::FIFTY_HZ) != HAL_OK) {
+            bksram::write_reset<0xE'50'08>();
+        }
+
+        if(extension_front.configure(configuration, fault_threshold) != HAL_OK) {
+            bksram::write_reset<0xE'50'09>();
+        } else if(extension_rear.configure(configuration, fault_threshold) != HAL_OK) {
+            bksram::write_reset<0xE'50'10>();
+        }
+    }
+
+    void SenserKiller::worker(void* arg) {
+        SenserKiller& self { *static_cast<SenserKiller*>(arg) };
+
+        Trielo::trielo<actu::fan::ctl::all::start_min_speed>();
+        Trielo::trielo<actu::fan::fb::all::init>();
+        panel::sevseg::green_yellow::MAX6549 max6549 {};
+        init();
+
+        while(1) {
+            const auto rtd_front { extension_front.read_rtd() };
+            if(rtd_front.has_value() && rtd_front.value().fault == sens::max31865::Masks::RTD_LSBs::Fault::Or::FAULT) {
+                bksram::write_reset<0xE'50'11>();
+            }
+            osDelay(1);
+
+            const auto rtd_rear { extension_rear.read_rtd() };
+            if(rtd_rear.has_value() && rtd_rear.value().fault == sens::max31865::Masks::RTD_LSBs::Fault::Or::FAULT) {
+                bksram::write_reset<0xE'50'12>();
+            }
+            osDelay(1);
+
+            self.temp_front = rtd_front.value().calculate_approx_temp().value();
+            max6549.yellow_show(self.temp_front);
+
+            self.temp_rear = rtd_rear.value().calculate_approx_temp().value();
+
+            osDelay(1'000);
+        }
+    }
+
+    /*
     void SenserKiller::worker(void* arg) {
         SenserKiller& self { *static_cast<SenserKiller*>(arg) };
 
@@ -100,4 +165,5 @@ namespace tasks {
             osDelay(1);
         }
     }
+    */
 }

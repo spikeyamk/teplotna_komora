@@ -15,7 +15,6 @@ namespace white {
     void bright();
     void turn_on_all_segments();
     void display_pins();
-    void launch_display_task(float& number);
     uint8_t set_digit(float number, uint8_t position);
 
     inline void display_refresh(const common::sevmap& sevmap) {

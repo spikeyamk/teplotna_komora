@@ -34,7 +34,8 @@ namespace bksram {
         __HAL_RCC_BKPSRAM_CLK_ENABLE();
 
         *reinterpret_cast<uint32_t*>(BKPSRAM_BASE) = ErrorCodes::get<value>().unwrap();
-        NVIC_SystemReset();
+        std::printf("bksram::write_reset<0x%02X>()\n", value.unwrap());
+        //NVIC_SystemReset();
     }
 
     inline ubitint_t<20> read() {

@@ -1,7 +1,10 @@
 #pragma once
 
+
+
 namespace panel {
 namespace encoder {
-    void encoder_test();
+    void enca_ext10_handler();
+    void encb_ext11_handler();
 }
 }
