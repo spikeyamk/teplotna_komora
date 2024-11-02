@@ -1,4 +1,5 @@
 #include "main.h"
+#include "cmsis_os2.h"
 #include "stm32f2xx_hal.h"
 #include "actu/bridge/bridge.hpp"
 
@@ -15,6 +16,7 @@ namespace front {
 
     void heat() {
         turn_off();
+        osDelayUntil(1);
         HAL_GPIO_WritePin(BRDGF_LLOW_GPIO_Port, BRDGF_LLOW_Pin, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(BRDGF_RLOW_GPIO_Port, BRDGF_RLOW_Pin, GPIO_PIN_SET);
         HAL_GPIO_WritePin(BRDGF_LHIGH_GPIO_Port, BRDGF_LHIGH_Pin, GPIO_PIN_SET);
@@ -23,6 +25,7 @@ namespace front {
 
     void cool() {
         turn_off();
+        osDelayUntil(1);
         HAL_GPIO_WritePin(BRDGF_LLOW_GPIO_Port, BRDGF_LLOW_Pin, GPIO_PIN_SET);
         HAL_GPIO_WritePin(BRDGF_RLOW_GPIO_Port, BRDGF_RLOW_Pin, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(BRDGF_LHIGH_GPIO_Port, BRDGF_LHIGH_Pin, GPIO_PIN_RESET);
@@ -41,6 +44,7 @@ namespace rear {
 
     void heat() {
         turn_off();
+        osDelayUntil(1);
         HAL_GPIO_WritePin(BRDGR_RLOW_GPIO_Port, BRDGR_RLOW_Pin, GPIO_PIN_SET);
         HAL_GPIO_WritePin(BRDGR_LLOW_GPIO_Port, BRDGR_LLOW_Pin, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(BRDGR_RHIGH_GPIO_Port, BRDGR_RHIGH_Pin, GPIO_PIN_RESET);
@@ -49,6 +53,7 @@ namespace rear {
 
     void cool() {
         turn_off();
+        osDelayUntil(1);
         HAL_GPIO_WritePin(BRDGR_RLOW_GPIO_Port, BRDGR_RLOW_Pin, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(BRDGR_LLOW_GPIO_Port, BRDGR_LLOW_Pin, GPIO_PIN_SET);
         HAL_GPIO_WritePin(BRDGR_RHIGH_GPIO_Port, BRDGR_RHIGH_Pin, GPIO_PIN_SET);

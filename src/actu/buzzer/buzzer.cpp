@@ -11,5 +11,9 @@ namespace buzzer {
     void stop() {
         HAL_GPIO_WritePin(BUZZEN_GPIO_Port, BUZZEN_Pin, GPIO_PIN_RESET);
     }
+
+    void toggle() {
+        HAL_GPIO_TogglePin(BUZZEN_GPIO_Port, BUZZEN_Pin);
+    }
 }
 }

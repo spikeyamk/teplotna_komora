@@ -16,7 +16,7 @@ namespace tasks {
 
         float number { self.number };
         auto sevmap { panel::sevseg::common::float_to_sevmap(number) };
-        while (1) {
+        while(1) {
             if(number != self.number) {
                 number = self.number;
                 sevmap = panel::sevseg::common::float_to_sevmap(number);

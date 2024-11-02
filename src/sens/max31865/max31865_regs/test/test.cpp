@@ -55,8 +55,7 @@ namespace test {
         const Configuration configuration {
             Masks::Configuration::Vbias::Or::ON,
             Masks::Configuration::ConversionMode::Or::AUTO,
-            Masks::Configuration::WireMode::Or::TWO_WIRE_OR_FOUR_WIRE,
-            Masks::Configuration::FaultStatusAutoClear::Or::NOCLEAR
+            Masks::Configuration::WireMode::Or::TWO_WIRE_OR_FOUR_WIRE
         };
 
         if(Configuration(configuration.serialize()) != configuration) {
@@ -119,20 +118,20 @@ namespace test {
     const RTD rtd_nofault { number_serialized };
 
     const std::array<std::bitset<8>, 2> rtd_fault_serialized {
-        [&]() {
+        [](const std::array<std::bitset<8>, 2>& number_serialized) {
             auto ret { number_serialized };
             ret[1][0] = true;
             return ret;
-        }()
+        }(number_serialized)
     };
 
     const RTD rtd_fault {
-        [&]() {
+        [](const std::array<std::bitset<8>, 2>& number_serialized) {
             RTD ret { number_serialized };
             ret.adc_code = adc_code_value;
             ret.fault = Masks::RTD_LSBs::Fault::Or::FAULT;
             return ret;
-        }()
+        }(number_serialized)
     };
 
     int rtd() {

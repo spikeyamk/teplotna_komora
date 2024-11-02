@@ -25,25 +25,17 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     sevseg_common
     panel::white
 
-    peripheral::dac
-    peripheral::gpio
-    peripheral::it
-    peripheral::spi
-    peripheral::tim
-    peripheral::uart
-
     sens::i2c_common
     sens::i2c_light
     sens::i2c_temp_hum
-    sens::spi_temp
+    sens::max31865_driver
 
-    tasks::common
+    tasks::fan_senser
     tasks::panel
     tasks::rs232_uart
-    tasks::senser_killer
+    tasks::temp_senser
     tasks::temp_ctl
 
     util
-    example_subdirectory
     rtc
 )

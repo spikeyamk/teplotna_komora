@@ -34,48 +34,50 @@ namespace max31865 {
 
                 static constexpr Mask AND { 0b0001'0000 };
             };
+        
+            static constexpr Mask AND { 0b1111'0000 };
+        };
 
-            struct FaultDetection {
-                struct WriteAction {
-                    enum class Or {
-                        NO_ACTION                                          = 0b0000'0000,
-                        FAULT_DETECTION_WITH_AUTOMATIC_DELAY               = 0b0000'0100,
-                        RUN_FAULT_DETECTION_WITH_MANUAL_DELAY_CYCLE_ONE    = 0b0000'1000,
-                        FINISH_FAULT_DETECTION_WITH_MANUAL_DELAY_CYCLE_TWO = 0b0000'1100,
-                    };
-
-                    static constexpr Mask AND { 0b0000'1100 };
-                };
-
-                struct ReadMeaning {
-                    enum class Or {
-                        FAULT_DETECTION_FINISHED                                        = 0b0000'0000,
-                        AUTOMATIC_FAULT_DETECTION_STILL_RUNNING                         = 0b0000'0100,
-                        MANUAL_CYCLE_ONE_STILL_RUNNING_WAITING_FOR_USER_TO_WRITE_ELEVEN = 0b0000'1000,
-                        MANUAL_CYCLE_TWO_STILL_RUNNING                                  = 0b0000'1100,
-                    };
-
-                    static constexpr Mask AND { 0b0000'1100 };
-                };
-            };
-
-            struct FaultStatusAutoClear {
+        struct FaultDetection {
+            struct WriteAction {
                 enum class Or {
-                    NOCLEAR = 0b0000'0000,
-                    CLEAR   = 0b0000'0010,
+                    NO_ACTION                                          = 0b0000'0000,
+                    FAULT_DETECTION_WITH_AUTOMATIC_DELAY               = 0b1000'0100,
+                    RUN_FAULT_DETECTION_WITH_MANUAL_DELAY_CYCLE_ONE    = 0b1000'1000,
+                    FINISH_FAULT_DETECTION_WITH_MANUAL_DELAY_CYCLE_TWO = 0b1000'1100,
                 };
 
-                static constexpr Mask AND { 0b0000'0010 };
+                static constexpr Mask AND { 0b1000'1100 };
             };
 
-            struct FilterSelect {
+            struct ReadMeaning {
                 enum class Or {
-                    SIXTY_HZ = 0b0000'0000,
-                    FIFTY_HZ = 0b0000'0001,
+                    FAULT_DETECTION_FINISHED                                        = 0b0000'0000,
+                    AUTOMATIC_FAULT_DETECTION_STILL_RUNNING                         = 0b0000'0100,
+                    MANUAL_CYCLE_ONE_STILL_RUNNING_WAITING_FOR_USER_TO_WRITE_ELEVEN = 0b0000'1000,
+                    MANUAL_CYCLE_TWO_STILL_RUNNING                                  = 0b0000'1100,
                 };
 
-                static constexpr Mask AND { 0b0000'0001 };
+                static constexpr Mask AND { 0b0000'1100 };
             };
+        };
+
+        struct FaultStatusAutoClear {
+            enum class Or {
+                NOCLEAR = 0b0000'0000,
+                CLEAR   = 0b0000'0010,
+            };
+
+            static constexpr Mask AND { 0b0000'0010 };
+        };
+
+        struct FilterSelect {
+            enum class Or {
+                SIXTY_HZ = 0b0000'0000,
+                FIFTY_HZ = 0b0000'0001,
+            };
+
+            static constexpr Mask AND { 0b0000'0001 };
         };
 
         struct RTD_LSBs {

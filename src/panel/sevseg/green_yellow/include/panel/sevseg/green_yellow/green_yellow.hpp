@@ -1,5 +1,7 @@
 #pragma once
 
+#include "stm32f2xx_hal.h"
+
 namespace panel {
 namespace sevseg {
 namespace green_yellow {
@@ -51,8 +53,12 @@ namespace green_yellow {
             GREEN_3,
             GREEN_4,
         };
+    private:
+        SPI_HandleTypeDef* hspi;
+        GPIO_TypeDef* nss_port;
+        const uint16_t nss_pin;
     public:
-        MAX6549();
+        MAX6549(SPI_HandleTypeDef* hspi, GPIO_TypeDef* nss_port, const uint16_t nss_pin);
 
         void select();
         void deselect();

@@ -9,10 +9,12 @@ namespace lin_source {
 }
 namespace front {
     void start_dac();
+    void stop_dac();
     void set_output(const uint32_t value);
 }
 namespace rear {
     void start_dac();
+    void stop_dac();
     void set_output(const uint32_t value);
 }
 }
