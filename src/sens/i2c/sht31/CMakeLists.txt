@@ -1,0 +1,2 @@
+add_subdirectory(sht31_driver)
+add_subdirectory(sht31_regs)
