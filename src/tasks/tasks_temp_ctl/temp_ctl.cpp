@@ -8,8 +8,8 @@ namespace tasks {
 
     void TempCtl::worker(void* arg) {
         TempCtl& self { *static_cast<TempCtl*>(arg) };
+        (void) self;
         while(1) {
-            std::printf("tasks::TempCtl::worker: self.rpm: %f\n", self.rpm);
             osDelay(1'000);
         }
     }

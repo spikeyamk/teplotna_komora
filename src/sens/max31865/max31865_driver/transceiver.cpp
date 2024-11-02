@@ -19,7 +19,7 @@ namespace max31865 {
         HAL_Delay(10);
         const std::array<uint8_t, 2> init_configuration {
             static_cast<uint8_t>(RegAddrs::RW::CONFIGURATION),
-            static_cast<uint8_t>(Masks::Configuration::FaultStatusAutoClear::Or::CLEAR)
+            static_cast<uint8_t>(Masks::FaultStatusAutoClear::Or::CLEAR)
         };
         const HAL_StatusTypeDef ret {
             HAL_SPI_Transmit(
@@ -101,6 +101,24 @@ namespace max31865 {
         );
 
         return ret;
+    }
+
+    HAL_StatusTypeDef Transceiver::dump() {
+        const auto ret_read_all { read_all() };
+        if(ret_read_all.has_value() == false) {
+            return ret_read_all.error(); 
+        }
+
+        for(size_t i = 0; i < ret_read_all.value().size(); i++) {
+            std::printf(
+                "sens::max31865::Transceiver::dump: this: %p, ret_read_all.value()[%zu]: 0x%02lX\n",
+                reinterpret_cast<void*>(this),
+                i,
+                ret_read_all.value()[i].to_ulong()
+            );
+        }
+
+        return HAL_OK;
     }
 }
 }

@@ -16,9 +16,6 @@
 [submodule "deps/3rdparty/STM32CubeF2"]
 	path = deps/3rdparty/STM32CubeF2
 	url = https://github.com/STMicroelectronics/STM32CubeF2
-[submodule "docs/cmake-distinct-compilers"]
-	path = docs/cmake-distinct-compilers
-	url = https://github.com/scivision/cmake-distinct-compilers
 [submodule "deps/ubitint"]
 	path = deps/ubitint
 	url = https://www.github.com/spikeyamk/ubitint

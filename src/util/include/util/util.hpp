@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <array>
 
 namespace util {
     template<typename T>
@@ -54,6 +55,8 @@ namespace util {
             contains<key, Rest...>
         > {};
     public:
+        static constexpr std::array<T, sizeof...(Args)> array { Args... };
+
         template<T key>
         static constexpr T get() {
             static_assert(contains<key, Args...>::value, "key not found");

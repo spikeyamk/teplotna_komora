@@ -5,6 +5,7 @@
 #include "sens/max31865/extension.hpp"
 #include "sens/max31865/fault_status.hpp"
 #include "sens/max31865/fault_threshold.hpp"
+#include "sens/max31865/filter_select.hpp"
 #include "sens/max31865/masks.hpp"
 #include "sens/max31865/reg_addrs.hpp"
 #include "sens/max31865/rtd.hpp"

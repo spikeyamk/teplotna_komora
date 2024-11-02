@@ -3,6 +3,7 @@
 #include "actu/pump/pump.hpp"
 #include "actu/buzzer/buzzer.hpp"
 #include "actu/bridge/bridge.hpp"
+#include "actu/lin_source/lin_source.hpp"
 #include "util/util.hpp"
 
 namespace util {
@@ -12,7 +13,7 @@ namespace util {
 
         actu::pump::stop();
         actu::buzzer::stop();
-
+        
         actu::bridge::front::turn_off();
         actu::bridge::rear::turn_off();
     }

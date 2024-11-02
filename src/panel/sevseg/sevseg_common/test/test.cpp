@@ -27,10 +27,6 @@ namespace test {
     }
 
     int float_to_sevmap() {
-        if(Trielo::trielo<std::isnormal<float>>(std::nanf("1"))) {
-            return -1;
-        }
-
         struct ExpectedPair {
             float number;
             sevmap expected_result;
@@ -84,6 +80,40 @@ namespace test {
             if(Trielo::trielo<is_same>(ret, expected_pairs[i].expected_result) == false) {
                 return static_cast<int>(i);
             }
+        }
+
+        return 0;
+    }
+
+    int uint20_t_to_sevmap() {
+        const auto sevmap { common::uint20_t_to_sevmap(uint20_t(0xA'E1'55)) };
+        const common::sevmap sevmap_to_compare_against {
+            common::hex_map[0xA],
+            common::hex_map[0xE],
+            common::hex_map[0x1],
+            common::hex_map[0x5],
+            common::hex_map[0x5]
+        };
+
+        if(sevmap != sevmap_to_compare_against) {
+            std::printf("panel::sevseg::common::test::uitn20_t_to_sevmap: sevmap != sevmap_to_compare_against\n");
+            for(size_t i = 0; i < sevmap.size(); i++) {
+                std::cout
+                    << "sevmap["
+                    << i
+                    << "]: "
+                    << sevmap[i]
+                    << std::endl;
+                std::cout
+                    << "sevmap_to_compare_against["
+                    << i
+                    << "]: "
+                    << sevmap_to_compare_against[i]
+                    << std::endl;
+
+            }
+
+            return 1;
         }
 
         return 0;

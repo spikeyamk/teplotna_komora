@@ -1,7 +1,2 @@
 add_subdirectory(i2c)
-add_library(sens::i2c_common ALIAS i2c_common)
-add_library(sens::i2c_light ALIAS light)
-add_library(sens::i2c_temp_hum ALIAS temp_hum)
 add_subdirectory(max31865)
-add_subdirectory(spi_temp)
-add_library(sens::spi_temp ALIAS spi_temp)

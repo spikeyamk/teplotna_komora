@@ -1,5 +1,3 @@
-#add_subdirectory("googletest")
-
 add_library(stm32cubef2
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_dac.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_dac_ex.c
@@ -37,7 +35,6 @@ add_library(stm32cubef2
 target_compile_definitions(stm32cubef2 PUBLIC 
 	USE_HAL_DRIVER 
 	STM32F205xx
-	STM32_THREAD_SAFE_STRATEGY=4
     $<$<CONFIG:Debug>:DEBUG>
 )
 

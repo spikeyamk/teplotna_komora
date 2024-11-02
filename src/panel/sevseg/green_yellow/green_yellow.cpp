@@ -1,5 +1,7 @@
 #include <iostream>
 #include <array>
+#include <bitset>
+
 #include "cmsis_os2.h"
 #include "main.h"
 #include "spi.h"
@@ -9,7 +11,11 @@
 namespace panel {
 namespace sevseg {
 namespace green_yellow {
-    MAX6549::MAX6549() {
+    MAX6549::MAX6549(SPI_HandleTypeDef* hspi, GPIO_TypeDef* nss_port, const uint16_t nss_pin) :
+        hspi { hspi },
+        nss_port { nss_port },
+        nss_pin { nss_pin }
+    {
         normal_operation_disable_blink_global_intensity_clear_all();
         turn_off_decode_mode();
         set_digit_7_to_0_to_7seg_or_16seg_type();
@@ -19,17 +25,17 @@ namespace green_yellow {
     }
 
     void MAX6549::select() {
-        HAL_GPIO_WritePin(SPI2_SEVYG_NSS_GPIO_Port, SPI2_SEVYG_NSS_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(nss_port, nss_pin, GPIO_PIN_RESET);
     }
 
     void MAX6549::deselect() {
-        HAL_GPIO_WritePin(SPI2_SEVYG_NSS_GPIO_Port, SPI2_SEVYG_NSS_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(nss_port, nss_pin, GPIO_PIN_SET);
     }
 
     auto MAX6549::write(const uint8_t address, const uint8_t value) {
         select();
-        const std::array<uint8_t, 2> buf { (address & 0x7F), value };
-        const auto ret { HAL_SPI_Transmit(&hspi2, buf.data(), buf.size(), 1000) };
+        const std::array<uint8_t, 2> buf { static_cast<uint8_t>((std::bitset<8>(address) & std::bitset<8>(0x7F)).to_ulong()), value };
+        const auto ret { HAL_SPI_Transmit(hspi, buf.data(), buf.size(), 1000) };
         deselect();
         return ret;
     }
@@ -37,14 +43,14 @@ namespace green_yellow {
     uint8_t MAX6549::read(const uint8_t address) {
         select();
 
-        const std::array<uint8_t, 2> buf { (address | 0x80), 0x00 };
-        HAL_SPI_Transmit(&hspi2, buf.data(), buf.size(), 1000);
+        const std::array<uint8_t, 2> buf { static_cast<uint8_t>((std::bitset<8>(address) | std::bitset<8>(0x80)).to_ulong()), 0x00 };
+        HAL_SPI_Transmit(hspi, buf.data(), buf.size(), 1000);
         deselect();
 
         select();
         const std::array<uint8_t, 2> buf0 {};
         std::array<uint8_t, 2> ret {};
-        HAL_SPI_TransmitReceive(&hspi2, buf0.data(), ret.data(), ret.size(), 1000);
+        HAL_SPI_TransmitReceive(hspi, buf0.data(), ret.data(), ret.size(), 1000);
         deselect();
         for(uint8_t i = 0; i < ret.size(); i++) {
             std::printf("ret[%u]: 0x%02X\n", i, ret[i]);
@@ -153,7 +159,7 @@ namespace green_yellow {
 
     void test() {
         while(1) {
-            MAX6549 max6549 {};
+            MAX6549 max6549 { &hspi2, SPI2_SEVYG_NSS_GPIO_Port, SPI2_SEVYG_NSS_Pin };
             max6549.test_single_segment();
             max6549.test_hex();
             max6549.test_single_segment_single_digit();

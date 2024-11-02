@@ -28,6 +28,10 @@ namespace front {
         HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
     }
 
+    void stop_dac() {
+        HAL_DAC_Stop(&hdac, DAC_CHANNEL_1);
+    }
+
     void set_output(const uint32_t value) {
         HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, value);
     }
@@ -35,6 +39,10 @@ namespace front {
 namespace rear {
     void start_dac() {
         HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
+    }
+
+    void stop_dac() {
+        HAL_DAC_Stop(&hdac, DAC_CHANNEL_2);
     }
 
     void set_output(const uint32_t value) {
