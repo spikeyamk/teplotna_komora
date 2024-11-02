@@ -2,7 +2,7 @@
 #include <cmath>
 #include <cstdint>
 #include <algorithm>
-#include <span>
+#include <string_view>
 #include <ubitint.hpp>
 #include "panel/sevseg/common/common.hpp"
 
@@ -94,13 +94,14 @@ namespace common {
     }
 
     inline bool is_valid_char_in_float_snprintf_output(const char value) {
-        if(value != '-' && value != '.' && (!(value >= '0' && value <= '9')) && value != '\0') {
-            return false;
-        }
-        return true;
+        return (
+            (value == '-')
+            || (value == '.')
+            || ((value >= '0') && (value <= '9'))
+        );
     }
 
-    inline bool check_snprintf_float_output(const std::span<char>& buf) {
+    inline bool check_snprintf_float_output(const std::string_view& buf) {
         for(const char e: buf) {
             if(is_valid_char_in_float_snprintf_output(e) == false) {
                 return false; 
@@ -119,10 +120,13 @@ namespace common {
     }
 
     inline bool is_valid_char_in_hex_snprintf_output(const char value) {
-        return (value >= '0' && value <= '9') || (value >= 'A' && value <= 'F') || (value == '\0');
+        return (
+            (value >= '0' && value <= '9')
+            || (value >= 'A' && value <= 'F')
+        );
     }
 
-    inline bool check_snprintf_hex_output(const std::span<char>& buf) {
+    inline bool check_snprintf_hex_output(const std::string_view& buf) {
         for(const char e: buf) {
             if(is_valid_char_in_hex_snprintf_output(e) == false) {
                 return false; 
@@ -131,15 +135,13 @@ namespace common {
         
         return true;
     }
-
-    using uint20_t = ubitint_t<20>;
     
     sevmap uint20_t_to_sevmap(const uint20_t value) {
         std::array<char, 6> buf {};
         if(std::snprintf(buf.data(), buf.size(), "%05lX", value.unwrap()) < 0) {
             return exception_sevmap::error;
         }
-        if(check_snprintf_hex_output(buf) == false) {
+        if(check_snprintf_hex_output(std::string_view(buf.data(), buf.size() - 1)) == false) {
             return exception_sevmap::error;
         }
 
@@ -173,7 +175,7 @@ namespace common {
         if(std::snprintf(buf.data(), buf.size(), "%05.4f", value) < 0) {
             return exception_sevmap::error;
         }
-        if(check_snprintf_float_output(buf) == false) {
+        if(check_snprintf_float_output(std::string_view(buf.data(), buf.size() - 1)) == false) {
             return exception_sevmap::error;
         }
 
