@@ -81,19 +81,23 @@ extern "C" void app_main(void* arg) {
         std::printf("app_main: comm::usb_uart::RedirectStdout::get_instance().init_threadsafe() == false\n");
     }
 
-    Trielo::trielo<util::turn_every_annoying_peripheral_off>();
+    util::turn_every_annoying_peripheral_off();
 
     tasks::TempSenser::get_instance().init();
     if(tasks::TempSenser::get_instance().launch() == false) {
         bksram::write_reset<bksram::ErrorCodes::TempSenser::LAUNCH>();
     }
 
-    if(tasks::Panel::get_instance().launch() == false) {
-        bksram::write_reset<bksram::ErrorCodes::Panel::LAUNCH>();
-    }
-
+    actu::fan::ctl::all::start_full_speed();
+    osDelay(1'000);
+    tasks::FanSenser::get_instance().init();
     if(tasks::FanSenser::get_instance().launch() == false) {
         bksram::write_reset<bksram::ErrorCodes::FanSenser::LAUNCH>();
+    }
+    actu::fan::ctl::all::start_min_speed();
+
+    if(tasks::Panel::get_instance().launch() == false) {
+        bksram::write_reset<bksram::ErrorCodes::Panel::LAUNCH>();
     }
 
     if(tasks::RS232_UART::get_instance().launch() == false) {

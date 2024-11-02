@@ -26,12 +26,44 @@ namespace bksram {
         };
 
         struct FanSenser {
-            static constexpr uint20_t LAUNCH { 0xE'FA'90 };
+            static constexpr uint20_t LAUNCH { 0xE'F5'00 };
 
             struct Init {
+                static constexpr uint20_t FB_ALL  { 0xE'F5'1A };
+
+                static constexpr uint20_t FAN0_RL { 0xE'F5'10 };
+                static constexpr uint20_t FAN1_FL { 0xE'F5'11 };
+                static constexpr uint20_t FAN2_RR { 0xE'F5'12 };
+                static constexpr uint20_t FAN3_BL { 0xE'F5'13 };
+                static constexpr uint20_t FAN4_BR { 0xE'F5'14 };
+                static constexpr uint20_t FAN5_FR { 0xE'F5'15 };
+                using FanRegistry = util::Registry<uint20_t,
+                    FAN0_RL,
+                    FAN1_FL,
+                    FAN2_RR,
+                    FAN3_BL,
+                    FAN4_BR,
+                    FAN5_FR
+                >;
             };
 
             struct Worker {
+                static constexpr uint20_t INITED_FALSE { 0xE'F5'1F };
+
+                static constexpr uint20_t FAN0_RL { 0xE'F5'A0 };
+                static constexpr uint20_t FAN1_FL { 0xE'F5'A1 };
+                static constexpr uint20_t FAN2_RR { 0xE'F5'A2 };
+                static constexpr uint20_t FAN3_BL { 0xE'F5'A3 };
+                static constexpr uint20_t FAN4_BR { 0xE'F5'A4 };
+                static constexpr uint20_t FAN5_FR { 0xE'F5'A5 };
+                using FanRegistry = util::Registry<uint20_t,
+                    FAN0_RL,
+                    FAN1_FL,
+                    FAN2_RR,
+                    FAN3_BL,
+                    FAN4_BR,
+                    FAN5_FR
+                >;
             };
         };
 
@@ -109,7 +141,7 @@ namespace bksram {
             };
 
             struct Worker {
-                static constexpr uint20_t INITED_FALSE { 0xE'AB'BA };
+                static constexpr uint20_t INITED_FALSE { 0xE'31'1F };
 
                 struct MAX31865 {
                     struct RTD {
@@ -143,6 +175,22 @@ namespace bksram {
             Panel::LAUNCH,
 
             FanSenser::LAUNCH,
+            FanSenser::Init::FB_ALL,
+
+            FanSenser::Init::FAN0_RL,
+            FanSenser::Init::FAN1_FL,
+            FanSenser::Init::FAN2_RR,
+            FanSenser::Init::FAN3_BL,
+            FanSenser::Init::FAN4_BR,
+            FanSenser::Init::FAN5_FR,
+
+            FanSenser::Worker::INITED_FALSE,
+            FanSenser::Worker::FAN0_RL,
+            FanSenser::Worker::FAN1_FL,
+            FanSenser::Worker::FAN2_RR,
+            FanSenser::Worker::FAN3_BL,
+            FanSenser::Worker::FAN4_BR,
+            FanSenser::Worker::FAN5_FR,
 
             TempSenser::LAUNCH,
 
