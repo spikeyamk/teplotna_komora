@@ -1,8 +1,8 @@
 add_subdirectory(tasks_common)
 add_library(tasks::common ALIAS tasks_common)
 
-add_subdirectory(tasks_example)
-add_library(tasks::example ALIAS tasks_example)
+add_subdirectory(tasks_fan_senser)
+add_library(tasks::fan_senser ALIAS tasks_fan_senser)
 
 add_subdirectory(tasks_panel)
 add_library(tasks::panel ALIAS tasks_panel)

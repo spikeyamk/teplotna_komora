@@ -22,13 +22,4 @@ endif()
 
 add_library(${SUBDIRECTORY_NAME} ${SUBDIRECTORY_SOURCES})
 target_include_directories(${SUBDIRECTORY_NAME} PUBLIC "include")
-target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE
-    stm32cubef2
-    trielo
-    bksram
-)
-target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
-    panel::green_yellow
-    sens::max31865_driver
-    tasks::common
-)
+target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE stm32cubef2 trielo tasks_common)

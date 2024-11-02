@@ -25,6 +25,7 @@
 #include "panel/led/led.hpp"
 #include "sens/max31865/test.hpp"
 
+#include "tasks/fan_senser.hpp"
 #include "tasks/panel.hpp"
 #include "tasks/rs232_uart.hpp"
 #include "tasks/temp_senser.hpp"
@@ -77,18 +78,31 @@ extern "C" void app_main(void* arg) {
 
     if(comm::usb_uart::RedirectStdout::get_instance().init_threadsafe() == false) {
         comm::usb_uart::RedirectStdout::get_instance().turn_off_threadsafe();
-        std::printf("app_main: redirect_stdout.init() == false\n");
+        std::printf("app_main: comm::usb_uart::RedirectStdout::get_instance().init_threadsafe() == false\n");
     }
 
     Trielo::trielo<util::turn_every_annoying_peripheral_off>();
 
-    TRIELO_VOID(tasks::TempSenser::get_instance().init());
-    TRIELO(tasks::TempSenser::get_instance().launch());
+    tasks::TempSenser::get_instance().init();
+    if(tasks::TempSenser::get_instance().launch() == false) {
+        bksram::write_reset<bksram::ErrorCodes::TempSenser::LAUNCH>();
+    }
 
-    TRIELO(tasks::Panel::get_instance().launch());
+    if(tasks::Panel::get_instance().launch() == false) {
+        bksram::write_reset<bksram::ErrorCodes::Panel::LAUNCH>();
+    }
 
-    //tasks::RS232_UART::get_instance().launch();
-    //tasks::TempCtl::get_instance().launch();
+    if(tasks::FanSenser::get_instance().launch() == false) {
+        bksram::write_reset<bksram::ErrorCodes::FanSenser::LAUNCH>();
+    }
+
+    if(tasks::RS232_UART::get_instance().launch() == false) {
+        bksram::write_reset<bksram::ErrorCodes::RS232_UART::LAUNCH>();
+    }
+
+    if(tasks::TempCtl::get_instance().launch() == false) {
+        bksram::write_reset<bksram::ErrorCodes::TempCtl::LAUNCH>();
+    }
 
     for(size_t tick = 10; true; tick++) {
         std::printf("app_main: tick: %zu\n", tick);

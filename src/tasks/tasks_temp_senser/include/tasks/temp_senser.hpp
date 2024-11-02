@@ -41,7 +41,6 @@ namespace tasks {
         static TempSenser& get_instance();
         static void worker(void* arg);
         void init();
-        bool fan_fb_all_test() const;
         osStatus release_semaphore_front();
         osStatus release_semaphore_rear();
     };

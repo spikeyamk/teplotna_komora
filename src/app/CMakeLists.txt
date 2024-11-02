@@ -30,7 +30,7 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     sens::i2c_temp_hum
     sens::max31865_driver
 
-    tasks::common
+    tasks::fan_senser
     tasks::panel
     tasks::rs232_uart
     tasks::temp_senser
