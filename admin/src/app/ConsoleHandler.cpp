@@ -12,14 +12,26 @@ const std::string ConsoleHandler::sensorReadingsDirectoryPath = "sensor_readings
 const std::string ConsoleHandler::usageFilePath = "usage.txt";
 const std::string ConsoleHandler::logsFilePath = "logs.txt";
 const std::string ConsoleHandler::outputDirectoryPath = "output/";
-bool ConsoleHandler::exitApp = false;
+bool  ConsoleHandler::exitApp = false;
+
+ConsoleHandler::ConsoleHandler() {
+    // Create the output directory if it does not exist
+    if (!fs::exists(outputDirectoryPath)) {
+        fs::create_directories(outputDirectoryPath);
+        CreateFileIfNotExists(logsFilePath);
+        exitApp = false;
+    }
+}
+
+ConsoleHandler::~ConsoleHandler() {
+    if (exitApp == false) {
+        Exit();
+    }
+}
 
 void ConsoleHandler::Run() {
     PrintMessage("Welcome to temperature regulator admin!\n");
     PrintUsage();
-
-    CreateFileIfNotExists(logsFilePath);
-    CreateFileIfNotExists(usageFilePath);;
 
     while (exitApp == false)
     {

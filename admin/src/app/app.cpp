@@ -4,6 +4,7 @@
 #include "app.hpp"
 #include <random>
 #include "SerialHandler.hpp"
+#include "ConsoleHandler.hpp"
 
 std::string getRandomWord(int length = 6) {
     const std::string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -21,16 +22,19 @@ std::string getRandomWord(int length = 6) {
 
 int run() {
 	SerialHandler serial = SerialHandler();
+	// ConsoleHandler app = ConsoleHandler();
 
 	if(!serial.Initialize()) {
 		return 1;
 	}
 
+	// app.Run();
+
 	while(1) {
-		std::string word = getRandomWord();
-		serial.SendMessage(word);
-		serial.Delay(3000);
-		serial.ReceiveMessage(word.size());
+		// std::string word = getRandomWord();
+		// serial.SendMessage(word);
+		// serial.Delay(3000);
+		// serial.ReceiveMessage(word.size());
 	}
 
 	return 0;

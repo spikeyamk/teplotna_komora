@@ -11,8 +11,8 @@
 
 class ConsoleHandler {
 public:
-    ConsoleHandler() = delete;
-    ~ConsoleHandler() = delete;
+    ConsoleHandler();
+    ~ConsoleHandler();
 
     void                        Run();
     void                        ExportOutput(std::string outputDirectoryPath);
@@ -37,4 +37,4 @@ private:
     static bool                 exitApp;
 };
 
-#endif // SERIALHANDLER_H
+#endif // CONSOLEHANDLER_H
