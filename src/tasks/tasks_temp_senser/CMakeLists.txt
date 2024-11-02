@@ -25,11 +25,12 @@ target_include_directories(${SUBDIRECTORY_NAME} PUBLIC "include")
 target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE
     stm32cubef2
     trielo
-    tasks_common
     actu::fan_ctl
     actu::fan_fb
     bksram
-    sens::max31865_regs
-    sens::max31865_driver
+)
+target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
     panel::green_yellow
+    sens::max31865_driver
+    tasks::common
 )

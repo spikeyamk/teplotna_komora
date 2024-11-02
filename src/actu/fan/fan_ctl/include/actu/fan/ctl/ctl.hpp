@@ -47,6 +47,7 @@ namespace ctl {
     HAL_StatusTypeDef init(const common::Fan& fan);
     void set_speed(const common::Fan& fan, const SpeedPercentage speed);
     SpeedPercentage get_speed(const common::Fan& fan);
+    bool is_active(const common::Fan& fan);
 namespace all {
     HAL_StatusTypeDef init();
     /**

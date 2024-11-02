@@ -112,7 +112,15 @@ namespace max31865 {
         return Masks::FilterSelect::Or(static_cast<uint8_t>((ret.value() & Masks::FilterSelect::AND).to_ulong()));
     }
 
-    std::expected<RTD, HAL_StatusTypeDef> Extension::read_rtd() const {
+    std::expected<RTD, HAL_StatusTypeDef> Extension::read_rtd() {
+        if(semaphore == nullptr) {
+            return std::unexpected(HAL_ERROR);
+        }
+
+        if(osSemaphoreAcquire(semaphore, semaphore_timeout) != osOK) {
+            return std::unexpected(HAL_ERROR);
+        }
+
         if(HAL_GPIO_ReadPin(ndrdy_port, ndrdy_pin) != GPIO_PIN_RESET) {
             return std::unexpected(HAL_ERROR);
         }
@@ -128,6 +136,13 @@ namespace max31865 {
         }
 
         return RTD { std::array<std::bitset<8>, 2> { ret_rtd_msbs.value(), ret_rtd_lsbs.value() } };
+    }
+
+    osStatus Extension::release_semaphore() {
+        if(semaphore == nullptr) {
+            return osError;
+        }
+        return osSemaphoreRelease(semaphore);
     }
 
     std::expected<FaultStatus, HAL_StatusTypeDef> Extension::run_auto_fault_detection() const {

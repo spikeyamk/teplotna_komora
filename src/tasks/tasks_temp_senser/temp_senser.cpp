@@ -5,20 +5,30 @@
 #include "spi.h"
 #include "main.h"
 #include "panel/sevseg/green_yellow/green_yellow.hpp"
-#include "tasks/senser_killer.hpp"
+#include "tasks/temp_senser.hpp"
 
 namespace tasks {
-    SenserKiller& SenserKiller::get_instance() {
-        static SenserKiller instance {};
+    TempSenser& TempSenser::get_instance() {
+        static TempSenser instance {};
         return instance;
     }
 
-    void SenserKiller::init() {
+    bool TempSenser::fan_fb_all_test() const {
+        for(const auto& e: actu::fan::fb::fbs) {
+            if(e.get().consume_rpm() <= 100.0f) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    void TempSenser::init() {
         if(actu::fan::ctl::all::init() != HAL_OK) {
             bksram::write_reset<bksram::ErrorCodes::Init::Fan::CTL_ALL_INIT>();
         }
 
-        actu::fan::ctl::all::start_min_speed();
+        actu::fan::ctl::all::start_full_speed();
 
         if(actu::fan::fb::all::init() != HAL_OK) {
             bksram::write_reset<bksram::ErrorCodes::Init::Fan::FB_ALL_INIT>();
@@ -28,6 +38,14 @@ namespace tasks {
             bksram::write_reset<bksram::ErrorCodes::Init::MAX31865::TransceiverInit::FRONT>();
         } else if(transceiver_rear.init() != HAL_OK) {
             bksram::write_reset<bksram::ErrorCodes::Init::MAX31865::TransceiverInit::REAR>();
+        }
+
+        const char extension_front_name[] { "temp_front" };
+        const char extension_rear_name[] { "temp_rear" };
+        if(extension_front.init(extension_front_name) != HAL_OK) {
+            bksram::write_reset<bksram::ErrorCodes::Init::MAX31865::Extension::Init::FRONT>();
+        } else if(extension_rear.init(extension_rear_name) != HAL_OK) {
+            bksram::write_reset<bksram::ErrorCodes::Init::MAX31865::Extension::Init::REAR>();
         }
 
         if(extension_front.configure(sens::max31865::Configuration()) != HAL_OK) {
@@ -97,30 +115,35 @@ namespace tasks {
             bksram::write_reset<bksram::ErrorCodes::Init::MAX31865::Extension::RunAutoFaultDetection::REAR>();
         }
 
-        for(const auto& e: actu::fan::fb::fbs) {
-            if(e.get().consume_rpm() != 0.0f) {
-                bksram::write_reset<bksram::ErrorCodes::Init::Fan::FB_ALL_TEST>();
-            }
+        if(fan_fb_all_test() == false) {
+            bksram::write_reset<bksram::ErrorCodes::Init::Fan::FB_ALL_TEST>();
         }
+
+        actu::fan::ctl::all::stop();
+
+        inited = true;
     }
 
-    void SenserKiller::worker(void* arg) {
-        SenserKiller& self { *static_cast<SenserKiller*>(arg) };
+    void TempSenser::worker(void* arg) {
+        TempSenser& self { *static_cast<TempSenser*>(arg) };
+        if(self.inited == false) {
+            bksram::write_reset<bksram::ErrorCodes::Worker::INITED_FALSE>();
+        }
 
         while(1) {
             const auto rtd_front { self.extension_front.read_rtd() };
             if(rtd_front.has_value()) {
-                bksram::write_reset<bksram::ErrorCodes::Running::MAX31865::RTD::Timeout::FRONT>();
+                bksram::write_reset<bksram::ErrorCodes::Worker::MAX31865::RTD::Timeout::FRONT>();
             }
             const auto rtd_rear { self.extension_rear.read_rtd() };
             if(rtd_rear.has_value()) {
-                bksram::write_reset<bksram::ErrorCodes::Running::MAX31865::RTD::Timeout::REAR>();
+                bksram::write_reset<bksram::ErrorCodes::Worker::MAX31865::RTD::Timeout::REAR>();
             }
 
             if(rtd_front.value().fault == sens::max31865::Masks::RTD_LSBs::Fault::Or::FAULT) {
-                bksram::write_reset<bksram::ErrorCodes::Running::MAX31865::RTD::HighOrLowFaultThreshold::FRONT>();
+                bksram::write_reset<bksram::ErrorCodes::Worker::MAX31865::RTD::HighOrLowFaultThreshold::FRONT>();
             } else if(rtd_rear.value().fault == sens::max31865::Masks::RTD_LSBs::Fault::Or::FAULT) {
-                bksram::write_reset<bksram::ErrorCodes::Running::MAX31865::RTD::HighOrLowFaultThreshold::REAR>();
+                bksram::write_reset<bksram::ErrorCodes::Worker::MAX31865::RTD::HighOrLowFaultThreshold::REAR>();
             }
 
             self.temp_front = rtd_front.value().calculate_approx_temp().value();
@@ -129,7 +152,26 @@ namespace tasks {
             self.temp_rear = rtd_rear.value().calculate_approx_temp().value();
             self.max6549.green_show(self.temp_rear);
 
+            /*
+            for(size_t i = 0; i < actu::fan::fb::fbs.size(); i++) {
+                if(
+                    actu::fan::ctl::is_active(actu::fan::fb::fbs[i].get().fan)
+                    && (actu::fan::fb::fbs[i].get().consume_rpm() < 100.0f)
+                ){
+                    bksram::write_reset<bksram::ErrorCodes::Worker::FAN_FB>();
+                }
+            }
+            */
+
             osDelay(1);
         }
+    }
+
+    osStatus TempSenser::release_semaphore_front() {
+        return extension_front.release_semaphore();
+    }
+
+    osStatus TempSenser::release_semaphore_rear() {
+        return extension_rear.release_semaphore();
     }
 }

@@ -33,7 +33,7 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     tasks::common
     tasks::panel
     tasks::rs232_uart
-    tasks::senser_killer
+    tasks::temp_senser
     tasks::temp_ctl
 
     util

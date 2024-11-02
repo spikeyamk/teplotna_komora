@@ -27,6 +27,11 @@ namespace bksram {
                 };
 
                 struct Extension {
+                    struct Init {
+                        static constexpr uint20_t FRONT { 0xE'31'80 };
+                        static constexpr uint20_t REAR  { 0xE'31'81 };
+                    };
+
                     struct ClearConfigure {
                         static constexpr uint20_t FRONT { 0xE'31'82 };
                         static constexpr uint20_t REAR  { 0xE'31'83 };
@@ -85,8 +90,9 @@ namespace bksram {
             };
         };
 
-        struct Running {
-            static constexpr uint20_t FAN_FB { 0xE'FA'A0 };
+        struct Worker {
+            static constexpr uint20_t INITED_FALSE { 0xE'AB'BA };
+            static constexpr uint20_t FAN_FB       { 0xE'FA'A0 };
 
             struct MAX31865 {
                 struct RTD {
@@ -118,6 +124,9 @@ namespace bksram {
             
             Init::MAX31865::TransceiverInit::FRONT,
             Init::MAX31865::TransceiverInit::REAR,
+
+            Init::MAX31865::Extension::Init::FRONT,
+            Init::MAX31865::Extension::Init::REAR,
             
             Init::MAX31865::Extension::ClearConfigure::FRONT,
             Init::MAX31865::Extension::ClearConfigure::REAR,
@@ -151,17 +160,19 @@ namespace bksram {
             
             Init::MAX31865::Extension::RunAutoFaultDetection::FRONT,
             Init::MAX31865::Extension::RunAutoFaultDetection::REAR,
+            
+            Worker::INITED_FALSE,
 
-            Running::FAN_FB,
+            Worker::FAN_FB,
 
-            Running::MAX31865::RTD::Timeout::FRONT,
-            Running::MAX31865::RTD::Timeout::REAR,
+            Worker::MAX31865::RTD::Timeout::FRONT,
+            Worker::MAX31865::RTD::Timeout::REAR,
 
-            Running::MAX31865::RTD::HighOrLowFaultThreshold::FRONT,
-            Running::MAX31865::RTD::HighOrLowFaultThreshold::REAR,
+            Worker::MAX31865::RTD::HighOrLowFaultThreshold::FRONT,
+            Worker::MAX31865::RTD::HighOrLowFaultThreshold::REAR,
 
-            Running::MAX31865::RunAutoFaultDetection::FRONT,
-            Running::MAX31865::RunAutoFaultDetection::REAR
+            Worker::MAX31865::RunAutoFaultDetection::FRONT,
+            Worker::MAX31865::RunAutoFaultDetection::REAR
         >;
     };
 

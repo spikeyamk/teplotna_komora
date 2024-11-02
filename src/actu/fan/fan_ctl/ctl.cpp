@@ -18,6 +18,14 @@ namespace ctl {
     SpeedPercentage get_speed(const common::Fan& fan) {
         return SpeedPercentage(static_cast<uint8_t>(__HAL_TIM_GET_COMPARE(fan.htim, fan.ctl_channel.mask_for_init)));
     }
+
+    bool is_active(const common::Fan& fan) {
+        if(get_speed(fan) < SpeedPercentage(4)) {
+            return false;
+        }
+
+        return true;
+    }
 namespace all {
     HAL_StatusTypeDef init() {
         for(const auto& e: common::fans) {

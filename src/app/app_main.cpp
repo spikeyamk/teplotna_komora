@@ -27,7 +27,7 @@
 
 #include "tasks/panel.hpp"
 #include "tasks/rs232_uart.hpp"
-#include "tasks/senser_killer.hpp"
+#include "tasks/temp_senser.hpp"
 #include "tasks/temp_ctl.hpp"
 
 void shutdown_endless_loop() {
@@ -82,8 +82,8 @@ extern "C" void app_main(void* arg) {
 
     Trielo::trielo<util::turn_every_annoying_peripheral_off>();
 
-    TRIELO_VOID(tasks::SenserKiller::get_instance().init());
-    TRIELO(tasks::SenserKiller::get_instance().launch());
+    TRIELO_VOID(tasks::TempSenser::get_instance().init());
+    TRIELO(tasks::TempSenser::get_instance().launch());
 
     TRIELO(tasks::Panel::get_instance().launch());
 
