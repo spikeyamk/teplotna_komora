@@ -1,2 +1,2 @@
-add_subdirectory(i2c)
+add_subdirectory(sht31)
 add_subdirectory(max31865)
