@@ -11,17 +11,16 @@ public:
     SerialHandler();
     ~SerialHandler();
 
-    // Initialize the serial port
-    bool initialize();
+    bool Initialize();
 
     // Send a message to the STM32
-    void sendMessage(const std::string& message);
+    void SendMessage(const std::string& message);
 
     // Receive a message from the STM32
-    std::string receiveMessage(uint8_t size);
+    std::string ReceiveMessage(uint8_t size);
 
     // Delay for a given number of milliseconds
-    void delay(unsigned long ms);
+    void Delay(unsigned long ms);
 
     // Close the serial port
     bool close();

@@ -22,15 +22,15 @@ std::string getRandomWord(int length = 6) {
 int run() {
 	SerialHandler serial = SerialHandler();
 
-	if(!serial.initialize()) {
+	if(!serial.Initialize()) {
 		return 1;
 	}
 
 	while(1) {
 		std::string word = getRandomWord();
-		serial.sendMessage(word);
-		serial.delay(3000);
-		serial.receiveMessage(word.size());
+		serial.SendMessage(word);
+		serial.Delay(3000);
+		serial.ReceiveMessage(word.size());
 	}
 
 	return 0;

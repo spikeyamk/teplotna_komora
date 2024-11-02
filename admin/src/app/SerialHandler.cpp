@@ -11,7 +11,7 @@ SerialHandler::~SerialHandler() {
     }
 }
 
-bool SerialHandler::initialize() {
+bool SerialHandler::Initialize() {
     std::printf("Opening port %s.\n", com.GetPort().c_str());
 
 	if (com.Open() == 0) {
@@ -26,7 +26,7 @@ bool SerialHandler::initialize() {
 	}
 }
 
-void SerialHandler::sendMessage(const std::string& message) {
+void SerialHandler::SendMessage(const std::string& message) {
     if (serialPort != -1) {
         std::printf("\n\nSending: %s", message.c_str());
 
@@ -43,7 +43,7 @@ void SerialHandler::sendMessage(const std::string& message) {
     }
 }
 
-std::string SerialHandler::receiveMessage(uint8_t size) {
+std::string SerialHandler::ReceiveMessage(uint8_t size) {
     printf("Received: ");
 
     for(uint8_t i = 0; i < size; i++) {
@@ -60,7 +60,7 @@ std::string SerialHandler::receiveMessage(uint8_t size) {
     return "";
 }
 
-void SerialHandler::delay(unsigned long ms) {
+void SerialHandler::Delay(unsigned long ms) {
     if (serialPort != -1) {
         com.Delay(ms);
     } else {
