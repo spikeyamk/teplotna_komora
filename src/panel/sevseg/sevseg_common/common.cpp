@@ -89,39 +89,57 @@ namespace common {
         };
     }
 
-    inline uint8_t numerical_char_to_uint8_t(const char value) {
+    inline uint8_t float_char_to_uint8_t(const char value) {
         return static_cast<uint8_t>(value - '0');
     }
 
-    inline bool is_valid_char_in_snprintf_output(const char value) {
+    inline bool is_valid_char_in_float_snprintf_output(const char value) {
         if(value != '-' && value != '.' && (!(value >= '0' && value <= '9')) && value != '\0') {
             return false;
         }
         return true;
     }
 
-    inline bool check_snprintf_output(const std::span<char>& buf) {
+    inline bool check_snprintf_float_output(const std::span<char>& buf) {
         for(const char e: buf) {
-            if(is_valid_char_in_snprintf_output(e) == false) {
+            if(is_valid_char_in_float_snprintf_output(e) == false) {
                 return false; 
             }
         }
         
         return true;
     }
-    
+
+    inline uint8_t hex_char_to_uint8_t(const char value) {
+        if(value >= '0' && value <= '9') {
+            return static_cast<uint8_t>(value - '0');
+        } else if(value >= 'A' && value <= 'F') {
+            return static_cast<uint8_t>(value - 'A') + 10;
+        }
+    }
+
+    inline bool is_valid_char_in_hex_snprintf_output(const char value) {
+        return (value >= '0' && value <= '9') || (value >= 'A' && value <= 'F') || (value == '\0');
+    }
+
+    inline bool check_snprintf_hex_output(const std::span<char>& buf) {
+        for(const char e: buf) {
+            if(is_valid_char_in_hex_snprintf_output(e) == false) {
+                return false; 
+            }
+        }
+        
+        return true;
+    }
+
     using uint20_t = ubitint_t<20>;
     
     sevmap uint20_t_to_sevmap(const uint20_t value) {
-        if(value > uint20_t::max_value) {
-            return exception_sevmap::positive_overflow;
-        }
-
-        std::array<char, 20> buf { 0x00 };
+        std::array<char, 6> buf {};
         if(std::snprintf(buf.data(), buf.size(), "%05lX", value.unwrap()) < 0) {
             return exception_sevmap::error;
         }
-        if(check_snprintf_output(buf) == false) {
+        if(check_snprintf_hex_output(buf) == false) {
             return exception_sevmap::error;
         }
 
@@ -130,7 +148,7 @@ namespace common {
             ret.begin(),
             ret.end(),
             [&buf, index = static_cast<size_t>(0)](auto& e) mutable {
-                e = hex_map[numerical_char_to_uint8_t(buf[index])];
+                e = hex_map[hex_char_to_uint8_t(buf[index])];
                 index++;
             }
         );
@@ -151,11 +169,11 @@ namespace common {
             return exception_sevmap::negative_underflow;
         }
 
-        std::array<char, 20> buf { 0x00 };
+        std::array<char, 7> buf {};
         if(std::snprintf(buf.data(), buf.size(), "%05.4f", value) < 0) {
             return exception_sevmap::error;
         }
-        if(check_snprintf_output(buf) == false) {
+        if(check_snprintf_float_output(buf) == false) {
             return exception_sevmap::error;
         }
 
@@ -168,10 +186,10 @@ namespace common {
                     e = minus_sign;
                 } else if(buf[index] == '.') {
                     index--;
-                    e = hex_map[numerical_char_to_uint8_t(buf[index])];
+                    e = hex_map[float_char_to_uint8_t(buf[index])];
                     e |= dp_or_mask;
                 } else {
-                    e = hex_map[numerical_char_to_uint8_t(buf[index])];
+                    e = hex_map[float_char_to_uint8_t(buf[index])];
                 }
                 index--;
             }
