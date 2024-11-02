@@ -1,8 +1,8 @@
 #include <trielo/trielo.hpp>
 #include "private.hpp"
-#include "example_subdirectory/public.hpp"
+#include "decoder/public.hpp"
 
-namespace example_subdirectory {
+namespace decoder {
     void foo() {
         Trielo::trielo<bar>();
     }

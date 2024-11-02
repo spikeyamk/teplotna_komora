@@ -52,3 +52,6 @@
 [submodule "admin/deps/3rdparty/json"]
 	path = admin/deps/3rdparty/json
 	url = https://github.com/nlohmann/json
+[submodule "admin/deps/serde"]
+	path = admin/deps/serde
+	url = https://github.com/spikeyamk/serde.git

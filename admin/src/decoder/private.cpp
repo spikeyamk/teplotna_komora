@@ -1,6 +1,6 @@
 #include <trielo/trielo.hpp>
 #include "private.hpp"
 
-namespace example_subdirectory {
+namespace decoder {
     void bar() {}
 }

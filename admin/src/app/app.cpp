@@ -1,6 +1,6 @@
 #include <nlohmann/json.hpp>
 #include <trielo/trielo.hpp>
-#include "example_subdirectory/public.hpp"
+#include "decoder/public.hpp"
 #include "returns_true.hpp"
 #include "app.hpp"
 #include <ceserial.h>

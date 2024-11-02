@@ -1,2 +1,2 @@
 add_subdirectory(app)
-add_subdirectory(example_subdirectory)
+add_subdirectory(decoder)

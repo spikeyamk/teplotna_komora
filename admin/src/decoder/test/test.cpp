@@ -1,6 +1,6 @@
-#include "example_subdirectory/test.hpp"
+#include "decoder/test.hpp"
 
-namespace example_subdirectory {
+namespace decoder {
 namespace test {
     int returns_zero() {
         return 0;

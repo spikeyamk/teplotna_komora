@@ -26,5 +26,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     trielo
     nlohmann_json
     serial
-    example_subdirectory
+    decoder
 )
