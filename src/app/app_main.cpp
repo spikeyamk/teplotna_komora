@@ -9,7 +9,7 @@
 
 #include "comm/usb_uart/usb_uart.hpp"
 #include "bksram/bksram.hpp"
-#include "tasks/example.hpp"
+#include "tasks/rs232_uart.hpp"
 
 bool hw_test() {
     return true;
@@ -39,10 +39,10 @@ extern "C" void app_main(void* arg) {
         std::printf("app_main: redirect_stdout.init() == false\n");
     }
 
-    TRIELO(tasks::Example::get_instance().launch());
+    TRIELO(tasks::RS232_UART::get_instance().launch());
 
     for(uint32_t tick = 0; true; tick++) {
-        std::printf("app_main: tick: %lu\n", tick);
+        //std::printf("app_main: tick: %lu\n", tick);
         osDelay(5'000);
     }
 

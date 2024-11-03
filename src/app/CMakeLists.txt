@@ -12,7 +12,7 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     comm::usb_uart
 
     tasks::common
-    tasks::example
+    tasks::rs232_uart
 
     util
     rtc
