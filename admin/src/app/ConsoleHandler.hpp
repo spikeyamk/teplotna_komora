@@ -21,6 +21,8 @@ public:
     void                        Exit();
 private:
     std::string                 GenerateOutputFilePath();
+    void                        SetConsoleColor(const std::string& color);
+    void                        PrintColoredLine(const std::string &line);
     void                        CreateFileIfNotExists(std::string filePath);
     void                        WriteData(std::string filename, const std::string& data);
     std::string                 GenerateLogLine(const std::string &message);

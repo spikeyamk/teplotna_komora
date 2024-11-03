@@ -30,7 +30,7 @@ ConsoleHandler::~ConsoleHandler() {
 }
 
 void ConsoleHandler::Run() {
-    PrintMessage("Welcome to temperature regulator admin!\n");
+    PrintMessage("Welcome to temperature regulator admin!");
     PrintUsage();
 
     while (exitApp == false)
@@ -39,14 +39,14 @@ void ConsoleHandler::Run() {
         std::cout << "Enter a command: ";
         std::cin >> command;
 
-        if (command == "read_all") {
+        if (command == "read-all") {
             ReadAll();
-        } else if (command == "set_temperature") {
+        } else if (command == "set-temperature") {
             float temperature;
-            std::cout << "Enter the temperature: ";
+            std::cout << "Enter the temperature to set: ";
             std::cin >> temperature;
             SetTemperature(temperature);
-        } else if (command == "export_output") {
+        } else if (command == "export") {
             std::string destinationDirectoryPath;
             std::cout << "Enter the destination directory path: ";
             std::cin >> destinationDirectoryPath;
@@ -94,13 +94,13 @@ void ConsoleHandler::ReadAll() {
     PrintMessage("Reading all sensor states\n");
     std::string outputFileName = GenerateOutputFilePath();
     PrintSuccess("All sensor states read succesfully!\n");
-    RecordAppLogs("All sensor states read and recorded at " + outputFileName + ".\n");
+    RecordAppLogs("All sensor states read and recorded at " + outputFileName);
 }
 
 void ConsoleHandler::SetTemperature(float temperature) {
     PrintMessage("Setting temperature to " + std::to_string(temperature) + " degrees Celsius...\n");
     PrintSuccess("Temperature has been set successfully!\n");
-    RecordAppLogs("Temperature set to " + std::to_string(temperature) + " degrees Celsius.\n");
+    RecordAppLogs("Temperature set to " + std::to_string(temperature) + " degrees Celsius.");
 }
 
 void ConsoleHandler::Exit() {
@@ -126,6 +126,33 @@ std::string ConsoleHandler::GenerateOutputFilePath() {
     return oss.str();
 }
 
+void ConsoleHandler::SetConsoleColor(const std::string& color) {
+    if (color == "RED") {
+        std::cout << "\033[31m"; // ANSI escape code for red
+    } else if (color == "GREEN") {
+        std::cout << "\033[32m"; // ANSI escape code for green
+    } else if (color == "NORMAL") {
+        std::cout << "\033[0m";  // ANSI escape code for reset/default color
+    }
+}
+
+void ConsoleHandler::PrintColoredLine(const std::string& line) {
+     if (line.find("[RED]") == 0) {
+        SetConsoleColor("RED");
+        std::cout << line.substr(8) << std::endl; // Skip the marker
+    } else if (line.find("[GREEN]") == 0) {
+        SetConsoleColor("GREEN");
+        std::cout << line.substr(7) << std::endl; // Skip the marker
+    } else if (line.find("[NORMAL]") == 0) {
+        SetConsoleColor("NORMAL");
+        std::cout << line.substr(8) << std::endl; // Skip the marker
+    } else {
+        // Default color for lines without markers
+        SetConsoleColor("NORMAL");
+        std::cout << line << std::endl;
+    }
+}
+
 void ConsoleHandler::CreateFileIfNotExists(std::string filePath) {
     // Check if the file exists
     std::ifstream fileCheck(filePath);
@@ -144,7 +171,7 @@ void ConsoleHandler::CreateFileIfNotExists(std::string filePath) {
     return fileCreate.close();
 }
 
-std::string GenerateLogLine(const std::string& message) {
+std::string ConsoleHandler::GenerateLogLine(const std::string& message) {
         // Get the current time
         std::time_t t = std::time(nullptr);
         std::tm* now = std::localtime(&t);
@@ -212,7 +239,7 @@ void ConsoleHandler::PrintUsage() {
 
     std::string line;
     while (std::getline(file, line)) { // Read file line by line
-        PrintMessage(line);       // Print each line using printNormalMessage
+        PrintColoredLine(line);
     }
 
     file.close(); // Close the file

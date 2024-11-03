@@ -21,21 +21,21 @@ std::string getRandomWord(int length = 6) {
 }
 
 int run() {
-	SerialHandler serial = SerialHandler();
-	// ConsoleHandler app = ConsoleHandler();
+	// SerialHandler serial = SerialHandler();
+	ConsoleHandler app = ConsoleHandler();
 
-	if(!serial.Initialize()) {
-		return 1;
-	}
+	// if(!serial.Initialize()) {
+	// 	return 1;
+	// }
 
-	// app.Run();
+	app.Run();
 
-	while(1) {
+	// while(1) {
 		// std::string word = getRandomWord();
 		// serial.SendMessage(word);
 		// serial.Delay(3000);
 		// serial.ReceiveMessage(word.size());
-	}
+	//}
 
 	return 0;
 }

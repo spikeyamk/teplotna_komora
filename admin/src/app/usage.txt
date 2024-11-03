@@ -1,21 +1,21 @@
-Available Commands:
+Usage guide for <admin.exe>:
 
-1. read_all
-   - Description: Retrieves and displays all current sensor readings.
-   - Example: Enter 'read_all' to see all sensor data.
+[GREEN] 1. read-all
+[NORMAL]   - Description: Retrieves and displays all current sensor readings.
+[RED]      - Example: Enter 'read-all' to see all sensor data.
 
-2. set_temperature
-   - Description: Sets the temperature for the sensor.
-   - Example: Enter 'set_temperature', followed by the desired temperature value.
-   - Input: A floating-point number representing the temperature.
+[GREEN] 2. set-temperature
+[NORMAL]    - Description: Sets the temperature for the sensor.
+[RED]       - Example: Enter 'set_temperature 23.0'
+[NORMAL]    - Input: A floating-point number representing the temperature.
 
-3. export_output
-   - Description: Exports the sensor data to a specified directory.
-   - Example: Enter 'export_output', followed by the destination directory path.
-   - Input: A valid directory path where the output file will be saved.
+[GREEN] 3. export
+[NORMAL]    - Description: Exports the sensor data to a specified directory.
+[RED]       - Example: Enter 'export C:/Documents/Sensor-data'
+[NORMAL]    - Input: A valid directory path where the output file will be saved.
 
-4. exit
-   - Description: Exits the console application.
-   - Example: Enter 'exit' to close the application.
+[GREEN] 4. exit
+[NORMAL]    - Description: Exits the console application.
+[RED]       - Example: Enter 'exit' to close the application.
 
-If you encounter an error, please ensure you have entered a valid command as described above.
+[NORMAL] If you encounter an error, please ensure you have entered a valid command as described above.

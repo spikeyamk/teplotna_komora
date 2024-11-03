@@ -28,3 +28,10 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     serial
     decoder
 )
+
+# Copy usage.txt to the build directory
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/usage.txt ${CMAKE_CURRENT_BINARY_DIR}/usage.txt COPYONLY)
+
+# Install the executable and usage.txt
+install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/usage.txt DESTINATION ${CMAKE_INSTALL_BINDIR})
