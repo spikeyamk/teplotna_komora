@@ -1,12 +1,15 @@
-#include "ConsoleHandler.hpp"
-#include <iostream>
-#include <fstream>
-#include "SerialHandler.hpp"
 #include <ctime>
 #include <sstream>
 #include <filesystem>
+#include <iostream>
+#include <fstream>
+#include <nlohmann/json.hpp>
+#include "ConsoleHandler.hpp"
+#include "SerialHandler.hpp"
+
 
 namespace fs = std::filesystem;
+using json = nlohmann::json;
 
 const std::string ConsoleHandler::sensorReadingsDirectoryPath = "sensor_readings/";
 const std::string ConsoleHandler::usageFilePath = "usage.txt";
@@ -93,6 +96,7 @@ void ConsoleHandler::ExportOutput(std::string destinationDirectoryPath) {
 void ConsoleHandler::ReadAll() {
     PrintMessage("Reading all sensor states\n");
     std::string outputFileName = GenerateOutputFilePath();
+    AppendSensorReading(25.0); // Dummy sensor reading
     PrintSuccess("All sensor states read succesfully!\n");
     RecordAppLogs("All sensor states read and recorded at " + outputFileName);
 }
@@ -107,6 +111,40 @@ void ConsoleHandler::Exit() {
     PrintMessage("Exiting the application...\n");
     exitApp = true;
     PrintSuccess("Application has been closed successfully!\n");
+}
+
+void ConsoleHandler::AppendSensorReading(float temperature) {
+    // Generate the file name for the current day
+    std::string fileName = GenerateOutputFilePath();
+    CreateFileIfNotExists(fileName);
+
+    // Create or load the existing JSON data
+    json sensorData;
+    std::ifstream inputFile(fileName);
+    if (inputFile.is_open()) {
+        // If the file exists, parse the JSON data
+        inputFile >> sensorData;
+    } else {
+        // If the file does not exist, initialize as an empty array
+        sensorData = json::array();
+    }
+    inputFile.close();
+
+    // Create a new JSON object for the sensor reading
+    json newReading = {
+        {"time", GetTime()},
+        {"temperature", temperature}
+    };
+
+    // Append the new reading to the JSON array
+    sensorData.insert(sensorData.begin(), newReading);
+
+    // Save the updated JSON data back to the file
+    std::ofstream outputFile(fileName);
+    if (outputFile.is_open()) {
+        outputFile << sensorData.dump(4); // Pretty print with an indent of 4 spaces
+    }
+    outputFile.close();
 }
 
 std::string ConsoleHandler::GenerateOutputFilePath() {
@@ -154,21 +192,31 @@ void ConsoleHandler::PrintColoredLine(const std::string& line) {
 }
 
 void ConsoleHandler::CreateFileIfNotExists(std::string filePath) {
-    // Check if the file exists
-    std::ifstream fileCheck(filePath);
-    if (fileCheck) {
-        PrintMessage("File \"" + filePath + "\" already exists.");
-        return fileCheck.close();
+    // Use std::filesystem to extract the directory path from the full file path
+    fs::path path(filePath);
+
+    // Extract the parent directory from the file path
+    fs::path parentDir = path.parent_path();
+
+    // Check if the parent directory exists; if not, create it
+    if (!fs::exists(parentDir)) {
+        if (!fs::create_directories(parentDir)) {
+            std::cerr << "Error: Failed to create directories: " << parentDir << std::endl;
+            return;
+        }
     }
 
-    // File does not exist, so we create it
-    std::ofstream fileCreate(filePath);
-    if (!fileCreate) {
-        return PrintError("Error: Unable to create file \"" + filePath + "\".");
+    // Now, create the file if it does not exist
+    std::ofstream file(filePath, std::ios::app); // Open the file in append mode to create it if it doesn't exist
+    if (!file) {
+        std::cerr << "Error: Failed to create the file: " << filePath << std::endl;
+        return;
     }
 
-    PrintSuccess("File \"" + filePath + "\" has been created successfully.");
-    return fileCreate.close();
+     // Write an empty JSON array to the file
+    json emptyArray = json::array();
+    file << emptyArray.dump(4); // Format the output with an indentation of 4 spaces
+    file.close(); // Close the file after creating it
 }
 
 std::string ConsoleHandler::GenerateLogLine(const std::string& message) {
@@ -243,4 +291,14 @@ void ConsoleHandler::PrintUsage() {
     }
 
     file.close(); // Close the file
+}
+
+std::string ConsoleHandler::GetTime() {
+    std::time_t t = std::time(nullptr);
+    std::tm* localTime = std::localtime(&t);
+    std::ostringstream oss;
+    oss << localTime->tm_hour << ":"
+        << localTime->tm_min << ":"
+        << localTime->tm_sec;
+    return oss.str();
 }

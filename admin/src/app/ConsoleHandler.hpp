@@ -20,6 +20,8 @@ public:
     void                        SetTemperature(float temperature);
     void                        Exit();
 private:
+    void                        AppendSensorReading(float temperature);
+    std::string                 GetTime();
     std::string                 GenerateOutputFilePath();
     void                        SetConsoleColor(const std::string& color);
     void                        PrintColoredLine(const std::string &line);
