@@ -46,7 +46,7 @@ Dialog::Dialog(QWidget* parent) :
     layout->addWidget(periodic_checkbox, 3, 2);
 
     // Connect the timer to the transmit function for periodic execution
-    periodic_timer->setInterval(2'000);
+    periodic_timer->setInterval(100);
     connect(periodic_timer, &QTimer::timeout, this, &Dialog::transmit);
     connect(periodic_checkbox, &QCheckBox::checkStateChanged, this, [this](Qt::CheckState state) {
         if(periodic_timer->isActive() && (state == Qt::Unchecked)){
