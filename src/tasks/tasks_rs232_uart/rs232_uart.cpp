@@ -27,12 +27,10 @@ namespace tasks {
 
     void RS232_UART::Connection::Actions::connect(RS232_UART& self) {
         self.transmit(common::magic::results::Connect {});
-        //std::printf("tasks::RS232_UART::Connection::Actions::connect()\n");
     }
 
     void RS232_UART::Connection::Actions::disconnect(RS232_UART& self) {
         self.transmit(common::magic::results::Disconnect {});
-        //std::printf("tasks::RS232_UART::Connection::Actions::disconnect()\n");
     }
 
     void RS232_UART::Connection::Actions::nop(RS232_UART& self) {
@@ -68,14 +66,14 @@ namespace tasks {
 
         while(1) {
             if(HAL_UARTEx_ReceiveToIdle(&huart3, buf.data(), buf.size(), &rx_len, TIMEOUT_MS) != HAL_OK) {
-                sm.process_event(commands::Disconnect{});
+                sm.process_event(commands::Disconnect());
                 osDelay(1);
                 continue;
             }
 
             const auto decoded { commands::Deserializer::decode(buf.begin(), buf.begin() + rx_len) };
             if(decoded.has_value() == false) {
-                sm.process_event(commands::Disconnect{});
+                sm.process_event(commands::Disconnect());
                 osDelay(1);
                 continue;
             }

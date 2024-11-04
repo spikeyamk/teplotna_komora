@@ -11,6 +11,9 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS
     Core
+    Gui
+    SerialPort
+    Widgets
 )
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/trielo trielo)

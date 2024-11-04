@@ -1,9 +1,10 @@
-#include <QCoreApplication>
-#include <QTimer>
+#include <QApplication>
 
-int main(int argc, char* argv[]) {
-    QCoreApplication app(argc, argv);
-    qDebug() << "Waiting 5'000 ms for QTimer to expire\n";
-    QTimer::singleShot(5'000, &app, &QCoreApplication::quit);
+#include "dialog.hpp"
+
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+    Dialog dialog {};
+    dialog.show();
     return app.exec();
 }
