@@ -6,6 +6,7 @@
 
 namespace tasks {
     class RS232_UART : public Prototype<RS232_UART, 16 * 1024, "rs232_uart"> {
+        friend CRTP;
     private:
         struct Connection {
             struct States {
@@ -31,8 +32,9 @@ namespace tasks {
         RS232_UART() = default;
     public:
         static RS232_UART& get_instance();
-        static void worker(void* arg);
     private:
+        static void worker(void* arg);
+
         template<typename T>
         void transmit(const T& obj) const {
             const auto buf { common::magic::results::Serializer::run(obj) };
