@@ -46,11 +46,10 @@ Dialog::Dialog(QWidget* parent) :
     layout->addWidget(periodic_checkbox, 3, 2);
 
     // Connect the timer to the transmit function for periodic execution
-    periodic_timer->setInterval(100);
+    periodic_timer->setInterval(250);
     connect(periodic_timer, &QTimer::timeout, this, &Dialog::transmit);
     connect(periodic_checkbox, &QCheckBox::checkStateChanged, this, [this](Qt::CheckState state) {
         if(periodic_timer->isActive() && (state == Qt::Unchecked)){
-            std::cout << "]\n";
             transmit_button->setEnabled(true);
             periodic_timer->stop();
         }
@@ -66,7 +65,6 @@ Dialog::Dialog(QWidget* parent) :
 void Dialog::start_transmit() {
     transmit();
     if(periodic_checkbox->checkState() == Qt::Checked) {
-        std::cout << "[\n";
         transmit_button->setEnabled(false);
         periodic_timer->start();
     }
@@ -86,10 +84,21 @@ void Dialog::transmit() {
 
 void Dialog::show_result(const Transceiver::ResultVariant& result) {
     std::visit(
-        [](auto&& result) {
+        [&](auto&& result) {
             using Decay = std::decay_t<decltype(result)>;
             if constexpr(std::is_same_v<Decay, common::magic::results::ReadSensors>) {
+                static bool was_active_before { false };
+                if(periodic_timer->isActive() && (was_active_before == false)) {
+                    std::cout << "[\n";
+                    was_active_before = true;
+                }
+
                 std::cout << QString(QJsonDocument(to_json(result)).toJson(QJsonDocument::Compact)).toStdString() << ",\n";
+
+                if(periodic_timer->isActive() == false) {
+                    std::cout << "]\n";
+                    was_active_before = false;
+                }
             } else if constexpr(std::is_same_v<Decay, common::magic::results::WriteTemp>) {
                 qDebug()
                     << "Dialog::show_result():"
