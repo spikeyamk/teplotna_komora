@@ -1,7 +1,3 @@
-// Print usage of the terminal commands
-// Read all - Takses a json filename as input, reads data through USART and saves it to the file
-// Set temperature - Takes a temperature as input and sends it through USART, Prints whether the temperature was set successfully
-// Exit - Exits the program
 #ifndef CONSOLEHANDLER_H
 #define CONSOLEHANDLER_H
 
@@ -20,6 +16,9 @@ public:
     void                        SetTemperature(float temperature);
     void                        Exit();
 private:
+    void                        HandleSetTemperature();
+    void                        HandleExport();
+    void                        HandleInvalidCommand();
     void                        AppendSensorReading(float temperature);
     std::string                 GetTime();
     std::string                 GenerateOutputFilePath();

@@ -7,7 +7,6 @@
 #include "ConsoleHandler.hpp"
 #include "SerialHandler.hpp"
 
-
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
@@ -33,64 +32,95 @@ ConsoleHandler::~ConsoleHandler() {
 }
 
 void ConsoleHandler::Run() {
-    PrintMessage("Welcome to temperature regulator admin!");
+    // Display the initial usage guide
     PrintUsage();
 
-    while (exitApp == false)
-    {
+    while (!exitApp) {
+        std::cout << "\n> ";
         std::string command;
-        std::cout << "Enter a command: ";
-        std::cin >> command;
+        std::getline(std::cin, command); // Getline to capture the entire line
+
+        // Trim whitespace from both ends of the command
+        command.erase(0, command.find_first_not_of(" \t")); // Trim left
+        command.erase(command.find_last_not_of(" \t") + 1); // Trim right
 
         if (command == "read-all") {
             ReadAll();
         } else if (command == "set-temperature") {
-            float temperature;
-            std::cout << "Enter the temperature to set: ";
-            std::cin >> temperature;
-            SetTemperature(temperature);
+            HandleSetTemperature();
         } else if (command == "export") {
-            std::string destinationDirectoryPath;
-            std::cout << "Enter the destination directory path: ";
-            std::cin >> destinationDirectoryPath;
-            ExportOutput(destinationDirectoryPath);
+            HandleExport();
         } else if (command == "exit") {
             Exit();
+        } else if (command.empty()) {
+            continue; // If the command is empty (user just pressed Enter), do nothing
         } else {
-            PrintError("Error: Invalid command. Please try again.");
-            PrintUsage();
+            HandleInvalidCommand();
         }
     }
 }
 
+void ConsoleHandler::HandleSetTemperature() {
+    float temperature;
+    PrintMessage( "Enter the temperature to set: ");
+    std::cin >> temperature;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear input buffer
+    SetTemperature(temperature);
+}
+
+void ConsoleHandler::HandleExport() {
+    std::string destinationDirectoryPath;
+    PrintMessage("Enter the destination directory path: ");
+    std::getline(std::cin, destinationDirectoryPath); // Getline to allow spaces in the path
+    ExportOutput(destinationDirectoryPath);
+}
+
+void ConsoleHandler::HandleInvalidCommand() {
+    PrintError("Error: Invalid command. Please try again.");
+    PrintUsage();
+}
+
 void ConsoleHandler::ExportOutput(std::string destinationDirectoryPath) {
+    PrintMessage("Exporting output to " + destinationDirectoryPath + "...");
+
     try {
-            // Check if the source directory exists
-            if (!fs::exists(destinationDirectoryPath) || !fs::is_directory(outputDirectoryPath)) {
-                return PrintError("Error: Source directory \"" + destinationDirectoryPath + "\" does not exist or is not a directory.");
-            }
-
-            // Create the destination directory if it does not exist
-            if (!fs::exists(destinationDirectoryPath)) {
-                fs::create_directories(destinationDirectoryPath);
-            }
-
-            // Iterate over each file in the source directory
-            for (const auto& entry : fs::directory_iterator(outputDirectoryPath)) {
-                if (entry.is_regular_file()) { // Check if the entry is a regular file
-                    fs::path sourceFile = entry.path();
-                    fs::path destinationFile = fs::path(outputDirectoryPath) / sourceFile.filename();
-
-                    // Copy the file from source to destination
-                    fs::copy_file(sourceFile, destinationFile, fs::copy_options::overwrite_existing);
-                    PrintSuccess("Copied: " + sourceFile.string() + " to " + destinationFile.string());
-                }
-            }
-        } catch (const fs::filesystem_error& e) {
-            PrintError("Filesystem error: " + std::string(e.what()));
-        } catch (const std::exception& e) {
-            PrintError("Error: " + std::string(e.what()));
+        // Check if the source directory exists
+        if (!fs::is_directory(outputDirectoryPath)) {
+            return PrintError("Error: Source directory \"" + outputDirectoryPath + "\" is not a directory.");
         }
+
+        // Create the destination directory if it does not exist
+        if (!fs::exists(destinationDirectoryPath)) {
+            PrintMessage("Destination directory does not exist. Creating it now...\n");
+            fs::create_directories(destinationDirectoryPath);
+            PrintSuccess("Destination directory created successfully!\n");
+        }
+
+        // Use a recursive directory iterator to handle subdirectories
+        for (const auto& entry : fs::recursive_directory_iterator(outputDirectoryPath)) {
+            if (entry.is_regular_file()) {
+                fs::path sourceFile = entry.path();
+
+                // Construct the relative path from the source directory
+                fs::path relativePath = fs::relative(sourceFile, outputDirectoryPath);
+
+                // Construct the destination file path
+                fs::path destinationFile = fs::path(destinationDirectoryPath) / relativePath;
+
+                // Create necessary subdirectories in the destination
+                fs::create_directories(destinationFile.parent_path());
+
+                // Copy the file, overwriting if it already exists
+                fs::copy_file(sourceFile, destinationFile, fs::copy_options::overwrite_existing);
+
+                PrintSuccess("Copied: " + sourceFile.string() + " to " + destinationFile.string());
+            }
+        }
+    } catch (const fs::filesystem_error& e) {
+        PrintError("Filesystem error while copying files: " + std::string(e.what()));
+    } catch (const std::exception& e) {
+        PrintError("Error when copying files: " + std::string(e.what()));
+    }
 }
 
 void ConsoleHandler::ReadAll() {
@@ -125,7 +155,6 @@ void ConsoleHandler::AppendSensorReading(float temperature) {
         // If the file exists, parse the JSON data
         inputFile >> sensorData;
     } else {
-        // If the file does not exist, initialize as an empty array
         sensorData = json::array();
     }
     inputFile.close();
