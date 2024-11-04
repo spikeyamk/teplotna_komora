@@ -81,7 +81,7 @@ void ConsoleHandler::HandleInvalidCommand() {
 }
 
 void ConsoleHandler::ExportOutput(std::string destinationDirectoryPath) {
-    PrintMessage("Exporting output to " + destinationDirectoryPath + "...");
+    PrintMessage("\nExporting output to " + destinationDirectoryPath + "...");
 
     try {
         // Check if the source directory exists
@@ -91,9 +91,9 @@ void ConsoleHandler::ExportOutput(std::string destinationDirectoryPath) {
 
         // Create the destination directory if it does not exist
         if (!fs::exists(destinationDirectoryPath)) {
-            PrintMessage("Destination directory does not exist. Creating it now...\n");
+            PrintMessage("Destination " + destinationDirectoryPath + " directory does not exist. Creating it now...");
             fs::create_directories(destinationDirectoryPath);
-            PrintSuccess("Destination directory created successfully!\n");
+            PrintSuccess("Destination " + destinationDirectoryPath + " directory created successfully!");
         }
 
         // Use a recursive directory iterator to handle subdirectories
@@ -124,23 +124,23 @@ void ConsoleHandler::ExportOutput(std::string destinationDirectoryPath) {
 }
 
 void ConsoleHandler::ReadAll() {
-    PrintMessage("Reading all sensor states\n");
+    PrintMessage("\nReading all sensor states...");
     std::string outputFileName = GenerateOutputFilePath();
     AppendSensorReading(25.0); // Dummy sensor reading
-    PrintSuccess("All sensor states read succesfully!\n");
+    PrintSuccess("All sensor states read succesfully!");
     RecordAppLogs("All sensor states read and recorded at " + outputFileName);
 }
 
 void ConsoleHandler::SetTemperature(float temperature) {
-    PrintMessage("Setting temperature to " + std::to_string(temperature) + " degrees Celsius...\n");
-    PrintSuccess("Temperature has been set successfully!\n");
+    PrintMessage("\nSetting temperature to " + std::to_string(temperature) + " degrees Celsius...");
+    PrintSuccess("Temperature has been set successfully!");
     RecordAppLogs("Temperature set to " + std::to_string(temperature) + " degrees Celsius.");
 }
 
 void ConsoleHandler::Exit() {
-    PrintMessage("Exiting the application...\n");
+    PrintMessage("Exiting admin...");
     exitApp = true;
-    PrintSuccess("Application has been closed successfully!\n");
+    PrintSuccess("Admin has been closed successfully!");
 }
 
 void ConsoleHandler::AppendSensorReading(float temperature) {
@@ -191,33 +191,6 @@ std::string ConsoleHandler::GenerateOutputFilePath() {
         << "_Sensor_Readings.json";
 
     return oss.str();
-}
-
-void ConsoleHandler::SetConsoleColor(const std::string& color) {
-    if (color == "RED") {
-        std::cout << "\033[31m"; // ANSI escape code for red
-    } else if (color == "GREEN") {
-        std::cout << "\033[32m"; // ANSI escape code for green
-    } else if (color == "NORMAL") {
-        std::cout << "\033[0m";  // ANSI escape code for reset/default color
-    }
-}
-
-void ConsoleHandler::PrintColoredLine(const std::string& line) {
-     if (line.find("[RED]") == 0) {
-        SetConsoleColor("RED");
-        std::cout << line.substr(8) << std::endl; // Skip the marker
-    } else if (line.find("[GREEN]") == 0) {
-        SetConsoleColor("GREEN");
-        std::cout << line.substr(7) << std::endl; // Skip the marker
-    } else if (line.find("[NORMAL]") == 0) {
-        SetConsoleColor("NORMAL");
-        std::cout << line.substr(8) << std::endl; // Skip the marker
-    } else {
-        // Default color for lines without markers
-        SetConsoleColor("NORMAL");
-        std::cout << line << std::endl;
-    }
 }
 
 void ConsoleHandler::CreateFileIfNotExists(std::string filePath) {
@@ -316,7 +289,7 @@ void ConsoleHandler::PrintUsage() {
 
     std::string line;
     while (std::getline(file, line)) { // Read file line by line
-        PrintColoredLine(line);
+        PrintMessage(line);
     }
 
     file.close(); // Close the file
