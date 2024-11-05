@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <ubitint.hpp>
-#include "stm32f2xx_hal.h"
+#include "stm32h7xx_hal.h"
 
 #include "util/util.hpp"
 
