@@ -26,7 +26,7 @@ extern "C" void app_main(void* arg) {
         std::printf("app_main: bksram::test() == false: bksram::read().unwrap(): 0x%02lX\n", bksram::read().unwrap());
         __disable_irq();
         while(1) {
-            HAL_IWDG_Refresh(&hiwdg);
+            HAL_IWDG_Refresh(&hiwdg1);
         }
     }
 

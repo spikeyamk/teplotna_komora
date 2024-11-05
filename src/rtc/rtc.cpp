@@ -1,5 +1,4 @@
 #include <trielo/trielo.hpp>
-
 #include "rtc.h"
 #include "cmsis_os2.h"
 #include "rtc/rtc.hpp"
@@ -36,7 +35,7 @@ namespace rtc {
         if(ret != HAL_OK) {
             return ret;
         }
-        
+
         /* Get the RTC current Date */
         ret = HAL_RTC_GetDate(&hrtc, &gDate, RTC_FORMAT_BIN);
         if(ret != HAL_OK) {

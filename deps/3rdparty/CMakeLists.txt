@@ -41,7 +41,6 @@ add_library(stm32cubeh7
 )
 
 target_compile_definitions(stm32cubeh7 PUBLIC
-	USE_NUCLEO_64
 	USE_HAL_DRIVER
 	STM32H723xx
     $<$<CONFIG:Debug>:DEBUG>

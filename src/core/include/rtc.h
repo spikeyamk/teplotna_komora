@@ -27,6 +27,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stm32h7xx_hal_rtc.h"
 
 /* USER CODE BEGIN Includes */
 
