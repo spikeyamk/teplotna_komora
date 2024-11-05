@@ -25,9 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdio.h>
-#include "iwdg.h"
-#include "tim.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -88,8 +86,6 @@ void vApplicationIdleHook( void )
    important that vApplicationIdleHook() is permitted to return to its calling
    function, because it is the responsibility of the idle task to clean up
    memory allocated by the kernel to any task that has since been deleted. */
-  __HAL_TIM_SET_COUNTER(&htim6, 0);
-  HAL_IWDG_Refresh(&hiwdg1);
 }
 /* USER CODE END 2 */
 
@@ -99,7 +95,6 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, signed char *pcTaskName)
    /* Run time stack overflow checking is performed if
    configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
    called if a stack overflow is detected. */
-  printf("vApplicationStackOverflowHook: xTask: %p pcTaskName: %s\r\n", (void*) xTask, pcTaskName);
 }
 /* USER CODE END 4 */
 
@@ -110,7 +105,7 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, signed char *pcTaskName)
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-  //HAL_TIM_Base_Start_IT(&htim6);
+
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -145,7 +140,7 @@ void MX_FREERTOS_Init(void) {
 
 /* USER CODE BEGIN Header_app_main */
 /**
-  * @brief  Function implementing the app thread.
+  * @brief  Function implementing the defaultTask thread.
   * @param  argument: Not used
   * @retval None
   */
