@@ -44,11 +44,11 @@ namespace all {
     }
 
     void stop() {
-        ::actu::fan::ctl::all::set_speed(SpeedPercentage(99));
+        ::actu::fan::ctl::all::set_speed(SpeedPercentage(0));
     }
 
     void start_full_speed() {
-        ::actu::fan::ctl::all::set_speed(SpeedPercentage(0));
+        ::actu::fan::ctl::all::set_speed(SpeedPercentage(99));
     }
 
     void start_half_speed() {
@@ -56,7 +56,7 @@ namespace all {
     }
 
     void start_min_speed() {
-        ::actu::fan::ctl::all::set_speed(SpeedPercentage(95));
+        ::actu::fan::ctl::all::set_speed(SpeedPercentage(5));
     }
 
     void test_speed() {
