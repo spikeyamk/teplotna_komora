@@ -7,3 +7,15 @@
 [submodule "deps/3rdparty/STM32CubeH7"]
 	path = deps/3rdparty/STM32CubeH7
 	url = https://github.com/STMicroelectronics/STM32CubeH7.git
+[submodule "deps/serde"]
+	path = deps/serde
+	url = https://www.github.com/spikeyamk/serde
+[submodule "deps/ubitint"]
+	path = deps/ubitint
+	url = https://www.github.com/spikeyamk/ubitint
+[submodule "deps/3rdparty/sml"]
+	path = deps/3rdparty/sml
+	url = https://github.com/boost-ext/sml.git
+[submodule "deps/3rdparty/pfr"]
+	path = deps/3rdparty/pfr
+	url = https://github.com/boostorg/pfr.git

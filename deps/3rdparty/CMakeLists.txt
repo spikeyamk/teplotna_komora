@@ -1,4 +1,5 @@
-#add_subdirectory("googletest")
+add_subdirectory(pfr)
+add_subdirectory(sml)
 
 add_library(stm32cubeh7
     STM32CubeH7/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cortex.c
@@ -37,9 +38,9 @@ add_library(stm32cubeh7
     STM32CubeH7/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c
 )
 
-target_compile_definitions(stm32cubeh7 PUBLIC 
-	USE_NUCLEO_64 
-	USE_HAL_DRIVER 
+target_compile_definitions(stm32cubeh7 PUBLIC
+	USE_NUCLEO_64
+	USE_HAL_DRIVER
 	STM32H723xx
     $<$<CONFIG:Debug>:DEBUG>
 )

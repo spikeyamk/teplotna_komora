@@ -1,8 +1,16 @@
-add_subdirectories(${CMAKE_CURRENT_SOURCE_DIR})
+add_subdirectory(app)
+add_subdirectory(bksram)
+add_subdirectory(callback_overrides)
+add_subdirectory(comm)
+add_subdirectory(core)
+add_subdirectory(rtc)
+add_subdirectory(tasks)
+add_subdirectory(util)
 
 # Define the ELF and binary file locations
 set(ELF_FILE "${CMAKE_BINARY_DIR}/src/core/${CMAKE_PROJECT_NAME}.elf")
 set(BIN_FILE "${CMAKE_BINARY_DIR}/src/core/${CMAKE_PROJECT_NAME}.bin")
+set(FLASH_ADDRESS "0x08000000")
 
 # Add a custom command to generate the .bin file from the .elf file
 add_custom_command(
@@ -17,6 +25,6 @@ add_custom_target(
     flash
     DEPENDS ${BIN_FILE}  # Ensure the binary is built before flashing
     COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target all
-    COMMAND STM32_Programmer_CLI -c port=SWD -w ${BIN_FILE} 0x08000000 -v -rst
+    COMMAND STM32_Programmer_CLI -c port=SWD -w ${BIN_FILE} ${FLASH_ADDRESS} -v -rst
     COMMENT "Building project and flashing the binary with STM32_Programmer_CLI"
 )
