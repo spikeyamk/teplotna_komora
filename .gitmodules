@@ -1,6 +1,21 @@
+[submodule "deps/serde"]
+	path = deps/serde
+	url = https://github.com/spikeyamk/serde.git
 [submodule "deps/trielo"]
 	path = deps/trielo
 	url = https://github.com/spikeyamk/trielo
+[submodule "deps/ubitint"]
+	path = deps/ubitint
+	url = https://www.github.com/spikeyamk/ubitint
+[submodule "deps/3rdparty/pfr"]
+	path = deps/3rdparty/pfr
+	url = https://github.com/boostorg/pfr.git
+[submodule "deps/3rdparty/STM32CubeF2"]
+	path = deps/3rdparty/STM32CubeF2
+	url = https://github.com/STMicroelectronics/STM32CubeF2
+[submodule "deps/3rdparty/sml"]
+	path = deps/3rdparty/sml
+	url = https://github.com/boost-ext/sml.git
 [submodule "docs/max6954/MAX6954"]
 	path = docs/max6954/MAX6954
 	url = https://github.com/Sebski123/MAX6954
@@ -13,12 +28,12 @@
 [submodule "docs/max31865/STM32F334_MAX31865"]
 	path = docs/max31865/STM32F334_MAX31865
 	url = https://github.com/Vishi100/STM32F334_MAX31865
-[submodule "deps/3rdparty/STM32CubeF2"]
-	path = deps/3rdparty/STM32CubeF2
-	url = https://github.com/STMicroelectronics/STM32CubeF2
-[submodule "deps/ubitint"]
-	path = deps/ubitint
-	url = https://www.github.com/spikeyamk/ubitint
+[submodule "admin/deps/3rdparty/serial"]
+	path = admin/deps/3rdparty/serial
+	url = https://github.com/yan9a/serial
+[submodule "admin/deps/3rdparty/json"]
+	path = admin/deps/3rdparty/json
+	url = https://github.com/nlohmann/json
 [submodule "docs/sht31/stm32-hal-sht3x"]
 	path = docs/sht31/stm32-hal-sht3x
 	url = https://github.com/henriheimann/stm32-hal-sht3x.git

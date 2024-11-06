@@ -5,6 +5,7 @@ set(CMAKE_C_COMPILER_FORCED TRUE)
 set(CMAKE_CXX_COMPILER_FORCED TRUE)
 set(CMAKE_C_COMPILER_ID GNU)
 set(CMAKE_CXX_COMPILER_ID GNU)
+set(CMAKE_CXX_COMPILE_FEATURES cxx_std_14)
 
 # Some default GCC settings
 # arm-none-eabi- must be part of path environment
