@@ -187,10 +187,6 @@ void Error_Handler(void);
 #define SPI3_TEMP_MISO_GPIO_Port GPIOB
 #define SPI3_TEMP_MOSI_Pin GPIO_PIN_5
 #define SPI3_TEMP_MOSI_GPIO_Port GPIOB
-#define I2CBB1_SCL_Pin GPIO_PIN_6
-#define I2CBB1_SCL_GPIO_Port GPIOB
-#define I2CBB1_SDA_Pin GPIO_PIN_7
-#define I2CBB1_SDA_GPIO_Port GPIOB
 #define SEVW_CC0_Pin GPIO_PIN_0
 #define SEVW_CC0_GPIO_Port GPIOE
 #define SEVW_CC1_Pin GPIO_PIN_1

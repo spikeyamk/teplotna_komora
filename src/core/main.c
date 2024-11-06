@@ -20,6 +20,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "dac.h"
+#include "i2c.h"
 #include "iwdg.h"
 #include "rtc.h"
 #include "spi.h"
@@ -103,9 +104,10 @@ int main(void)
   MX_SPI2_Init();
   MX_SPI3_Init();
   MX_USART3_UART_Init();
-  MX_IWDG_Init();
+  //MX_IWDG_Init();
   MX_TIM6_Init();
   MX_RTC_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -185,16 +187,6 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
-
-/**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM1 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
-  */
-
 
 /**
   * @brief  This function is executed in case of error occurrence.
