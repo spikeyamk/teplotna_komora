@@ -111,6 +111,7 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, signed char *pcTaskName)
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
   __HAL_TIM_SET_COUNTER(&htim6, 0);
+  __HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
   HAL_TIM_Base_Start_IT(&htim6);
   /* USER CODE END Init */
 

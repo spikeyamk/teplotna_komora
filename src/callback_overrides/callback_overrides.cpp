@@ -48,6 +48,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if (htim->Instance == TIM1) {
         HAL_IncTick();
     } else if(htim->Instance == TIM6) {
+        std::printf("HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim): htim->Instance == TIM6: TWDG did not stop!\n");
         bksram::write<bksram::ErrorCodes::TWDG>();
     }
 }

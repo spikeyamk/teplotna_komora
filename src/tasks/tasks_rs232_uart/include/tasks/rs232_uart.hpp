@@ -5,7 +5,7 @@
 #include "tasks/prototype.hpp"
 
 namespace tasks {
-    class RS232_UART : public Prototype<RS232_UART, 8 * 1024, "rs232_uart"> {
+    class RS232_UART : public Prototype<RS232_UART, 4 * 1024, "rs232_uart"> {
         friend CRTP;
     private:
         struct Connection {
@@ -24,10 +24,6 @@ namespace tasks {
 
             auto operator()() const;
         };
-
-        float temp_front { 40.0f };
-        float temp_rear { 39.0f };
-        float desired_temp { 20.0f };
     private:
         RS232_UART() = default;
     public:

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "stm32f2xx_hal.h"
 
 namespace panel {
@@ -82,7 +84,7 @@ namespace green_yellow {
         template<uint8_t digits>
         void set_scan_limit() const {
             static_assert(digits <= 0x07, "MAX6549::set_scan_limit: digits must be less than or equal to 0x07");
-            write_log(SCAN_LIMIT, digits);
+            write(SCAN_LIMIT, digits);
         }
         void set_max_scan_limit() const;
 
@@ -92,7 +94,7 @@ namespace green_yellow {
         template<uint8_t level>
         void set_intensity() const {
             static_assert(level <= 0x0F, "MAX6549::set_intensity: level must be less than or equal to 0x0F");
-            write_log(GLOBAL_INTENSITY, level);
+            write(GLOBAL_INTENSITY, level);
         }
         void set_max_global_intensity() const;
 

@@ -17,7 +17,7 @@ namespace max31865 {
         StaticSemaphore_t sempahore_control_block {};
         osSemaphoreId_t semaphore { nullptr };
     public:
-        static constexpr uint32_t semaphore_timeout { 70 };
+        static constexpr uint32_t semaphore_timeout { 2'000 };
         Transceiver& transceiver;
     public:
         Extension(GPIO_TypeDef* ndrdy_port, const uint16_t ndrdy_pin, Transceiver& transceiver) :

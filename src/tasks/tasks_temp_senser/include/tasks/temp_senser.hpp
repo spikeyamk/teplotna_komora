@@ -5,12 +5,13 @@
 
 #include "main.h"
 #include "spi.h"
-#include "sens/max31865/max31865.hpp"
 #include "panel/sevseg/green_yellow/green_yellow.hpp"
+#include "sens/max31865/max31865.hpp"
 #include "tasks/prototype.hpp"
 
 namespace tasks {
-    class TempSenser : public Prototype<TempSenser, 8 * 1024, "temp_senser"> {
+    class TempSenser : public Prototype<TempSenser, 4 * 1024, "temp_senser"> {
+        friend CRTP;
     private:
         bool inited { false };
     public:
@@ -33,13 +34,14 @@ namespace tasks {
 
         sens::max31865::Transceiver transceiver_rear { &hspi3, SPI3_TEMP_NSS1_GPIO_Port, SPI3_TEMP_NSS1_Pin };
         sens::max31865::Extension extension_rear { SPI3_TEMP_NDRDY1_GPIO_Port, SPI3_TEMP_NDRDY1_Pin, transceiver_rear };
-
         panel::sevseg::green_yellow::MAX6549 max6549 { &hspi2, SPI2_SEVYG_NSS_GPIO_Port, SPI2_SEVYG_NSS_Pin };
     private:
         TempSenser() = default;
     public:
         static TempSenser& get_instance();
+    private:
         static void worker(void* arg);
+    public:
         void init();
         osStatus release_semaphore_front();
         osStatus release_semaphore_rear();

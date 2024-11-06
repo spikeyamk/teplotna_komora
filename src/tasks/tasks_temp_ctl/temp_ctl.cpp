@@ -10,6 +10,7 @@ namespace tasks {
         TempCtl& self { *static_cast<TempCtl*>(arg) };
         (void) self;
         while(1) {
+            std::printf("tasks::TempCtl::worker()\n");
             osDelay(1'000);
         }
     }

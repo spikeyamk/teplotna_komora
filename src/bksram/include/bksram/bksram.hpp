@@ -10,8 +10,8 @@ namespace bksram {
     using uint20_t = ubitint_t<20>;
 
     struct ErrorCodes {
-        static constexpr uint20_t MISSING_LF { 0x0'13'37 };
-        static constexpr uint20_t TWDG       { 0x0'0A'35 };
+        static constexpr uint20_t MISSING_LF { 0xE'13'37 };
+        static constexpr uint20_t TWDG       { 0xE'0A'35 };
 
         struct RS232_UART {
             static constexpr uint20_t LAUNCH { 0xE'23'00 };
