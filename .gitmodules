@@ -19,3 +19,9 @@
 [submodule "deps/ubitint"]
 	path = deps/ubitint
 	url = https://www.github.com/spikeyamk/ubitint
+[submodule "docs/sht31/stm32-hal-sht3x"]
+	path = docs/sht31/stm32-hal-sht3x
+	url = https://github.com/henriheimann/stm32-hal-sht3x.git
+[submodule "docs/sht31/SHT31-STM32"]
+	path = docs/sht31/SHT31-STM32
+	url = https://github.com/trung-pham-dinh/SHT31-STM32.git

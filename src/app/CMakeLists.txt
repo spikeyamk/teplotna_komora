@@ -25,9 +25,7 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     sevseg_common
     panel::white
 
-    sens::i2c_common
-    sens::i2c_light
-    sens::i2c_temp_hum
+    sens::sht31_driver
     sens::max31865_driver
 
     tasks::fan_senser
