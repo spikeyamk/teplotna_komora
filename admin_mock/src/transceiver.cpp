@@ -39,7 +39,7 @@ void Transceiver::run() {
         }
 
         const auto connect_serialized { common::magic::commands::Serializer::run(common::magic::commands::Connect()) };
-        if(serial_port.write(reinterpret_cast<const char*>(connect_serialized.data()), connect_serialized.size()) != connect_serialized.size()) {
+        if(serial_port.write(reinterpret_cast<const char*>(connect_serialized.data()), connect_serialized.size()) != static_cast<qint64>(connect_serialized.size())) {
             emit this->error_occured(Error::ConnectWriteWrongSize);
             continue;
         }
@@ -80,7 +80,7 @@ void Transceiver::run() {
             std::visit(
                 [&](auto&& command) {
                     const auto command_serialized { common::magic::commands::Serializer::run(command) };
-                    if(serial_port.write(reinterpret_cast<const char*>(command_serialized.data()), command_serialized.size()) != command_serialized.size()) {
+                    if(serial_port.write(reinterpret_cast<const char*>(command_serialized.data()), command_serialized.size()) != static_cast<qint64>(command_serialized.size())) {
                         emit this->error_occured(Error::CommandWriteWrongSize);
                         command_write_visitor_success = false;
                         return;
@@ -129,7 +129,7 @@ void Transceiver::run() {
         }
 
         const auto disconnect_serialized { common::magic::commands::Serializer::run(common::magic::commands::Disconnect()) };
-        if(serial_port.write(reinterpret_cast<const char*>(disconnect_serialized.data()), disconnect_serialized.size()) != disconnect_serialized.size()) {
+        if(serial_port.write(reinterpret_cast<const char*>(disconnect_serialized.data()), disconnect_serialized.size()) != static_cast<qint64>(disconnect_serialized.size())) {
             emit this->error_occured(Error::DisconnectWriteWrongSize);
             continue;
         }
