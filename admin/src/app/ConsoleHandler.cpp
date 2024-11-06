@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <iostream>
 #include <fstream>
+#include <limits>
 #include <nlohmann/json.hpp>
 #include "ConsoleHandler.hpp"
 #include "SerialHandler.hpp"
@@ -64,13 +65,16 @@ void ConsoleHandler::HandleSetTemperature() {
     float temperature;
     PrintMessage( "Enter the temperature to set: ");
     std::cin >> temperature;
+
+    // This macro from windows.h breaks everything I suggest we get rid of ceserial.h
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear input buffer
+
     SetTemperature(temperature);
 }
 
 void ConsoleHandler::HandleExport() {
     std::string destinationDirectoryPath;
-    PrintMessage("Enter the destination directory path: ");
+    PrintMessage("Enter the desination directory path: ");
     std::getline(std::cin, destinationDirectoryPath); // Getline to allow spaces in the path
     ExportOutput(destinationDirectoryPath);
 }

@@ -5,21 +5,23 @@
 namespace common {
 namespace magic {
 namespace results {
-    struct WriteTemp {};
+    struct Connect {};
+    struct Disconnect {};
+    struct Nop {};
+
+    struct WriteTemp {
+        float value;
+    };
 
     struct ReadSensors {
-        float temp_a;
-        float temp_b;
-        float fan_0;
-        float fan_1;
-        float fan_2;
-        float fan_3;
-        float fan_4;
-        float fan_5;
-        float fan_6;
+        float temp_front;
+        float temp_rear;
     };
 
     using Pack = Serde::pack_holder<
+        Connect,
+        Disconnect,
+        Nop,
         WriteTemp,
         ReadSensors
     >;

@@ -3,6 +3,5 @@
 
 namespace common {
 namespace magic {
-    void bar() {}
 }
 }
