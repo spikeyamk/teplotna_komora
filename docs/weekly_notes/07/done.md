@@ -1,0 +1,13 @@
+- enkóder funguje mení hodnotu jedného floatu vo vnútri tasks::Panel s krokom 1.0f s max. hodnotou 85.0f a min. hodnotou -40.0f a ukazuje ju na bielom displeji
+- žltý displej ukazuje teplotu z predného Peltiera a zelený teplotu zo zadného Peltiera
+- overená ochrana proti zapojení naprázdno a nakrátko pre jeden aj druhý teplotný senzor Peltiera
+- kábliky na tento senzor majú zlý kontakt vo vnútri zásuvky na doske a tak niekedy sa senzor javí, že ukazuje oveľa väčšiu teplotu ako by mal, treba s tým káblikom v tej zásuvke poriadne pohýbať, aby chytil lepší kontakt
+- poistka na zadnom mostíku pravdepodobne vyhárala kvôli spínaniu mostíka, jej vyhorenie sa nepodarilo nijako zreplikovať pomocou kódu, ktorý ho spínal bez oneskorenia
+- pripravený SHT31 driver ostáva neotestovaný
+- kvôli nepresnému meraniu otáčok a zložitejšej implementácii verifikácie správneho behu a rôznemu timingu od tasks::TempSenser ventilátora bol tasks::SenserKiller rozdelený do tasks::TempSenser a tasks::FanSenser
+- tasks::TempSenser neblokujúco čaká pomocou binárneho semafóru na odpoveď od platinových teplotných senzorov s timeoutom 100 ms, semafór je uvoľňovaný pomocou ISR citlivej na dobežnú hranu DRDY pinov od MAX31865, v normálnej prevádzke je uvoľnových každých 62.5 ms, v prípade timeoutu nastáva reset alebo v prípade neplatného merania
+- tasks::TempSenser ochrana ak teplota platinových senzorov je mimo intervalu <-50.0f °C; 100.0f °C>
+- tasks::FanSenser očakáva, že ventilátory sa nikdy nezastavia, iné bloky kódu po volaní tasks::FanSenser::get_instance().launch() nesmú volať actu::fan::stop() inak nastáva reset musíme zatiaľ použiť actu::fan::start_min_speed()
+- pre NUCLEO-F207ZG bol vytvorený RS232_UART mock test, kde tasks::RS232_UART blokujúco čaká na príjimané commandy od počítača s common::magic::TIMEOUT_MS { 100 }
+- vytvorená počítačová aplikácia na komunikáciu cez RS232_UART s mock test FW v Qt, úspešné overenie funkčnosti protokolu, zatiaľ protokol očakáva na každý command aj result, pridaný aj common::magic::Commands::{Connect, Disconnect} na signlizáciu toho, že niekto zapojil nové zariadenie do RS232, keďže vo fyzickej vrstve RS232 chýba detekcia pripojeného timeoutu.
+- Po common::magic::Commands::Connect commande protokol vyžaduje buď do intervalu 100 ms poslať ďalší command alebo potvrdiť aktívne spojenie pomocou common::magic::Commands::Nop na refreshnutie 100 ms timeout countera. Na každý timeout FW odpovedá pomocou common::magic::Results::Disconnect takisto odpovedá na common::magic::Commands::Disconnect command.
