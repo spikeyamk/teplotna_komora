@@ -30,6 +30,8 @@ namespace tasks {
         )
     )
     class Prototype {
+    protected:
+        using CRTP = Prototype<Derived, stack_size, t_task_name>;
     private:
         std::array<uint32_t, stack_size> stack_mem;
         StaticTask_t cb;
