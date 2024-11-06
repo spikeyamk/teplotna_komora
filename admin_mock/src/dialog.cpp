@@ -4,9 +4,10 @@
 #include <QJsonDocument>
 
 #include "to_json.hpp"
+#include "chart_widget.hpp"
 #include "dialog.hpp"
 
-Dialog::Dialog(QWidget* parent) :
+Dialog::Dialog(ChartWidget& chart_widget, QWidget* parent) :
     QDialog { parent },
     layout { new QGridLayout(this) },
 
@@ -21,7 +22,8 @@ Dialog::Dialog(QWidget* parent) :
     response_value { new QLineEdit("N/A") },
 
     periodic_checkbox { new QCheckBox("Periodic") },
-    periodic_timer { new QTimer(this) }
+    periodic_timer { new QTimer(this) },
+    chart_widget { chart_widget }
 {
     for(const auto& e: QSerialPortInfo::availablePorts()) {
         device_combo_box->addItem(e.portName());
@@ -48,7 +50,7 @@ Dialog::Dialog(QWidget* parent) :
     // Connect the timer to the transmit function for periodic execution
     periodic_timer->setInterval(250);
     connect(periodic_timer, &QTimer::timeout, this, &Dialog::transmit);
-    connect(periodic_checkbox, &QCheckBox::checkStateChanged, this, [this](Qt::CheckState state) {
+    connect(periodic_checkbox, &QCheckBox::checkStateChanged, this, [&](Qt::CheckState state) {
         if(periodic_timer->isActive() && (state == Qt::Unchecked)){
             transmit_button->setEnabled(true);
             periodic_timer->stop();
@@ -94,6 +96,8 @@ void Dialog::show_result(const Transceiver::ResultVariant& result) {
                 }
 
                 std::cout << QString(QJsonDocument(to_json(result)).toJson(QJsonDocument::Compact)).toStdString() << ",\n";
+
+                chart_widget.push(result);
 
                 if(periodic_timer->isActive() == false) {
                     std::cout << "]\n";

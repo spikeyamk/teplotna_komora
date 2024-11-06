@@ -9,10 +9,10 @@
 #include <QTimer>
 
 #include "transceiver.hpp"
+#include "chart_widget.hpp"
 
 class Dialog : public QDialog {
     Q_OBJECT
-
 private:
     QGridLayout* layout { nullptr };
 
@@ -37,6 +37,7 @@ private:
     QTimer* periodic_timer { nullptr };
 
     Transceiver transceiver {};
+    ChartWidget& chart_widget;
 private slots:
     void start_transmit();
     void transmit();
@@ -44,5 +45,5 @@ private slots:
     void show_result_buf(const QByteArray& result);
     void error_occured(const Transceiver::Error error);
 public:
-    Dialog(QWidget* parent = nullptr);
+    Dialog(ChartWidget& chart_widget, QWidget* parent = nullptr);
 };

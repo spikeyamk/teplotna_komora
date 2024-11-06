@@ -11,6 +11,7 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS
     Core
+    Charts
     Gui
     SerialPort
     Widgets
