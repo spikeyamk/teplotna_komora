@@ -18,6 +18,8 @@ add_library(stm32cubef2
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_exti.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_iwdg.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_i2c.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_rtc.c
+    STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_rtc_ex.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_spi.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_tim.c
     STM32CubeF2/Drivers/STM32F2xx_HAL_Driver/Src/stm32f2xx_hal_tim_ex.c
@@ -30,14 +32,12 @@ add_library(stm32cubef2
     STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/tasks.c
     STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/timers.c
     STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c
-    STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c
     STM32CubeF2/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c
 )
 
 target_compile_definitions(stm32cubef2 PUBLIC 
 	USE_HAL_DRIVER 
 	STM32F205xx
-	STM32_THREAD_SAFE_STRATEGY=4
     $<$<CONFIG:Debug>:DEBUG>
 )
 

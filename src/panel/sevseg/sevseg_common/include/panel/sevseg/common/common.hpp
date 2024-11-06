@@ -2,6 +2,7 @@
 
 #include <array>
 #include <bitset>
+#include <ubitint.hpp>
 
 namespace panel {
 namespace sevseg {
@@ -23,6 +24,8 @@ namespace common {
     }
 
     sevmap float_to_sevmap(const float value);
+    using uint20_t = ubitint_t<20>;
+    sevmap uint20_t_to_sevmap(const uint20_t value);
 }
 }
 }

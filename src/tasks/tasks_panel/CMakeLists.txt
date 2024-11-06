@@ -1,0 +1,26 @@
+get_filename_component(SUBDIRECTORY_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+file(GLOB SUBDIRECTORY_SOURCES "*.cpp")
+
+set(SUBDIRECTORY_TEST_VAR "${SUBDIRECTORY_NAME}_TEST")
+if(DEFINED ${SUBDIRECTORY_TEST_VAR})
+    if(${${SUBDIRECTORY_TEST_VAR}} STREQUAL TRUE)
+        ExternalProject_Add(${SUBDIRECTORY_NAME}_test
+            SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test
+            CMAKE_GENERATOR Ninja
+            CMAKE_CACHE_ARGS
+                -DSUBDIRECTORY_NAME:STRING=${SUBDIRECTORY_NAME}
+                -DSUBDIRECTORY_SOURCES:STRING=${SUBDIRECTORY_SOURCES}
+                -DSUBDIRECTORY_DEPS:STRING=${CMAKE_SOURCE_DIR}/deps/trielo
+            CONFIGURE_HANDLED_BY_BUILD FALSE
+            BUILD_ALWAYS TRUE
+            INSTALL_COMMAND ""
+            TEST_COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+            TEST_BEFORE_INSTALL TRUE
+        )
+    endif()
+endif()
+
+add_library(${SUBDIRECTORY_NAME} ${SUBDIRECTORY_SOURCES})
+target_include_directories(${SUBDIRECTORY_NAME} PUBLIC "include")
+target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE stm32cubef2 trielo panel::white)
+target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC tasks_common)

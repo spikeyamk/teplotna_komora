@@ -1,5 +1,7 @@
 #pragma once
 
+#include "stm32f2xx_hal.h"
+
 namespace panel {
 namespace sevseg {
 namespace green_yellow {
@@ -51,50 +53,53 @@ namespace green_yellow {
             GREEN_3,
             GREEN_4,
         };
+    private:
+        SPI_HandleTypeDef* hspi;
+        GPIO_TypeDef* nss_port;
+        const uint16_t nss_pin;
     public:
-        MAX6549();
+        MAX6549(SPI_HandleTypeDef* hspi, GPIO_TypeDef* nss_port, const uint16_t nss_pin);
+        ~MAX6549();
 
-        void select();
-        void deselect();
+        void clear_all() const;
 
-        auto write(const uint8_t address, const uint8_t value);
-        uint8_t read(const uint8_t address);
-        void write_log(const uint8_t address, const uint8_t value);
-        void write_read_log(const uint8_t address, const uint8_t value);
-        void read_log(const uint8_t address);
-
-        void clear_all();
         void test_single_segment();
         void test_hex();
         void test_single_segment_single_digit();
 
-        void set_max_global_intensity();
+        void yellow_show(const float value);
+        void green_show(const float value);
+    private:
+        void select() const;
+        void deselect() const;
 
-        template<uint8_t level>
-        void set_intensity() {
-            static_assert(level <= 0x0F, "MAX6549::set_intensity: level must be less than or equal to 0x0F");
-            write_log(GLOBAL_INTENSITY, level);
-        }
-
-        void normal_operation_disable_blink_global_intensity_clear_all();
-        void turn_off_decode_mode();
-        void set_max_scan_limit();
+        HAL_StatusTypeDef write(const uint8_t address, const uint8_t value) const;
+        uint8_t read(const uint8_t address) const;
+        void write_log(const uint8_t address, const uint8_t value) const;
+        void write_read_log(const uint8_t address, const uint8_t value) const;
+        void read_log(const uint8_t address) const;
 
         template<uint8_t digits>
-        void set_scan_limit() {
+        void set_scan_limit() const {
             static_assert(digits <= 0x07, "MAX6549::set_scan_limit: digits must be less than or equal to 0x07");
             write_log(SCAN_LIMIT, digits);
         }
+        void set_max_scan_limit() const;
 
-        void set_digit_7_to_0_to_7seg_or_16seg_type();
-        void shutdown();
+        void turn_off_decode_mode() const;
+        void normal_operation_disable_blink_global_intensity_clear_all() const;
 
-        void yellow_show(const float value);
-        void green_show(const float value);
+        template<uint8_t level>
+        void set_intensity() const {
+            static_assert(level <= 0x0F, "MAX6549::set_intensity: level must be less than or equal to 0x0F");
+            write_log(GLOBAL_INTENSITY, level);
+        }
+        void set_max_global_intensity() const;
 
-        ~MAX6549();
-    private:
-        void show(const float value, const std::array<uint8_t, 5>& address_map);
+        void set_digit_7_to_0_to_7seg_or_16seg_type() const;
+        void show(const float value, const std::array<uint8_t, 5>& address_map) const;
+
+        void shutdown() const;
     };
     
     void test();

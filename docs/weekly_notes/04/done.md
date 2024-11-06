@@ -1,0 +1,4 @@
+- nová poistka pre Peltier vzadu
+- oba mostíky a Peltiere funkčné
+- src/peripheral modul nedokončený pravdepodobne tak skoro ani nikdy nebude keďže pinout stále nie je dokončený
+- DAC_OUT1_CSF stále vyskratovaný s VDD

@@ -1,14 +1,19 @@
+#include "main.h"
 #include "stm32f2xx_hal.h"
 #include "actu/buzzer/buzzer.hpp"
 
 namespace actu {
 namespace buzzer {
     void start() {
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(BUZZEN_GPIO_Port, BUZZEN_Pin, GPIO_PIN_SET);
     }
 
     void stop() {
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(BUZZEN_GPIO_Port, BUZZEN_Pin, GPIO_PIN_RESET);
+    }
+
+    void toggle() {
+        HAL_GPIO_TogglePin(BUZZEN_GPIO_Port, BUZZEN_Pin);
     }
 }
 }

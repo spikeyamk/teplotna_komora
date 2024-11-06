@@ -1,57 +1,42 @@
-[submodule "deps/trielo"]
-	path = deps/trielo
-	url = https://github.com/spikeyamk/trielo
-[submodule "docs/max6954/MAX6954"]
-	path = docs/max6954/MAX6954
-	url = https://github.com/Sebski123/MAX6954
-[submodule "docs/max6954/max6954-rs"]
-	path = docs/max6954/max6954-rs
-	url = https://github.com/embediver/max6954-rs
-[submodule "docs/max31865/Adafruit_MAX31865"]
-	path = docs/max31865/Adafruit_MAX31865
-	url = https://github.com/adafruit/Adafruit_MAX31865.git
-[submodule "docs/max31865/nimaltd_max31865"]
-	path = docs/max31865/nimaltd_max31865
-	url = https://github.com/nimaltd/max31865
-[submodule "docs/max31865/arduino-max31865"]
-	path = docs/max31865/arduino-max31865
-	url = https://github.com/olewolf/arduino-max31865
-[submodule "docs/max31865/Adafruit-MAX31865-PCB"]
-	path = docs/max31865/Adafruit-MAX31865-PCB
-	url = https://github.com/adafruit/Adafruit-MAX31865-PCB
-[submodule "docs/max31865/libdriver_max31865"]
-	path = docs/max31865/libdriver_max31865
-	url = https://github.com/libdriver/max31865.git
-[submodule "docs/max31865/ESP32-MAX31865"]
-	path = docs/max31865/ESP32-MAX31865
-	url = https://github.com/jamieparkinson/ESP32-MAX31865
-[submodule "docs/max31865/MAX31865-Stm32HAL"]
-	path = docs/max31865/MAX31865-Stm32HAL
-	url = https://github.com/4ilo/MAX31865-Stm32HAL
-[submodule "docs/max31865/STM32F334_MAX31865"]
-	path = docs/max31865/STM32F334_MAX31865
-	url = https://github.com/Vishi100/STM32F334_MAX31865
-[submodule "deps/3rdparty/STM32CubeF2"]
-	path = deps/3rdparty/STM32CubeF2
-	url = https://github.com/STMicroelectronics/STM32CubeF2
-[submodule "docs/cmake-distinct-compilers"]
-	path = docs/cmake-distinct-compilers
-	url = https://github.com/scivision/cmake-distinct-compilers
-[submodule "deps/3rdparty/pfr"]
-	path = deps/3rdparty/pfr
-	url = https://github.com/boostorg/pfr.git
 [submodule "deps/serde"]
 	path = deps/serde
 	url = https://github.com/spikeyamk/serde.git
-[submodule "admin/deps/3rdparty/serial"]
-	path = admin/deps/3rdparty/serial
-	url = https://github.com/yan9a/serial
+[submodule "deps/trielo"]
+	path = deps/trielo
+	url = https://github.com/spikeyamk/trielo
+[submodule "deps/ubitint"]
+	path = deps/ubitint
+	url = https://www.github.com/spikeyamk/ubitint
+[submodule "deps/3rdparty/pfr"]
+	path = deps/3rdparty/pfr
+	url = https://github.com/boostorg/pfr.git
+[submodule "deps/3rdparty/STM32CubeF2"]
+	path = deps/3rdparty/STM32CubeF2
+	url = https://github.com/STMicroelectronics/STM32CubeF2
 [submodule "deps/3rdparty/sml"]
 	path = deps/3rdparty/sml
 	url = https://github.com/boost-ext/sml.git
+[submodule "docs/max6954/MAX6954"]
+	path = docs/max6954/MAX6954
+	url = https://github.com/Sebski123/MAX6954
+[submodule "docs/max31865/Adafruit_MAX31865"]
+	path = docs/max31865/Adafruit_MAX31865
+	url = https://github.com/adafruit/Adafruit_MAX31865.git
+[submodule "docs/max31865/libdriver_max31865"]
+	path = docs/max31865/libdriver_max31865
+	url = https://github.com/libdriver/max31865.git
+[submodule "docs/max31865/STM32F334_MAX31865"]
+	path = docs/max31865/STM32F334_MAX31865
+	url = https://github.com/Vishi100/STM32F334_MAX31865
+[submodule "admin/deps/3rdparty/serial"]
+	path = admin/deps/3rdparty/serial
+	url = https://github.com/yan9a/serial
 [submodule "admin/deps/3rdparty/json"]
 	path = admin/deps/3rdparty/json
 	url = https://github.com/nlohmann/json
-[submodule "admin/deps/serde"]
-	path = admin/deps/serde
-	url = https://github.com/spikeyamk/serde.git
+[submodule "docs/sht31/stm32-hal-sht3x"]
+	path = docs/sht31/stm32-hal-sht3x
+	url = https://github.com/henriheimann/stm32-hal-sht3x.git
+[submodule "docs/sht31/SHT31-STM32"]
+	path = docs/sht31/SHT31-STM32
+	url = https://github.com/trung-pham-dinh/SHT31-STM32.git

@@ -4,8 +4,18 @@
 
 namespace actu {
 namespace lin_source {
-    void start_dac();
-    void set_output(uint32_t val_a, uint32_t val_b);
+namespace lin_source {
     void test_dac();
+}
+namespace front {
+    void start_dac();
+    void stop_dac();
+    void set_output(const uint32_t value);
+}
+namespace rear {
+    void start_dac();
+    void stop_dac();
+    void set_output(const uint32_t value);
+}
 }
 }

@@ -10,7 +10,7 @@ if(DEFINED ${SUBDIRECTORY_TEST_VAR})
             CMAKE_CACHE_ARGS
                 -DSUBDIRECTORY_NAME:STRING=${SUBDIRECTORY_NAME}
                 -DSUBDIRECTORY_SOURCES:STRING=${SUBDIRECTORY_SOURCES}
-                -DSUBDIRECTORY_DEPS:STRING=${CMAKE_SOURCE_DIR}/deps/trielo
+                -DSUBDIRECTORY_DEPS_DIR:STRING=${CMAKE_SOURCE_DIR}/deps
             CONFIGURE_HANDLED_BY_BUILD FALSE
             BUILD_ALWAYS TRUE
             INSTALL_COMMAND ""
@@ -23,3 +23,4 @@ endif()
 add_library(${SUBDIRECTORY_NAME} ${SUBDIRECTORY_SOURCES})
 target_include_directories(${SUBDIRECTORY_NAME} PUBLIC "include")
 target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE stm32cubef2 trielo)
+target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC ubitint)
