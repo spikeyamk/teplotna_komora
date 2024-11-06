@@ -14,5 +14,8 @@
 	path = deps/3rdparty/sml
 	url = https://github.com/boost-ext/sml.git
 [submodule "admin/deps/3rdparty/json"]
-	path = admin/deps/3rdparty/json
+	path = admin_mock/deps/3rdparty/json
 	url = https://github.com/nlohmann/json.git
+[submodule "deps/3rdparty/STM32CubeF2"]
+	path = deps/3rdparty/STM32CubeF2
+	url = https://github.com/STMicroelectronics/STM32CubeF2
