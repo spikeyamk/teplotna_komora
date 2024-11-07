@@ -5,6 +5,7 @@ target_include_directories(${SUBDIRECTORY_NAME} PUBLIC "include")
 target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE stm32cubef2)
 target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
     actu::fan_fb
+    actu::fan_ctl
     bksram
     panel::encoder
     comm::usb_uart

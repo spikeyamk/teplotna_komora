@@ -61,6 +61,9 @@ namespace all {
     void start_min_speed();
     void test_speed();
 }
+namespace single {
+    void select_fan(int iter_fan);
+}
 }
 }
 }

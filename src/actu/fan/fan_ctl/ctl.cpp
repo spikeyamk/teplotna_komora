@@ -66,6 +66,16 @@ namespace all {
         }
     }
 }
+namespace single {
+    void select_fan(int iter_fan) {
+        ::actu::fan::ctl::set_speed(common::fans[iter_fan++], SpeedPercentage(0));
+        if (iter_fan >= 6) {
+            iter_fan = 0;
+        }
+        ::actu::fan::ctl::set_speed(common::fans[iter_fan], SpeedPercentage(99));
+        std::printf("fan_ctl: Current fan num: %d\n", iter_fan);
+    }
+}
 }
 }
 }
