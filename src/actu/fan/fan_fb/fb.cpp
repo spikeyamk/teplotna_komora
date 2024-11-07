@@ -1,4 +1,6 @@
 #include <trielo/trielo.hpp>
+
+#include "cmsis_os2.h"
 #include "actu/fan/fb/fb.hpp"
 
 namespace actu {
@@ -48,6 +50,19 @@ namespace all {
             }
         }
         return HAL_OK;
+    }
+
+    void test() {
+        while(1) {
+            for(size_t i = 0; i < fbs.size(); i++) {
+                std::printf(
+                    "actu::fan::fb::all::test: fbs[%zu].get().consume_rpm().value_or(static_cast<float>(0xFF'FF'FF'FF)): %f\n",
+                    i,
+                    fbs[i].get().consume_rpm().value_or(static_cast<float>(0xFF'FF'FF'FF))
+                );
+            }
+            osDelay(500);
+        }
     }
 }
 }
