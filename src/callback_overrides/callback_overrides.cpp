@@ -7,6 +7,7 @@
 #include "comm/usb_uart/usb_uart.hpp"
 #include "bksram/bksram.hpp"
 #include "tasks/temp_senser.hpp"
+#include "actu/bridge/bridge.hpp"
 
 extern "C" int __io_putchar(int ch) {
     return comm::usb_uart::__io_putchar(ch);
@@ -14,6 +15,8 @@ extern "C" int __io_putchar(int ch) {
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     int iter_fan = 0;
+    bool select_peltier = false;
+    bool heat_or_cool_peltier = false;
 
     switch(GPIO_Pin) {
         case ENCA_EXTI10_Pin:
@@ -24,18 +27,26 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
             break;
         //turn on one fan at a time
         case BUT0_FR_Pin:
+            osDelay(100);
             actu::fan::ctl::single::select_fan(iter_fan);
             if (iter_fan >= 6) {
                 iter_fan = 0;
             }
             break;
-        //select front or back peltier
+        //turn off front or back peltier
         case BUT1_MR_Pin:
+            osDelay(100);
+            select_peltier = actu::bridge::control::turn_off_peltier(select_peltier);
             break;
-        //select heating or cooling function
+        //heat or cool only one peltier
         case BUT2_ML_Pin:
+            osDelay(100);
+            heat_or_cool_peltier = actu::bridge::control::heat_or_cool(select_peltier, heat_or_cool_peltier);
             break;
+        //heat or cool both peltiers at the same time
         case BUT3_FL_Pin:
+            osDelay(100);
+            heat_or_cool_peltier = actu::bridge::control::heat_or_cool_all(heat_or_cool_peltier);
             break;
         case SPI3_TEMP_NDRDY0_Pin:
             tasks::TempSenser::get_instance().release_semaphore_front();
