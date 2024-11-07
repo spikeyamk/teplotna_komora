@@ -10,36 +10,39 @@ ChartWidget::ChartWidget() :
     rear_series { new QLineSeries(this) },
     chart { new QChart() },
     chart_view { new QChartView(chart) },
-    timer { new QTimer(this) }
+    msecs_since_epoch { static_cast<qreal>(QDateTime::currentMSecsSinceEpoch()) }
 {
     front_series->setName("temp_front");
+    QPen front_pen(QColor("orange"));
+    front_pen.setWidth(2);
+    front_series->setPen(front_pen);
+
     rear_series->setName("temp_rear");
+    QPen rear_pen(QColorConstants::Green);
+    rear_pen.setWidth(2);
+    rear_series->setPen(rear_pen);
 
     chart->addSeries(front_series);
     chart->addSeries(rear_series);
 
     chart->createDefaultAxes();
-    chart->setTitle("ReadSensors");
+    chart->setTitle(typeid(common::magic::results::ReadSensors()).name());
+    chart->axes(Qt::Vertical).front()->setTitleText("Temperature [°C]");
+    chart->axes(Qt::Horizontal).front()->setTitleText("Time [s]");
 
     chart_view->setRenderHint(QPainter::Antialiasing);
 
     layout->addWidget(chart_view);
-
-    connect(timer, &QTimer::timeout, this,
-        [this, temp_front = 0.0f, temp_rear = 5.0f ]() mutable {
-            push(common::magic::results::ReadSensors { .temp_front = std::sin(temp_front++), .temp_rear = std::sin(temp_rear++) });
-        }
-    );
-    //timer->start(250);
 }
 
 ChartWidget::~ChartWidget() {
     delete chart;
 }
 
-void ChartWidget::push(const common::magic::results::ReadSensors& read_sensors) { 
-    front_series->append(static_cast<float>(front_series->points().size()), read_sensors.temp_front);
-    rear_series->append(static_cast<float>(front_series->points().size()), read_sensors.temp_rear);
+void ChartWidget::push(const common::magic::results::ReadSensors& read_sensors) {
+    const qreal current_x_value { (static_cast<qreal>(QDateTime::currentMSecsSinceEpoch()) - msecs_since_epoch) / 1000.0f };
+    front_series->append(current_x_value, read_sensors.temp_front);
+    rear_series->append(current_x_value, read_sensors.temp_rear);
     autoscale_axes();
 }
 

@@ -19,7 +19,7 @@ private:
 
     QChart* chart { nullptr };
     QChartView* chart_view { nullptr };
-    QTimer* timer { nullptr };
+    const qreal msecs_since_epoch;
 public:
     ChartWidget();
     ~ChartWidget();

@@ -14,10 +14,10 @@ namespace max31865 {
     private:
         GPIO_TypeDef* ndrdy_port;
         const uint16_t ndrdy_pin;
-        StaticSemaphore_t sempahore_control_block {};
+        StaticSemaphore_t semaphore_control_block {};
         osSemaphoreId_t semaphore { nullptr };
     public:
-        static constexpr uint32_t semaphore_timeout { 70 };
+        static constexpr uint32_t semaphore_timeout { 2'000 };
         Transceiver& transceiver;
     public:
         Extension(GPIO_TypeDef* ndrdy_port, const uint16_t ndrdy_pin, Transceiver& transceiver) :
@@ -32,8 +32,8 @@ namespace max31865 {
             const osSemaphoreAttr_t sempahore_attr {
                 .name = name,
                 .attr_bits = 0,
-                .cb_mem = &sempahore_control_block,
-                .cb_size = sizeof(sempahore_control_block),
+                .cb_mem = &semaphore_control_block,
+                .cb_size = sizeof(semaphore_control_block),
             };
             
             semaphore = osSemaphoreNew(1, 0, &sempahore_attr);

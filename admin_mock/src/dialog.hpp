@@ -7,6 +7,7 @@
 #include <QMap>
 #include <QCheckBox>
 #include <QTimer>
+#include <QSlider>
 
 #include "transceiver.hpp"
 #include "chart_widget.hpp"
@@ -35,6 +36,11 @@ private:
 
     QCheckBox* periodic_checkbox { nullptr };
     QTimer* periodic_timer { nullptr };
+
+    static constexpr int PERIODIC_TIMER_SLIDER_MIN { 1 };
+    static constexpr int PERIODIC_TIMER_SLIDER_MAX { 1'000 };
+    QSlider* periodic_timer_slider { nullptr };
+    QLabel* periodic_timer_slider_label { nullptr };
 
     Transceiver transceiver {};
     ChartWidget& chart_widget;

@@ -3,6 +3,8 @@
 #include <functional>
 #include <boost/sml.hpp>
 
+#include "tasks/temp_senser.hpp"
+#include "tasks/panel.hpp"
 #include "tasks/rs232_uart.hpp"
 
 namespace tasks {
@@ -16,12 +18,12 @@ namespace tasks {
 		using namespace std;
         using namespace common::magic;
 		return make_transition_table(
-			*state<States::Disconnected> + event<commands::Connect> / function{Actions::connect} = state<States::Connected>,
-            state<States::Connected> + event<commands::Disconnect> / function{Actions::disconnect} = state<States::Disconnected>,
+			*"Disconnected"_s + event<commands::Connect> / function{Actions::connect} = "Connected"_s,
+            "Connected"_s + event<commands::Disconnect> / function{Actions::disconnect} = "Disconnected"_s,
 
-            state<States::Connected> + event<commands::Nop> / function{Actions::nop} = state<States::Connected>,
-            state<States::Connected> + event<commands::ReadSensors> / function{Actions::read_sensors} = state<States::Connected>,
-            state<States::Connected> + event<commands::WriteTemp> / function{Actions::write_temp} = state<States::Connected>
+            "Connected"_s + event<commands::Nop> / function{Actions::nop} = "Connected"_s,
+            "Connected"_s + event<commands::ReadSensors> / function{Actions::read_sensors} = "Connected"_s,
+            "Connected"_s + event<commands::WriteTemp> / function{Actions::write_temp} = "Connected"_s
 		);
     }
 
@@ -40,17 +42,17 @@ namespace tasks {
     void RS232_UART::Connection::Actions::read_sensors(const RS232_UART& self) {
         self.transmit(
             common::magic::results::ReadSensors {
-                .temp_front = self.temp_front,
-                .temp_rear = self.temp_rear,
+                .temp_front = TempSenser::get_instance().temp_front,
+                .temp_rear = TempSenser::get_instance().temp_rear,
             }
         );
     }
 
     void RS232_UART::Connection::Actions::write_temp(RS232_UART& self, const common::magic::commands::WriteTemp& write_temp) {
-        self.desired_temp = write_temp.value;
+        Panel::get_instance().desired_temp = write_temp.value;
         self.transmit(
             common::magic::results::WriteTemp {
-                .value = self.desired_temp,
+                .value = Panel::get_instance().desired_temp,
             }
         );
     }
@@ -61,28 +63,90 @@ namespace tasks {
         using namespace common::magic;
 
         std::array<uint8_t, MTU> buf {};
-        uint16_t rx_len { 0 };
         boost::sml::sm<Connection> sm { self };
 
         while(1) {
-            if(HAL_UARTEx_ReceiveToIdle(&huart3, buf.data(), buf.size(), &rx_len, TIMEOUT_MS) != HAL_OK) {
-                sm.process_event(commands::Disconnect());
-                osDelay(1);
+            HAL_UARTEx_ReceiveToIdle_IT(&huart3, buf.data(), buf.size());
+            if(osSemaphoreAcquire(self.semaphore, osWaitForever) != osOK) {
+                // we should never get here because of osWaitForever...
+                //std::printf("osSemaphoreAcquire(self.semaphore, osWaitForever) != osOK\n");
                 continue;
             }
 
-            const auto decoded { commands::Deserializer::decode(buf.begin(), buf.begin() + rx_len) };
-            if(decoded.has_value() == false) {
+            /*
+            for(size_t i = 0; i < self.rx_len; i++) {
+                std::printf("first: buf[%zu]: 0x%02X\n", i, buf[i]);
+            }
+            */
+
+            const auto first_decoded { commands::Deserializer::decode(buf.begin(), buf.begin() + self.rx_len) };
+            if(first_decoded.has_value() == false) {
+                //std::printf("first_decoded.has_value() == false\n");
                 sm.process_event(commands::Disconnect());
-                osDelay(1);
                 continue;
             }
-
             std::visit([&sm](auto&& command) {
                 sm.process_event(command);
-            }, decoded.value());
+            }, first_decoded.value());
 
-            osDelay(1);
+            using namespace boost::sml;
+            if(sm.is("Disconnected"_s)) {
+                //std::printf("sm.is(\"Disconnected\"_s)\n");
+                continue;
+            }
+
+            while(1) {
+                HAL_UARTEx_ReceiveToIdle_IT(&huart3, buf.data(), buf.size());
+                if(osSemaphoreAcquire(self.semaphore, self.semaphore_timeout) != osOK) {
+                    //std::printf("osSemaphoreAcquire(self.semaphore, self.semaphore_timeout) != osOK)\n");
+                    sm.process_event(commands::Disconnect());
+                    break;
+                }
+
+                /*
+                for(size_t i = 0; i < self.rx_len; i++) {
+                    std::printf("second: buf[%zu]: 0x%02X\n", i, buf[i]);
+                }
+                */
+
+                const auto second_decoded { commands::Deserializer::decode(buf.begin(), buf.begin() + self.rx_len) };
+                if(second_decoded.has_value() == false) {
+                    //std::printf("second_decoded.has_value() == false\n");
+                    sm.process_event(commands::Disconnect());
+                    break;
+                }
+                std::visit([&sm](auto&& command) {
+                    sm.process_event(command);
+                }, second_decoded.value());
+
+                if(sm.is("Disconnected"_s)) {
+                    //std::printf("sm.is(\"Disconnected\"_s)\n");
+                    break;
+                }
+            }
+
+            //std::printf("bottom\n");
         }
+    }
+
+    bool RS232_UART::init() {
+        const osSemaphoreAttr_t sempahore_attr {
+            .name = "rs232_sem",
+            .attr_bits = 0,
+            .cb_mem = &semaphore_control_block,
+            .cb_size = sizeof(semaphore_control_block),
+        };
+        
+        semaphore = osSemaphoreNew(1, 0, &sempahore_attr);
+        if(semaphore == nullptr) {
+            return false;
+        }
+
+        return true;
+    }
+
+    osStatus RS232_UART::release_semaphore(const uint16_t in_rx_len) {
+        rx_len = in_rx_len;
+        return osSemaphoreRelease(semaphore);
     }
 }

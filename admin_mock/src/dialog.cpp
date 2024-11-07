@@ -23,6 +23,8 @@ Dialog::Dialog(ChartWidget& chart_widget, QWidget* parent) :
 
     periodic_checkbox { new QCheckBox("Periodic") },
     periodic_timer { new QTimer(this) },
+    periodic_timer_slider { new QSlider(Qt::Horizontal) },
+    periodic_timer_slider_label { new QLabel("Interval (ms): 1000") },
     chart_widget { chart_widget }
 {
     for(const auto& e: QSerialPortInfo::availablePorts()) {
@@ -47,8 +49,17 @@ Dialog::Dialog(ChartWidget& chart_widget, QWidget* parent) :
 
     layout->addWidget(periodic_checkbox, 3, 2);
 
+    periodic_timer_slider->setRange(PERIODIC_TIMER_SLIDER_MIN, PERIODIC_TIMER_SLIDER_MAX);
+    periodic_timer_slider->setValue(PERIODIC_TIMER_SLIDER_MAX);
+    layout->addWidget(periodic_timer_slider_label, 4, 0);
+    layout->addWidget(periodic_timer_slider, 4, 1, 1, 2);
+    connect(periodic_timer_slider, &QSlider::valueChanged, this, [&](int value) {
+        periodic_timer->setInterval(value);
+        periodic_timer_slider_label->setText(QString("Interval (ms): %1").arg(value));
+    });
+
     // Connect the timer to the transmit function for periodic execution
-    periodic_timer->setInterval(250);
+    periodic_timer->setInterval(PERIODIC_TIMER_SLIDER_MAX);
     connect(periodic_timer, &QTimer::timeout, this, &Dialog::transmit);
     connect(periodic_checkbox, &QCheckBox::checkStateChanged, this, [&](Qt::CheckState state) {
         if(periodic_timer->isActive() && (state == Qt::Unchecked)){

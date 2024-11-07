@@ -121,10 +121,6 @@ namespace max31865 {
             return std::unexpected(HAL_ERROR);
         }
 
-        if(HAL_GPIO_ReadPin(ndrdy_port, ndrdy_pin) != GPIO_PIN_RESET) {
-            return std::unexpected(HAL_ERROR);
-        }
-
         const auto ret_rtd_lsbs { transceiver.read(RegAddrs::RO::RTD_LSBS) };
         if(ret_rtd_lsbs.has_value() == false) {
             return std::unexpected(ret_rtd_lsbs.error());
@@ -158,6 +154,7 @@ namespace max31865 {
             std::bitset<8>(static_cast<uint8_t>(Masks::Configuration::Vbias::Or::ON))
             | std::bitset<8>(static_cast<uint8_t>(configuration_before.wire_mode))
             | std::bitset<8>(static_cast<uint8_t>(filter_select_before.filter_select))
+            | std::bitset<8>(static_cast<uint8_t>(Masks::FaultDetection::WriteAction::Or::FAULT_DETECTION_WITH_AUTOMATIC_DELAY))
         };
 
         const auto ret_write { transceiver.write(RegAddrs::RW::CONFIGURATION, configuration_reg_with_auto_fault_detection) };
@@ -177,7 +174,7 @@ namespace max31865 {
                 read_configuration_reg_after_auto_fault_detection_run.value()
                 & Masks::FaultDetection::ReadMeaning::AND
             )
-            == std::bitset<8>(static_cast<uint8_t>(Masks::FaultDetection::ReadMeaning::Or::FAULT_DETECTION_FINISHED))
+            != std::bitset<8>(static_cast<uint8_t>(Masks::FaultDetection::ReadMeaning::Or::FAULT_DETECTION_FINISHED))
         ) {
             return std::unexpected(HAL_ERROR);
         }

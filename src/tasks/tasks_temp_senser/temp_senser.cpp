@@ -20,9 +20,9 @@ namespace tasks {
 
         const char extension_front_name[] { "temp_front" };
         const char extension_rear_name[] { "temp_rear" };
-        if(extension_front.init(extension_front_name) != HAL_OK) {
+        if(extension_front.init(extension_front_name) == false) {
             bksram::write_reset<bksram::ErrorCodes::TempSenser::Init::MAX31865::Extension::Init::FRONT>();
-        } else if(extension_rear.init(extension_rear_name) != HAL_OK) {
+        } else if(extension_rear.init(extension_rear_name) == false) {
             bksram::write_reset<bksram::ErrorCodes::TempSenser::Init::MAX31865::Extension::Init::REAR>();
         }
 
@@ -102,13 +102,13 @@ namespace tasks {
             bksram::write_reset<bksram::ErrorCodes::TempSenser::Worker::INITED_FALSE>();
         }
 
-        while(1) {
+        for(uint8_t i = 0; true; i++) {
             const auto rtd_front { self.extension_front.read_rtd() };
-            if(rtd_front.has_value()) {
+            if(rtd_front.has_value() == false) {
                 bksram::write_reset<bksram::ErrorCodes::TempSenser::Worker::MAX31865::RTD::Timeout::FRONT>();
             }
             const auto rtd_rear { self.extension_rear.read_rtd() };
-            if(rtd_rear.has_value()) {
+            if(rtd_rear.has_value() == false) {
                 bksram::write_reset<bksram::ErrorCodes::TempSenser::Worker::MAX31865::RTD::Timeout::REAR>();
             }
 
@@ -119,10 +119,12 @@ namespace tasks {
             }
 
             self.temp_front = rtd_front.value().calculate_approx_temp().value();
-            self.max6549.yellow_show(self.temp_front);
-
             self.temp_rear = rtd_rear.value().calculate_approx_temp().value();
-            self.max6549.green_show(self.temp_rear);
+
+            if(i % 100 == 0) {
+                self.max6549.yellow_show(self.temp_front);
+                self.max6549.green_show(self.temp_rear);
+            }
 
             osDelay(1);
         }

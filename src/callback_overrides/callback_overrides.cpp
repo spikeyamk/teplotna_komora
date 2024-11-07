@@ -6,6 +6,7 @@
 #include "comm/usb_uart/usb_uart.hpp"
 #include "bksram/bksram.hpp"
 #include "tasks/temp_senser.hpp"
+#include "tasks/rs232_uart.hpp"
 
 extern "C" int __io_putchar(int ch) {
     return comm::usb_uart::__io_putchar(ch);
@@ -48,6 +49,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if (htim->Instance == TIM1) {
         HAL_IncTick();
     } else if(htim->Instance == TIM6) {
+        std::printf("HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim): htim->Instance == TIM6: TWDG did not stop!\n");
         bksram::write<bksram::ErrorCodes::TWDG>();
+    }
+}
+
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
+    if(huart->Instance == USART3) {
+        tasks::RS232_UART::get_instance().release_semaphore(Size);
     }
 }

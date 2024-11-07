@@ -54,14 +54,8 @@ void shutdown_endless_loop() {
 
     __disable_irq();
     while(1) {
-        panel::led::all::toggle();
-        actu::buzzer::toggle();
-        for(uint32_t i = 0; i < 250; i++) {
-            panel::sevseg::white::display_refresh(bksram_error_sevmap);
-            HAL_Delay(1);
-        }
+        panel::sevseg::white::display_refresh_nodelay(bksram_error_sevmap);
         HAL_IWDG_Refresh(&hiwdg);
-        HAL_Delay(250);
     }
 }
 
@@ -88,25 +82,29 @@ extern "C" void app_main(void* arg) {
         bksram::write_reset<bksram::ErrorCodes::TempSenser::LAUNCH>();
     }
 
-    actu::fan::ctl::all::start_full_speed();
-    osDelay(1'000);
+    /*
+    actu::fan::ctl::all::start_min_speed();
+    osDelay(10'000);
     tasks::FanSenser::get_instance().init();
     if(tasks::FanSenser::get_instance().launch() == false) {
         bksram::write_reset<bksram::ErrorCodes::FanSenser::LAUNCH>();
     }
-    actu::fan::ctl::all::start_min_speed();
+    */
 
     if(tasks::Panel::get_instance().launch() == false) {
         bksram::write_reset<bksram::ErrorCodes::Panel::LAUNCH>();
     }
 
+    tasks::RS232_UART::get_instance().init();
     if(tasks::RS232_UART::get_instance().launch() == false) {
         bksram::write_reset<bksram::ErrorCodes::RS232_UART::LAUNCH>();
     }
 
+    /*
     if(tasks::TempCtl::get_instance().launch() == false) {
         bksram::write_reset<bksram::ErrorCodes::TempCtl::LAUNCH>();
     }
+    */
 
     for(size_t tick = 10; true; tick++) {
         std::printf("app_main: tick: %zu\n", tick);
