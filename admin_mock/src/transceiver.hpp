@@ -9,13 +9,12 @@
 
 class Transceiver : public QThread {
     Q_OBJECT
-
 private:
     bool stop_token { false };
     QMutex mutex {};
     QWaitCondition wait_condition {};
     QSerialPortInfo serial_port_info {};
-    static constexpr int TIMEOUT_MS { 2'000 };
+    static constexpr int TIMEOUT_MS { common::magic::TIMEOUT_MS };
     static constexpr int TIMEOUT_BETWEEN_BYTES_MS { 10 };
 public:
     using CommandVariant = common::magic::commands::Deserializer::Variant;

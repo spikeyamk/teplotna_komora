@@ -8,12 +8,12 @@ namespace tasks {
     class RS232_UART : public Prototype<RS232_UART, 4 * 1024, "rs232_uart"> {
         friend CRTP;
     private:
-        struct Connection {
-            struct States {
-                struct Disconnected {};
-                struct Connected {};
-            };
+        StaticSemaphore_t semaphore_control_block {};
+        osSemaphoreId_t semaphore { nullptr };
 
+        static constexpr uint32_t semaphore_timeout { common::magic::TIMEOUT_MS };
+
+        struct Connection {
             struct Actions {
                 static void connect(RS232_UART& self);
                 static void disconnect(RS232_UART& self);
@@ -24,10 +24,14 @@ namespace tasks {
 
             auto operator()() const;
         };
+    public:
+        uint16_t rx_len { 0 };
     private:
         RS232_UART() = default;
     public:
         static RS232_UART& get_instance();
+        bool init();
+        osStatus release_semaphore(const uint16_t in_rx_len);
     private:
         static void worker(void* arg);
 

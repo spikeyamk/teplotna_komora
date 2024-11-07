@@ -95,13 +95,16 @@ extern "C" void app_main(void* arg) {
         bksram::write_reset<bksram::ErrorCodes::Panel::LAUNCH>();
     }
 
+    tasks::RS232_UART::get_instance().init();
     if(tasks::RS232_UART::get_instance().launch() == false) {
         bksram::write_reset<bksram::ErrorCodes::RS232_UART::LAUNCH>();
     }
 
+    /*
     if(tasks::TempCtl::get_instance().launch() == false) {
         bksram::write_reset<bksram::ErrorCodes::TempCtl::LAUNCH>();
     }
+    */
 
     for(size_t tick = 10; true; tick++) {
         std::printf("app_main: tick: %zu\n", tick);
