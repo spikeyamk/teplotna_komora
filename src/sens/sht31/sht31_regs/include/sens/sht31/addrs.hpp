@@ -4,7 +4,7 @@
 
 namespace sens {
 namespace sht31 {
-    enum class SlaveAddress {
+    enum class SlaveAddress7bit {
         ADDR_PIN_LOW = 0x44,
         ADDR_PIN_HIGH = 0x45,
     };

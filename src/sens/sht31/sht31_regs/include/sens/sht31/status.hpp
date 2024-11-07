@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include "sens/sht31/masks.hpp"
 
 namespace sens {
@@ -16,6 +18,11 @@ namespace sht31 {
     public:
         Status() = delete;
         Status(const std::bitset<16>& serialized);
+
+        bool operator==(const Status& other) const;
+        bool operator!=(const Status& other) const;
     };
 }
 }
+
+std::ostream& operator<<(std::ostream& os, const sens::sht31::Status& status);

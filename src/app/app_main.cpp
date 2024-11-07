@@ -24,6 +24,7 @@
 #include "panel/sevseg/green_yellow/green_yellow.hpp"
 #include "panel/led/led.hpp"
 #include "sens/max31865/test.hpp"
+#include "sens/sht31/test.hpp"
 
 #include "tasks/fan_senser.hpp"
 #include "tasks/panel.hpp"
@@ -66,9 +67,11 @@ void shutdown_endless_loop() {
 extern "C" void app_main(void* arg) {
     (void) arg;
 
+    /*
     if(bksram::test() == false) {
         shutdown_endless_loop();
     }
+    */
 
     if(comm::usb_uart::RedirectStdout::get_instance().init_threadsafe() == false) {
         comm::usb_uart::RedirectStdout::get_instance().turn_off_threadsafe();
