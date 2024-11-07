@@ -18,7 +18,8 @@ namespace max31865 {
                 static_cast<uint16_t>(
                     (static_cast<int>(approx_temp) + 256) * 32
                 )
-            }
+            },
+            fault { Masks::RTD_LSBs::Fault::Or::NOFAULT }
         {}
         RTD(const std::array<std::bitset<8>, 2>& serialized);
         std::optional<float> calculate_approx_temp() const;
