@@ -35,3 +35,11 @@ namespace sht31 {
     }
 }
 }
+
+std::ostream& operator<<(std::ostream& os, const sens::sht31::TempHum& temp_hum) {
+    os
+        << "TempHum:\n"
+        << "  temp_hum.get_temp():" << temp_hum.get_temp() << "\n"
+        << "  temp_hum.get_hum():" << temp_hum.get_hum() << "\n";
+    return os;
+}

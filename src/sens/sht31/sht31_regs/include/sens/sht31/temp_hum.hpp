@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <array>
 #include <bitset>
 
@@ -19,3 +20,5 @@ namespace sht31 {
     };
 }
 }
+
+std::ostream& operator<<(std::ostream& os, const sens::sht31::TempHum& temp_hum);

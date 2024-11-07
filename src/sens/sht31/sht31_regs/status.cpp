@@ -75,5 +75,32 @@ namespace sht31 {
             )
         }
     {}
+
+    bool Status::operator==(const Status& other) const {
+        return last_write_data_checksum == other.last_write_data_checksum &&
+               last_command == other.last_command &&
+               system_reset == other.system_reset &&
+               tracking_alert_temp == other.tracking_alert_temp &&
+               tracking_alert_hum == other.tracking_alert_hum &&
+               heater == other.heater &&
+               alert_pending == other.alert_pending;
+    }
+
+    bool Status::operator!=(const Status& other) const {
+        return !(*this == other);
+    }
 }
+}
+
+std::ostream& operator<<(std::ostream& os, const sens::sht31::Status& status) {
+    os
+        << "Status:\n"
+        << "  Last Write Data Checksum: 0b" << std::bitset<16>(static_cast<uint16_t>(status.last_write_data_checksum)) << "\n"
+        << "  Last Command:             0b" << std::bitset<16>(static_cast<uint16_t>(status.last_command)) << "\n"
+        << "  System Reset:             0b" << std::bitset<16>(static_cast<uint16_t>(status.system_reset)) << "\n"
+        << "  Tracking Alert (Temp):    0b" << std::bitset<16>(static_cast<uint16_t>(status.tracking_alert_temp)) << "\n"
+        << "  Tracking Alert (Hum):     0b" << std::bitset<16>(static_cast<uint16_t>(status.tracking_alert_hum)) << "\n"
+        << "  Heater:                   0b" << std::bitset<16>(static_cast<uint16_t>(status.heater)) << "\n"
+        << "  Alert Pending:            0b" << std::bitset<16>(static_cast<uint16_t>(status.alert_pending)) << "\n";
+    return os;
 }
