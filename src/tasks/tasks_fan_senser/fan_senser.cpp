@@ -30,6 +30,8 @@ namespace tasks {
             bksram::write_reset<bksram::ErrorCodes::FanSenser::Worker::INITED_FALSE>();
         }
 
+        osDelay(5'000);
+
         while(1) {
             check_fans_spinning<bksram::ErrorCodes::FanSenser::Worker::FanRegistry>();
             osDelay(1'000);
@@ -43,7 +45,6 @@ namespace tasks {
 
         osDelay(1'000);
         check_fans_spinning<bksram::ErrorCodes::FanSenser::Init::FanRegistry>();
-        osDelay(1'000);
 
         inited = true;
     }

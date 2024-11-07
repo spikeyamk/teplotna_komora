@@ -83,11 +83,13 @@ extern "C" void app_main(void* arg) {
         bksram::write_reset<bksram::ErrorCodes::TempSenser::LAUNCH>();
     }
 
+    /*
     actu::fan::ctl::all::start_min_speed(); // don't remove this else reset with error code
     tasks::FanSenser::get_instance().init();
     if(tasks::FanSenser::get_instance().launch() == false) {
         bksram::write_reset<bksram::ErrorCodes::FanSenser::LAUNCH>();
     }
+    */
 
     if(tasks::Panel::get_instance().launch() == false) {
         bksram::write_reset<bksram::ErrorCodes::Panel::LAUNCH>();
