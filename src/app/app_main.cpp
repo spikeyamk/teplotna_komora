@@ -51,7 +51,7 @@ void shutdown_endless_loop() {
     panel::sevseg::white::init_brightness();
     panel::sevseg::white::bright();
 
-    const auto bksram_error_sevmap { panel::sevseg::common::uint20_t_to_sevmap(bksram::read()) };
+    const auto bksram_error_sevmap { panel::sevseg::common::to_sevmap(bksram::read()) };
 
     __disable_irq();
     while(1) {

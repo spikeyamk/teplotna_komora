@@ -23,9 +23,9 @@ namespace common {
         extern const sevmap negative_underflow;
     }
 
-    sevmap float_to_sevmap(const float value);
+    template<typename T>
+    sevmap to_sevmap(const T obj);
     using uint20_t = ubitint_t<20>;
-    sevmap uint20_t_to_sevmap(const uint20_t value);
 }
 }
 }

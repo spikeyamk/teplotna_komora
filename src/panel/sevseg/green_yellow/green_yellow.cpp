@@ -138,7 +138,7 @@ namespace green_yellow {
     }
 
     void MAX6549::show(const float value, const decltype(green_address_map)& address_map) const {
-        const auto sevmap { common::float_to_sevmap(value) };
+        const auto sevmap { common::to_sevmap(value) };
         for(size_t i = 0; i < sevmap.size(); i++) {
             write(address_map[i], static_cast<uint8_t>(sevmap[i].to_ulong()));
         }
