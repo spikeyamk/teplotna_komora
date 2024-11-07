@@ -26,7 +26,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     trielo
     nlohmann_json
     serial
-    decoder
+    common::magic
 )
 
 # Copy usage.txt to the build directory

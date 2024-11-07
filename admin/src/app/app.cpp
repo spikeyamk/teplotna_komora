@@ -1,6 +1,5 @@
 #include <nlohmann/json.hpp>
 #include <trielo/trielo.hpp>
-#include "decoder/public.hpp"
 #include "app.hpp"
 #include <random>
 #include "SerialHandler.hpp"

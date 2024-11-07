@@ -13,7 +13,7 @@ using json = nlohmann::json;
 
 const std::string ConsoleHandler::sensorReadingsDirectoryPath = "sensor_readings/";
 const std::string ConsoleHandler::usageFilePath = "usage.txt";
-const std::string ConsoleHandler::logsFilePath = "logs.txt";
+const std::string ConsoleHandler::logsFilePath = "./logs.txt";
 const std::string ConsoleHandler::outputDirectoryPath = "output/";
 bool  ConsoleHandler::exitApp = false;
 
