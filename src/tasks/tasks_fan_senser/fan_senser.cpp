@@ -10,18 +10,18 @@ namespace tasks {
 
     template<typename Registry, const size_t index>
     requires (index == Registry::array.size())
-    inline void init_test_fans() {}
+    inline void check_fans_spinning() {}
 
     template<typename Registry, const size_t index = 0>
     requires (
         (Registry::array.size() == actu::fan::fb::fbs.size())
         && (index != Registry::array.size())
     )
-    inline void init_test_fans() {
+    inline void check_fans_spinning() {
         if(actu::fan::fb::fbs[index].get().consume_rpm() <= 100.0f) {
             bksram::write_reset<Registry::array[index]>();
         }
-        init_test_fans<Registry, index + 1>();
+        check_fans_spinning<Registry, index + 1>();
     }
 
     void FanSenser::worker(void* arg) {
@@ -31,7 +31,7 @@ namespace tasks {
         }
 
         while(1) {
-            init_test_fans<bksram::ErrorCodes::FanSenser::Worker::FanRegistry>();
+            check_fans_spinning<bksram::ErrorCodes::FanSenser::Worker::FanRegistry>();
             osDelay(1'000);
         }
     }
@@ -41,7 +41,9 @@ namespace tasks {
             bksram::write_reset<bksram::ErrorCodes::FanSenser::Init::FB_ALL>();
         }
 
-        init_test_fans<bksram::ErrorCodes::FanSenser::Init::FanRegistry>();
+        osDelay(1'000);
+        check_fans_spinning<bksram::ErrorCodes::FanSenser::Init::FanRegistry>();
+        osDelay(1'000);
 
         inited = true;
     }
