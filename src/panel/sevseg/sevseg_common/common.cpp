@@ -136,7 +136,8 @@ namespace common {
         return true;
     }
     
-    sevmap uint20_t_to_sevmap(const uint20_t value) {
+    template<> 
+    sevmap to_sevmap<uint20_t>(const uint20_t value) {
         std::array<char, 6> buf {};
         if(std::snprintf(buf.data(), buf.size(), "%05lX", value.unwrap()) < 0) {
             return exception_sevmap::error;
@@ -157,8 +158,9 @@ namespace common {
 
         return ret;
     }
-    
-    sevmap float_to_sevmap(const float value) {
+
+    template<> 
+    sevmap to_sevmap<float>(const float value) {
         if(value > 9999.9f) {
             return exception_sevmap::positive_overflow;
         } else if(value < -999.9f) {

@@ -16,11 +16,11 @@ namespace tasks {
         panel::sevseg::white::dim();
 
         sens::max31865::RTD desired_rtd { self.desired_rtd };
-        auto sevmap { panel::sevseg::common::float_to_sevmap(desired_rtd.calculate_approx_temp().value()) };
+        auto sevmap { panel::sevseg::common::to_sevmap(desired_rtd.calculate_approx_temp().value()) };
         for(uint32_t tick = 0; true; tick++) {
             if(desired_rtd != self.desired_rtd) {
                 desired_rtd = self.desired_rtd;
-                sevmap = panel::sevseg::common::float_to_sevmap(desired_rtd.calculate_approx_temp().value());
+                sevmap = panel::sevseg::common::to_sevmap(desired_rtd.calculate_approx_temp().value());
             }
             panel::sevseg::white::display_refresh(sevmap);
             if(tick % 500 == 0) {
