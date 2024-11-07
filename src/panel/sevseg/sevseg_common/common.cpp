@@ -159,9 +159,7 @@ namespace common {
     }
     
     sevmap float_to_sevmap(const float value) {
-        if(std::isnormal(value) == false) {
-            return exception_sevmap::error;
-        } else if(value > 9999.9f) {
+        if(value > 9999.9f) {
             return exception_sevmap::positive_overflow;
         } else if(value < -999.9f) {
             return exception_sevmap::negative_overflow;
