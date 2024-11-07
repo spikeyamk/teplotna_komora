@@ -63,6 +63,7 @@ namespace all {
 }
 namespace single {
     void select_fan(int iter_fan);
+    void fan_test_loc();
 }
 }
 }

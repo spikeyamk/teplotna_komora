@@ -75,6 +75,21 @@ namespace single {
         ::actu::fan::ctl::set_speed(common::fans[iter_fan], SpeedPercentage(99));
         std::printf("fan_ctl: Current fan num: %d\n", iter_fan);
     }
+
+    void fan_test_loc() {
+        for(uint8_t fan_index = 0; true;) {
+            if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_0) == GPIO_PIN_SET) {
+                ::actu::fan::ctl::set_speed(common::fans[fan_index++], SpeedPercentage(0));
+                if (fan_index >= 6) {
+                    fan_index = 0;
+                }
+                ::actu::fan::ctl::set_speed(common::fans[fan_index], SpeedPercentage(99));
+
+                std::printf("fan_ctl: Current fan num: %d, RPM: %d\n", fan_index, get_speed(common::fans[fan_index]));
+                osDelay(100);
+            }
+        }
+    }
 }
 }
 }

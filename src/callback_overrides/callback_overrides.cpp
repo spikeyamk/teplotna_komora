@@ -3,7 +3,6 @@
 #include "main.h"
 #include "panel/encoder/encoder.hpp"
 #include "actu/fan/fb/fb.hpp"
-#include "actu/fan/ctl/ctl.hpp"
 #include "comm/usb_uart/usb_uart.hpp"
 #include "bksram/bksram.hpp"
 #include "tasks/temp_senser.hpp"
@@ -14,7 +13,6 @@ extern "C" int __io_putchar(int ch) {
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-    int iter_fan = 0;
     bool select_peltier = false;
     bool heat_or_cool_peltier = false;
 
@@ -25,13 +23,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
         case ENCB_EXTI11_Pin:
             panel::encoder::encb_ext11_handler();
             break;
-        //turn on one fan at a time
         case BUT0_FR_Pin:
-            osDelay(100);
-            actu::fan::ctl::single::select_fan(iter_fan);
-            if (iter_fan >= 6) {
-                iter_fan = 0;
-            }
             break;
         //turn off front or back peltier
         case BUT1_MR_Pin:
