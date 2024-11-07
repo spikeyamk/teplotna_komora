@@ -2,7 +2,6 @@
 #include "bksram/bksram.hpp"
 #include "spi.h"
 #include "main.h"
-#include "panel/sevseg/green_yellow/green_yellow.hpp"
 #include "tasks/temp_senser.hpp"
 
 namespace tasks {
@@ -118,13 +117,8 @@ namespace tasks {
                 bksram::write_reset<bksram::ErrorCodes::TempSenser::Worker::MAX31865::RTD::HighOrLowFaultThreshold::REAR>();
             }
 
-            self.temp_front = rtd_front.value().calculate_approx_temp().value();
-            self.temp_rear = rtd_rear.value().calculate_approx_temp().value();
-
-            if(i % 100 == 0) {
-                self.max6549.yellow_show(self.temp_front);
-                self.max6549.green_show(self.temp_rear);
-            }
+            self.rtd_front = rtd_front.value();
+            self.rtd_rear = rtd_rear.value();
 
             osDelay(1);
         }

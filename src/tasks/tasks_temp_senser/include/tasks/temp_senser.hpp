@@ -5,7 +5,6 @@
 
 #include "main.h"
 #include "spi.h"
-#include "panel/sevseg/green_yellow/green_yellow.hpp"
 #include "sens/max31865/max31865.hpp"
 #include "tasks/prototype.hpp"
 
@@ -15,8 +14,8 @@ namespace tasks {
     private:
         bool inited { false };
     public:
-        float temp_front { 0.0f };
-        float temp_rear { 0.0f };
+        sens::max31865::RTD rtd_front { 0.0f };
+        sens::max31865::RTD rtd_rear { 0.0f };
 
         const sens::max31865::FaultThreshold fault_threshold {
             sens::max31865::ADC_Code { sens::max31865::RTD(100.0f).adc_code },
@@ -34,7 +33,6 @@ namespace tasks {
 
         sens::max31865::Transceiver transceiver_rear { &hspi3, SPI3_TEMP_NSS1_GPIO_Port, SPI3_TEMP_NSS1_Pin };
         sens::max31865::Extension extension_rear { SPI3_TEMP_NDRDY1_GPIO_Port, SPI3_TEMP_NDRDY1_Pin, transceiver_rear };
-        panel::sevseg::green_yellow::MAX6549 max6549 { &hspi2, SPI2_SEVYG_NSS_GPIO_Port, SPI2_SEVYG_NSS_Pin };
     private:
         TempSenser() = default;
     public:

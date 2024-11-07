@@ -42,17 +42,17 @@ namespace tasks {
     void RS232_UART::Connection::Actions::read_sensors(const RS232_UART& self) {
         self.transmit(
             common::magic::results::ReadSensors {
-                .temp_front = TempSenser::get_instance().temp_front,
-                .temp_rear = TempSenser::get_instance().temp_rear,
+                .temp_front = TempSenser::get_instance().rtd_front.calculate_approx_temp().value(),
+                .temp_rear = TempSenser::get_instance().rtd_rear.calculate_approx_temp().value(),
             }
         );
     }
 
     void RS232_UART::Connection::Actions::write_temp(RS232_UART& self, const common::magic::commands::WriteTemp& write_temp) {
-        Panel::get_instance().desired_temp = write_temp.value;
+        Panel::get_instance().desired_rtd = sens::max31865::RTD(write_temp.value);
         self.transmit(
             common::magic::results::WriteTemp {
-                .value = Panel::get_instance().desired_temp,
+                .value = write_temp.value,
             }
         );
     }

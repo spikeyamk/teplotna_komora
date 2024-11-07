@@ -67,11 +67,9 @@ void shutdown_endless_loop() {
 extern "C" void app_main(void* arg) {
     (void) arg;
 
-    /*
     if(bksram::test() == false) {
         shutdown_endless_loop();
     }
-    */
 
     if(comm::usb_uart::RedirectStdout::get_instance().init_threadsafe() == false) {
         comm::usb_uart::RedirectStdout::get_instance().turn_off_threadsafe();

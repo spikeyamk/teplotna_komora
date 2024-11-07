@@ -2,17 +2,22 @@
 
 #include <iostream>
 
+#include "spi.h"
+#include "sens/max31865/rtd.hpp"
+#include "panel/sevseg/green_yellow/green_yellow.hpp"
 #include "tasks/prototype.hpp"
 
 namespace tasks {
     class Panel : public Prototype<Panel, 4 * 1024, "panel"> {
         friend CRTP;
-    public:
-        float desired_temp { 20.0f };
-        const float step { 1.0f };
     private:
-        const float max { 85.0f };
-        const float min { -40.0f };
+        panel::sevseg::green_yellow::MAX6549 max6549 { &hspi2, SPI2_SEVYG_NSS_GPIO_Port, SPI2_SEVYG_NSS_Pin };
+    public:
+        const sens::max31865::RTD DESIRED_RTD_STEP { sens::max31865::ADC_Code(sens::max31865::RTD(1.0f).adc_code.value - sens::max31865::RTD(0.0f).adc_code.value).serialize() };
+        const sens::max31865::RTD DESIRED_RTD_MAX { 85.0f };
+        const sens::max31865::RTD DESIRED_RTD_MIN { -40.0f };
+        sens::max31865::RTD desired_rtd { 20.0f };
+    public:
         Panel() = default;
     public:
         static Panel& get_instance();
