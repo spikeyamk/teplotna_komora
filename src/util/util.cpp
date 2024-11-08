@@ -17,7 +17,9 @@ namespace util {
         actu::bridge::front::turn_off();
         actu::bridge::rear::turn_off();
         actu::lin_source::front::set_output(0);
-        actu::lin_source::front::set_output(0);
+        actu::lin_source::front::stop_dac();
+        actu::lin_source::rear::set_output(0);
+        actu::lin_source::front::stop_dac();
     }
 
     void shutdown_endless_loop() {
