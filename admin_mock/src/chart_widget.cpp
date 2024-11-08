@@ -6,89 +6,123 @@
 
 ChartWidget::ChartWidget() :
     layout { new QVBoxLayout(this) },
-    front_series { new QLineSeries(this) },
-    rear_series { new QLineSeries(this) },
-    chart { new QChart() },
-    chart_view { new QChartView(chart) },
+
+    temp_front_series { new QLineSeries(this) },
+    temp_rear_series { new QLineSeries(this) },
+    temp_chart { new QChart() },
+    temp_chart_view { new QChartView(temp_chart) },
+
+    dac_front_series { new QLineSeries(this) },
+    dac_rear_series { new QLineSeries(this) },
+    dac_chart { new QChart() },
+    dac_chart_view { new QChartView(dac_chart) },
+
     msecs_since_epoch { static_cast<qreal>(QDateTime::currentMSecsSinceEpoch()) }
 {
-    front_series->setName("temp_front");
     QPen front_pen(QColor("orange"));
     front_pen.setWidth(2);
-    front_series->setPen(front_pen);
-
-    rear_series->setName("temp_rear");
     QPen rear_pen(QColorConstants::Green);
     rear_pen.setWidth(2);
-    rear_series->setPen(rear_pen);
 
-    chart->addSeries(front_series);
-    chart->addSeries(rear_series);
+    {
+        temp_front_series->setName("temp_front");
+        temp_front_series->setPen(front_pen);
 
-    chart->createDefaultAxes();
-    chart->setTitle(typeid(common::magic::results::ReadSensors()).name());
-    chart->axes(Qt::Vertical).front()->setTitleText("Temperature [°C]");
-    chart->axes(Qt::Horizontal).front()->setTitleText("Time [s]");
+        temp_rear_series->setName("temp_rear");
+        temp_rear_series->setPen(rear_pen);
 
-    chart_view->setRenderHint(QPainter::Antialiasing);
+        temp_chart->addSeries(temp_front_series);
+        temp_chart->addSeries(temp_rear_series);
 
-    layout->addWidget(chart_view);
+        temp_chart->createDefaultAxes();
+        temp_chart->setTitle(typeid(common::magic::results::ReadSensors()).name());
+        temp_chart->axes(Qt::Vertical).front()->setTitleText("Temperature [°C]");
+        temp_chart->axes(Qt::Horizontal).front()->setTitleText("Time [s]");
+
+        temp_chart_view->setRenderHint(QPainter::Antialiasing);
+
+        layout->addWidget(temp_chart_view);
+    }
+
+    {
+        dac_front_series->setName("dac_front");
+        dac_front_series->setPen(front_pen);
+
+        dac_rear_series->setName("dac_rear");
+        dac_rear_series->setPen(rear_pen);
+
+        dac_chart->addSeries(dac_front_series);
+        dac_chart->addSeries(dac_rear_series);
+
+        dac_chart->createDefaultAxes();
+        dac_chart->setTitle(typeid(common::magic::results::ReadSensors()).name());
+        dac_chart->axes(Qt::Vertical).front()->setTitleText("DAC Code (max. 4095)");
+        dac_chart->axes(Qt::Horizontal).front()->setTitleText("Time [s]");
+
+        dac_chart_view->setRenderHint(QPainter::Antialiasing);
+
+        layout->addWidget(dac_chart_view);
+    }
 }
 
 ChartWidget::~ChartWidget() {
-    delete chart;
+    delete temp_chart;
+    delete dac_chart;
 }
 
 void ChartWidget::push(const common::magic::results::ReadSensors& read_sensors) {
     const qreal current_x_value { (static_cast<qreal>(QDateTime::currentMSecsSinceEpoch()) - msecs_since_epoch) / 1000.0f };
-    front_series->append(current_x_value, read_sensors.temp_front);
-    rear_series->append(current_x_value, read_sensors.temp_rear);
-    autoscale_axes();
+    {
+        temp_front_series->append(current_x_value, read_sensors.temp_front);
+        temp_rear_series->append(current_x_value, read_sensors.temp_rear);
+        autoscale_axes(temp_chart, temp_front_series, temp_rear_series);
+    }
+
+    {
+
+    }
 }
 
-void ChartWidget::autoscale_axes() {
-    qreal max_x = -std::numeric_limits<qreal>::infinity();  // Initialize to very low value
-    qreal min_x = std::numeric_limits<qreal>::infinity();   // Initialize to very high value
-    qreal max_y = -std::numeric_limits<qreal>::infinity();  // Initialize to very low value
-    qreal min_y = std::numeric_limits<qreal>::infinity();   // Initialize to very high value
+void ChartWidget::autoscale_axes(QChart* chart, QLineSeries* front_series, QLineSeries* rear_series) {
+    qreal max_x = -std::numeric_limits<qreal>::infinity();
+    qreal min_x = std::numeric_limits<qreal>::infinity();
+    qreal max_y = -std::numeric_limits<qreal>::infinity();
+    qreal min_y = std::numeric_limits<qreal>::infinity();
 
-    // Loop over points in front_series and rear_series for max_x and min_x
-    for (const auto& point : front_series->points()) {
-        if (point.x() > max_x) {
+    for(const auto& point : front_series->points()) {
+        if(point.x() > max_x) {
             max_x = point.x();
         }
-        if (point.x() < min_x) {
+        if(point.x() < min_x) {
             min_x = point.x();
         }
     }
-    for (const auto& point : rear_series->points()) {
-        if (point.x() > max_x) {
+    for(const auto& point : rear_series->points()) {
+        if(point.x() > max_x) {
             max_x = point.x();
         }
-        if (point.x() < min_x) {
+        if(point.x() < min_x) {
             min_x = point.x();
         }
     }
 
-    // Loop over points in front_series and rear_series for max_y and min_y
-    for (const auto& point : front_series->points()) {
-        if (point.y() > max_y) {
+    for(const auto& point : front_series->points()) {
+        if(point.y() > max_y) {
             max_y = point.y();
         }
-        if (point.y() < min_y) {
+        if(point.y() < min_y) {
             min_y = point.y();
         }
     }
-    for (const auto& point : rear_series->points()) {
-        if (point.y() > max_y) {
+    for(const auto& point : rear_series->points()) {
+        if(point.y() > max_y) {
             max_y = point.y();
         }
-        if (point.y() < min_y) {
+        if(point.y() < min_y) {
             min_y = point.y();
         }
     }
 
-    // Now set the chart's axes limits
     chart->axes(Qt::Horizontal).first()->setMax(max_x);
     chart->axes(Qt::Horizontal).first()->setMin(min_x);
     chart->axes(Qt::Vertical).first()->setMax(max_y);
