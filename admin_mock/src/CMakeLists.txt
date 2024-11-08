@@ -11,6 +11,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     sml
     trielo
     ubitint
+    sens::max31865_regs
 
     Qt6::Core
     Qt6::Charts

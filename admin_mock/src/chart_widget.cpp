@@ -2,7 +2,7 @@
 
 #include <QDateTime>
 
-#include "chart_widget.hpp"
+#include "sens/max31865/rtd.hpp"
 #include "chart_widget.hpp"
 
 ChartWidget::ChartWidget() :
@@ -80,8 +80,8 @@ void ChartWidget::push(const magic::results::ReadSensors& read_sensors) {
     }
 
     {
-        dac_front_series->append(current_x_value, read_sensors.dac_front);
-        dac_rear_series->append(current_x_value, read_sensors.dac_rear);
+        dac_front_series->append(current_x_value, sens::max31865::RTD(sens::max31865::ADC_Code(read_sensors.dac_front).serialize()).calculate_approx_temp().value());
+        dac_rear_series->append(current_x_value, sens::max31865::RTD(sens::max31865::ADC_Code(read_sensors.dac_rear).serialize()).calculate_approx_temp().value());
         autoscale_axes(dac_chart, dac_front_series, dac_rear_series);
     }
 }
