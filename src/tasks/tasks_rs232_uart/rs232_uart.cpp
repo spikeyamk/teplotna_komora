@@ -17,7 +17,7 @@ namespace tasks {
     auto RS232_UART::Connection::operator()() const {
 		using namespace boost::sml;
 		using namespace std;
-        using namespace common::magic;
+        using namespace magic;
 		return make_transition_table(
 			*"Disconnected"_s + event<commands::Connect> / function{Actions::connect} = "Connected"_s,
             "Connected"_s + event<commands::Disconnect> / function{Actions::disconnect} = "Disconnected"_s,
@@ -29,30 +29,30 @@ namespace tasks {
     }
 
     void RS232_UART::Connection::Actions::connect(RS232_UART& self) {
-        self.transmit(common::magic::results::Connect {});
+        self.transmit(magic::results::Connect {});
     }
 
     void RS232_UART::Connection::Actions::disconnect(RS232_UART& self) {
-        self.transmit(common::magic::results::Disconnect {});
+        self.transmit(magic::results::Disconnect {});
     }
 
     void RS232_UART::Connection::Actions::nop(RS232_UART& self) {
-        self.transmit(common::magic::results::Nop {});
+        self.transmit(magic::results::Nop {});
     }
 
     void RS232_UART::Connection::Actions::read_sensors(const RS232_UART& self) {
         self.transmit(
-            common::magic::results::ReadSensors {
-                .temp_front = SenserKiller::get_instance().rtd_front.calculate_approx_temp().value(),
-                .temp_rear = SenserKiller::get_instance().rtd_rear.calculate_approx_temp().value(),
+            magic::results::ReadSensors {
+                .temp_front = SenserKiller::get_instance().rtd_front.adc_code.value.unwrap(),
+                .temp_rear = SenserKiller::get_instance().rtd_front.adc_code.value.unwrap(),
             }
         );
     }
 
-    void RS232_UART::Connection::Actions::write_temp(RS232_UART& self, const common::magic::commands::WriteTemp& write_temp) {
+    void RS232_UART::Connection::Actions::write_temp(RS232_UART& self, const magic::commands::WriteTemp& write_temp) {
         Panel::get_instance().desired_rtd = sens::max31865::RTD(write_temp.value);
         self.transmit(
-            common::magic::results::WriteTemp {
+            magic::results::WriteTemp {
                 .value = write_temp.value,
             }
         );
@@ -75,7 +75,7 @@ namespace tasks {
         RS232_UART& self { *static_cast<RS232_UART*>(arg) };
         self.init();
 
-        using namespace common::magic;
+        using namespace magic;
 
         std::array<uint8_t, MTU> buf {};
         boost::sml::sm<Connection> sm { self };

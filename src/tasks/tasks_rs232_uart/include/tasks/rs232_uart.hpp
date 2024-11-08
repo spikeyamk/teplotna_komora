@@ -1,7 +1,7 @@
 #pragma once
 
 #include "usart.h"
-#include "common/magic/magic.hpp"
+#include "magic/magic.hpp"
 #include "tasks/prototype.hpp"
 
 namespace tasks {
@@ -11,7 +11,7 @@ namespace tasks {
         StaticSemaphore_t semaphore_control_block {};
         osSemaphoreId_t semaphore { nullptr };
 
-        static constexpr uint32_t semaphore_timeout { common::magic::TIMEOUT_MS };
+        static constexpr uint32_t semaphore_timeout { magic::TIMEOUT_MS };
 
         struct Connection {
             struct Actions {
@@ -19,7 +19,7 @@ namespace tasks {
                 static void disconnect(RS232_UART& self);
                 static void nop(RS232_UART& self);
                 static void read_sensors(const RS232_UART& self);
-                static void write_temp(RS232_UART& self, const common::magic::commands::WriteTemp& write_temp);
+                static void write_temp(RS232_UART& self, const magic::commands::WriteTemp& write_temp);
             };
 
             auto operator()() const;
@@ -37,8 +37,8 @@ namespace tasks {
 
         template<typename T>
         void transmit(const T& obj) const {
-            const auto buf { common::magic::results::Serializer::run(obj) };
-            static_assert(buf.size() <= common::magic::MTU);
+            const auto buf { magic::results::Serializer::run(obj) };
+            static_assert(buf.size() <= magic::MTU);
             HAL_UART_Transmit(&huart3, buf.data(), buf.size(), HAL_MAX_DELAY);
         }
     };

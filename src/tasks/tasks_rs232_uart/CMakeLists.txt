@@ -28,6 +28,6 @@ target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
     tasks::common
     tasks::panel
     tasks::senser_killer
-    common::magic
+    magic
     sml
 )

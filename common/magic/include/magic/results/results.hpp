@@ -2,9 +2,8 @@
 
 #include <serde/common.hpp>
 
-namespace common {
 namespace magic {
-namespace commands {
+namespace results {
     struct Connect {};
     struct Disconnect {};
     struct Nop {};
@@ -13,8 +12,10 @@ namespace commands {
         float value;
     };
 
-    struct ReadSensors {};
-
+    struct ReadSensors {
+        uint16_t temp_front;
+        uint16_t temp_rear;
+    };
 
     using Pack = Serde::pack_holder<
         Connect,
@@ -23,6 +24,5 @@ namespace commands {
         WriteTemp,
         ReadSensors
     >;
-}
 }
 }
