@@ -13,4 +13,5 @@ target_link_libraries(${SUBMODULE_NAME} PRIVATE
     actu::bridge
     actu::pump
     actu::buzzer
+    panel::sevseg_white
 )

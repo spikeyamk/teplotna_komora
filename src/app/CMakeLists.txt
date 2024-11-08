@@ -21,9 +21,8 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     panel::button
     panel::encoder
     panel::led
-    panel::green_yellow
-    sevseg_common
-    panel::white
+    panel::sevseg_green_yellow
+    panel::sevseg_white
 
     sens::sht31_driver
     sens::max31865_driver

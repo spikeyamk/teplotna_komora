@@ -16,8 +16,6 @@ namespace util {
         return ret;
     }
 
-    void turn_every_annoying_peripheral_off();
-
     inline void microsec_blocking_delay(const uint32_t us) {
         const uint32_t SYSTICK_LOAD { SystemCoreClock / 1000000U };
         const uint32_t SYSTICK_DELAY_CALIB { SYSTICK_LOAD >> 1 };
@@ -63,4 +61,9 @@ namespace util {
             return key;
         }
     };
+}
+
+namespace util {
+    void turn_every_annoying_peripheral_off();
+    void shutdown_endless_loop();
 }

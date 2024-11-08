@@ -28,7 +28,7 @@ target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE
     bksram
 )
 target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
-    panel::green_yellow
+    panel::sevseg_green_yellow
     sens::max31865_driver
     tasks::common
 )
