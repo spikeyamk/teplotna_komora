@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <ubitint.hpp>
+
 #include "stm32f2xx_hal.h"
 
 #include "util/util.hpp"
@@ -10,11 +11,16 @@ namespace bksram {
     using uint20_t = ubitint_t<20>;
 
     struct ErrorCodes {
+        static constexpr uint20_t CLEAR      { 0xF'FF'FF };
         static constexpr uint20_t MISSING_LF { 0xE'13'37 };
-        static constexpr uint20_t TWDG       { 0xE'0A'35 };
+        struct TWDG {
+            static constexpr uint20_t INIT   { 0xE'1A'35 };
+            static constexpr uint20_t EXPIRE { 0xE'0A'35 };
+        };
 
         struct RS232_UART {
-            static constexpr uint20_t LAUNCH { 0xE'23'00 };
+            static constexpr uint20_t LAUNCH      { 0xE'23'00 };
+            static constexpr uint20_t SEMAPHORE_NULLPTR { 0xE'23'01 };
         };
 
         struct TempCtl {
@@ -165,10 +171,13 @@ namespace bksram {
         };
         
         using Registry = util::Registry<uint20_t,
+            CLEAR,
             MISSING_LF,
-            TWDG,
+            TWDG::INIT,
+            TWDG::EXPIRE,
 
             RS232_UART::LAUNCH,
+            RS232_UART::SEMAPHORE_NULLPTR,
 
             TempCtl::LAUNCH,
             

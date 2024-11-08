@@ -3,6 +3,10 @@
 #include <cstdint>
 #include <array>
 
+#include "stm32f2xx_hal.h"
+#include "iwdg.h"
+#include "tim.h"
+
 namespace util {
     template<typename T>
     inline T& self_ref(void* arg) {
@@ -66,4 +70,12 @@ namespace util {
 namespace util {
     void turn_every_annoying_peripheral_off();
     void shutdown_endless_loop();
+    HAL_StatusTypeDef twdg_init();
+    inline void twdg_refresh() {
+        __HAL_TIM_SET_COUNTER(&htim6, 0);
+    }
+
+    inline void iwdg_refresh() {
+        HAL_IWDG_Refresh(&hiwdg);
+    }
 }

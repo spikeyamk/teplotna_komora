@@ -3,6 +3,7 @@
 #include <functional>
 #include <boost/sml.hpp>
 
+#include "bksram/bksram.hpp"
 #include "tasks/senser_killer.hpp"
 #include "tasks/panel.hpp"
 #include "tasks/rs232_uart.hpp"
@@ -56,9 +57,23 @@ namespace tasks {
             }
         );
     }
+
+    void RS232_UART::init() {
+        const osSemaphoreAttr_t sempahore_attr {
+            .name = "rs232_sem",
+            .attr_bits = 0,
+            .cb_mem = &semaphore_control_block,
+            .cb_size = sizeof(semaphore_control_block),
+        };
+        
+        if((semaphore = osSemaphoreNew(1, 0, &sempahore_attr)) == nullptr) {
+            bksram::write_reset<bksram::ErrorCodes::RS232_UART::SEMAPHORE_NULLPTR>();
+        }
+    }
     
     void RS232_UART::worker(void* arg) {
         RS232_UART& self { *static_cast<RS232_UART*>(arg) };
+        self.init();
 
         using namespace common::magic;
 
@@ -127,22 +142,6 @@ namespace tasks {
 
             //std::printf("bottom\n");
         }
-    }
-
-    bool RS232_UART::init() {
-        const osSemaphoreAttr_t sempahore_attr {
-            .name = "rs232_sem",
-            .attr_bits = 0,
-            .cb_mem = &semaphore_control_block,
-            .cb_size = sizeof(semaphore_control_block),
-        };
-        
-        semaphore = osSemaphoreNew(1, 0, &sempahore_attr);
-        if(semaphore == nullptr) {
-            return false;
-        }
-
-        return true;
     }
 
     osStatus RS232_UART::release_semaphore(const uint16_t in_rx_len) {

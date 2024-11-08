@@ -92,16 +92,14 @@ namespace tasks {
             bksram::write_reset<bksram::ErrorCodes::SenserKiller::Init::MAX31865::Extension::RunAutoFaultDetection::REAR>();
         }
 
-        inited = true;
+        osDelay(1'000);
     }
 
     void SenserKiller::worker(void* arg) {
         SenserKiller& self { *static_cast<SenserKiller*>(arg) };
-        if(self.inited == false) {
-            bksram::write_reset<bksram::ErrorCodes::SenserKiller::Worker::INITED_FALSE>();
-        }
+        self.init();
 
-        for(uint8_t i = 0; true; i++) {
+        while(1) {
             const auto rtd_front { self.extension_front.read_rtd() };
             if(rtd_front.has_value() == false) {
                 bksram::write_reset<bksram::ErrorCodes::SenserKiller::Worker::MAX31865::RTD::Timeout::FRONT>();

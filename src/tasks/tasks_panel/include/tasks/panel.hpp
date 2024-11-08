@@ -8,7 +8,7 @@
 #include "tasks/prototype.hpp"
 
 namespace tasks {
-    class Panel : public Prototype<Panel, 4 * 1024, "panel"> {
+    class Panel : public Prototype<Panel, 2 * 1024, "panel"> {
         friend CRTP;
     private:
         panel::sevseg::green_yellow::MAX6549 max6549 { &hspi2, SPI2_SEVYG_NSS_GPIO_Port, SPI2_SEVYG_NSS_Pin };

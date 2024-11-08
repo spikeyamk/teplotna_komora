@@ -1,11 +1,9 @@
-#include <iostream>
+#include <trielo/trielo.hpp>
 
 #include "cmsis_os2.h"
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "iwdg.h"
-#include "tim.h"
 #include "bksram/bksram.hpp"
 #include "util/util.hpp"
 #include "comm/usb_uart/usb_uart.hpp"
@@ -16,8 +14,8 @@
 #include "tasks/panel.hpp"
 
 extern "C" void vApplicationIdleHook(void) {
-    __HAL_TIM_SET_COUNTER(&htim6, 0);
-    HAL_IWDG_Refresh(&hiwdg);
+    util::twdg_refresh();
+    util::iwdg_refresh();
 }
 
 extern "C" void vApplicationStackOverflowHook(TaskHandle_t xTask, signed char *pcTaskName) {
@@ -30,7 +28,7 @@ extern "C" void vApplicationStackOverflowHook(TaskHandle_t xTask, signed char *p
   * @retval None
   */
 extern "C" void MX_FREERTOS_Init() {
-    if(bksram::test() == false) {
+    if(Trielo::trielo<bksram::test>(Trielo::Success(true)) == false) {
         util::shutdown_endless_loop();
     }
 
@@ -38,12 +36,11 @@ extern "C" void MX_FREERTOS_Init() {
         comm::usb_uart::RedirectStdout::get_instance().turn_off_threadsafe();
         std::printf("MX_FREERTOS_Init: comm::usb_uart::RedirectStdout::get_instance().init_threadsafe() == false\n");
     }
-    
-    __HAL_TIM_SET_COUNTER(&htim6, 0);
-    __HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
-    HAL_TIM_Base_Start_IT(&htim6);
 
-    tasks::SenserKiller::get_instance().init();
+    if(Trielo::trielo<util::twdg_init>(Trielo::Success(HAL_OK)) != HAL_OK) {
+        bksram::write_reset<bksram::ErrorCodes::TWDG::INIT>();
+    }
+
     if(tasks::SenserKiller::get_instance().launch() == false) {
         bksram::write_reset<bksram::ErrorCodes::SenserKiller::LAUNCH>();
     }
@@ -56,7 +53,6 @@ extern "C" void MX_FREERTOS_Init() {
         bksram::write_reset<bksram::ErrorCodes::Panel::LAUNCH>();
     }
 
-    tasks::RS232_UART::get_instance().init();
     if(tasks::RS232_UART::get_instance().launch() == false) {
         bksram::write_reset<bksram::ErrorCodes::RS232_UART::LAUNCH>();
     }

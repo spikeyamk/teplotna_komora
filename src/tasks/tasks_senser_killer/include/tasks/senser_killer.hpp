@@ -9,10 +9,8 @@
 #include "tasks/prototype.hpp"
 
 namespace tasks {
-    class SenserKiller : public Prototype<SenserKiller, 4 * 1024, "senser_killer"> {
+    class SenserKiller : public Prototype<SenserKiller, 2 * 1024, "senser_killer"> {
         friend CRTP;
-    private:
-        bool inited { false };
     public:
         sens::max31865::RTD rtd_front { 0.0f };
         sens::max31865::RTD rtd_rear { 0.0f };
@@ -38,9 +36,9 @@ namespace tasks {
     public:
         static SenserKiller& get_instance();
     private:
+        void init();
         static void worker(void* arg);
     public:
-        void init();
         osStatus release_semaphore_front();
         osStatus release_semaphore_rear();
     };

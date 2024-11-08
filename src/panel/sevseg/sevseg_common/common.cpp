@@ -130,8 +130,8 @@ namespace common {
     inline uint8_t hex_char_to_uint8_t(const char value) {
         if(value >= '0' && value <= '9') {
             return static_cast<uint8_t>(value - '0');
-        } else if(value >= 'a' && value <= 'f') {
-            return static_cast<uint8_t>(value - 'a') + 10;
+        } else if(value >= 'A' && value <= 'F') {
+            return static_cast<uint8_t>(value - 'A') + 10;
         }
 
         return 0xE;

@@ -31,4 +31,5 @@ target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE
 target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
     tasks::common
     tasks::senser_killer
+    panel::sevseg_green_yellow
 )

@@ -32,31 +32,13 @@ namespace tasks {
     }
 
     void Panel::increment() {
-        //std::printf("tasks::Panel::increment\n");
-        //std::cout
-        //    << "desired_rtd.adc_code.value: "
-        //    << desired_rtd.adc_code.value
-        //    << "DESIRED_RTD_STEP.adc_code.value: "
-        //    << DESIRED_RTD_STEP.adc_code.value
-        //    << "DESIRED_RTD_MAX.adc_code.value: "
-        //    << DESIRED_RTD_MAX.adc_code.value
-        //    << std::endl;
-        
-        //std::cout
-        //    << "desired_rtd.adc_code.value + DESIRED_RTD_STEP.adc_code.value: "
-        //    << desired_rtd.adc_code.value + DESIRED_RTD_STEP.adc_code.value
-        //    << std::endl;
-
         if((desired_rtd.adc_code.value + DESIRED_RTD_STEP.adc_code.value) <= DESIRED_RTD_MAX.adc_code.value) {
-            //std::printf("tasks::Panel::increment: desired_rtd.adc_code.value + DESIRED_RTD_STEP.adc_code.value <= DESIRED_RTD_MAX.adc_code.value\n");
             desired_rtd.adc_code.value += DESIRED_RTD_STEP.adc_code.value;
         }
     }
 
     void Panel::decrement() {
-        //std::printf("tasks::Panel::decrement\n");
         if((desired_rtd.adc_code.value - DESIRED_RTD_STEP.adc_code.value) >= DESIRED_RTD_MIN.adc_code.value) {
-            //std::printf("desired_rtd.adc_code.value - DESIRED_RTD_STEP.adc_code.value >= DESIRED_RTD_MIN.adc_code.value\n");
             desired_rtd.adc_code.value -= DESIRED_RTD_STEP.adc_code.value;
         }
     }
