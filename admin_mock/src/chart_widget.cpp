@@ -80,7 +80,9 @@ void ChartWidget::push(const magic::results::ReadSensors& read_sensors) {
     }
 
     {
-
+        dac_front_series->append(current_x_value, read_sensors.dac_front);
+        dac_rear_series->append(current_x_value, read_sensors.dac_rear);
+        autoscale_axes(dac_chart, dac_front_series, dac_rear_series);
     }
 }
 
