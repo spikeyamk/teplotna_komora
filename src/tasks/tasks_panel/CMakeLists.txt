@@ -30,5 +30,5 @@ target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE
 )
 target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
     tasks::common
-    tasks::temp_senser
+    tasks::senser_killer
 )

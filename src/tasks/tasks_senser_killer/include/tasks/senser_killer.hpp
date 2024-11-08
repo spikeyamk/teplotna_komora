@@ -9,7 +9,7 @@
 #include "tasks/prototype.hpp"
 
 namespace tasks {
-    class TempSenser : public Prototype<TempSenser, 4 * 1024, "temp_senser"> {
+    class SenserKiller : public Prototype<SenserKiller, 4 * 1024, "senser_killer"> {
         friend CRTP;
     private:
         bool inited { false };
@@ -34,9 +34,9 @@ namespace tasks {
         sens::max31865::Transceiver transceiver_rear { &hspi3, SPI3_TEMP_NSS1_GPIO_Port, SPI3_TEMP_NSS1_Pin };
         sens::max31865::Extension extension_rear { SPI3_TEMP_NDRDY1_GPIO_Port, SPI3_TEMP_NDRDY1_Pin, transceiver_rear };
     private:
-        TempSenser() = default;
+        SenserKiller() = default;
     public:
-        static TempSenser& get_instance();
+        static SenserKiller& get_instance();
     private:
         static void worker(void* arg);
     public:

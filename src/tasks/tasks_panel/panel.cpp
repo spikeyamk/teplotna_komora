@@ -1,6 +1,6 @@
 #include "panel/sevseg/white/white.hpp"
 #include "panel/sevseg/common/common.hpp"
-#include "tasks/temp_senser.hpp"
+#include "tasks/senser_killer.hpp"
 #include "tasks/panel.hpp"
 
 namespace tasks {
@@ -24,8 +24,8 @@ namespace tasks {
             }
             panel::sevseg::white::display_refresh(sevmap);
             if(tick % 500 == 0) {
-                self.max6549.yellow_show(TempSenser::get_instance().rtd_front.calculate_approx_temp().value_or(static_cast<float>(0xFF'FF'FF'FF)));
-                self.max6549.green_show(TempSenser::get_instance().rtd_rear.calculate_approx_temp().value_or(static_cast<float>(0xFF'FF'FF'FF)));
+                self.max6549.yellow_show(SenserKiller::get_instance().rtd_front.calculate_approx_temp().value_or(static_cast<float>(0xFF'FF'FF'FF)));
+                self.max6549.green_show(SenserKiller::get_instance().rtd_rear.calculate_approx_temp().value_or(static_cast<float>(0xFF'FF'FF'FF)));
             }
             osDelay(1);
         }

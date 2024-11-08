@@ -3,7 +3,7 @@
 #include <functional>
 #include <boost/sml.hpp>
 
-#include "tasks/temp_senser.hpp"
+#include "tasks/senser_killer.hpp"
 #include "tasks/panel.hpp"
 #include "tasks/rs232_uart.hpp"
 
@@ -42,8 +42,8 @@ namespace tasks {
     void RS232_UART::Connection::Actions::read_sensors(const RS232_UART& self) {
         self.transmit(
             common::magic::results::ReadSensors {
-                .temp_front = TempSenser::get_instance().rtd_front.calculate_approx_temp().value(),
-                .temp_rear = TempSenser::get_instance().rtd_rear.calculate_approx_temp().value(),
+                .temp_front = SenserKiller::get_instance().rtd_front.calculate_approx_temp().value(),
+                .temp_rear = SenserKiller::get_instance().rtd_rear.calculate_approx_temp().value(),
             }
         );
     }

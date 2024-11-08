@@ -5,7 +5,7 @@
 #include "actu/fan/fb/fb.hpp"
 #include "comm/usb_uart/usb_uart.hpp"
 #include "bksram/bksram.hpp"
-#include "tasks/temp_senser.hpp"
+#include "tasks/senser_killer.hpp"
 #include "tasks/rs232_uart.hpp"
 
 extern "C" int __io_putchar(int ch) {
@@ -29,10 +29,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
         case BUT3_FL_Pin:
             break;
         case SPI3_TEMP_NDRDY0_Pin:
-            tasks::TempSenser::get_instance().release_semaphore_front();
+            tasks::SenserKiller::get_instance().release_semaphore_front();
             break;
         case SPI3_TEMP_NDRDY1_Pin:
-            tasks::TempSenser::get_instance().release_semaphore_rear();
+            tasks::SenserKiller::get_instance().release_semaphore_rear();
             break;
     }
 }

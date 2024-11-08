@@ -10,7 +10,7 @@
 #include "util/util.hpp"
 #include "comm/usb_uart/usb_uart.hpp"
 
-#include "tasks/temp_senser.hpp"
+#include "tasks/senser_killer.hpp"
 #include "tasks/temp_ctl.hpp"
 #include "tasks/rs232_uart.hpp"
 #include "tasks/panel.hpp"
@@ -43,9 +43,9 @@ extern "C" void MX_FREERTOS_Init() {
     __HAL_TIM_CLEAR_FLAG(&htim6, TIM_FLAG_UPDATE);
     HAL_TIM_Base_Start_IT(&htim6);
 
-    tasks::TempSenser::get_instance().init();
-    if(tasks::TempSenser::get_instance().launch() == false) {
-        bksram::write_reset<bksram::ErrorCodes::TempSenser::LAUNCH>();
+    tasks::SenserKiller::get_instance().init();
+    if(tasks::SenserKiller::get_instance().launch() == false) {
+        bksram::write_reset<bksram::ErrorCodes::SenserKiller::LAUNCH>();
     }
 
     if(tasks::TempCtl::get_instance().launch() == false) {

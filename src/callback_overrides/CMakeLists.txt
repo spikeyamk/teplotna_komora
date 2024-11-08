@@ -8,6 +8,6 @@ target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
     bksram
     panel::encoder
     comm::usb_uart
+    tasks::senser_killer
     tasks::rs232_uart
-    tasks::temp_senser
 )

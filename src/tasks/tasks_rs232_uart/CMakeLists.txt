@@ -26,7 +26,7 @@ target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE stm32cubef2 trielo)
 target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
     tasks::common
     tasks::panel
-    tasks::temp_senser
+    tasks::senser_killer
     common::magic
     sml
 )
