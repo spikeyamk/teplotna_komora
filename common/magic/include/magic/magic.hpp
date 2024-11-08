@@ -10,6 +10,6 @@
 #include "magic/results/deserializer.hpp"
 
 namespace magic {
-    static constexpr size_t MTU { 9 };
+    static constexpr size_t MTU { 17 };
     static constexpr uint32_t TIMEOUT_MS { 100 };
 }

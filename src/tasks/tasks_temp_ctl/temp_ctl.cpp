@@ -19,7 +19,7 @@ namespace tasks {
         self.init();
 
         while(1) {
-            std::printf("tasks::TempCtl::worker()\n");
+            //std::printf("tasks::TempCtl::worker()\n");
             osDelay(1'000);
         }
     }

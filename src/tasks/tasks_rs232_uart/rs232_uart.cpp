@@ -41,21 +41,17 @@ namespace tasks {
     }
 
     void RS232_UART::Connection::Actions::read_sensors(const RS232_UART& self) {
-        self.transmit(
-            magic::results::ReadSensors {
-                .temp_front = SenserKiller::get_instance().rtd_front.adc_code.value.unwrap(),
-                .temp_rear = SenserKiller::get_instance().rtd_front.adc_code.value.unwrap(),
-            }
-        );
+        self.transmit(magic::results::ReadSensors {
+            .temp_front = static_cast<uint8_t>(SenserKiller::get_instance().rtd_front.adc_code.value.unwrap()),
+            .temp_rear = static_cast<uint8_t>(SenserKiller::get_instance().rtd_rear.adc_code.value.unwrap()),
+        });
     }
 
     void RS232_UART::Connection::Actions::write_temp(RS232_UART& self, const magic::commands::WriteTemp& write_temp) {
         Panel::get_instance().desired_rtd = sens::max31865::RTD(write_temp.value);
-        self.transmit(
-            magic::results::WriteTemp {
-                .value = write_temp.value,
-            }
-        );
+        self.transmit(magic::results::WriteTemp {
+            .value = write_temp.value,
+        });
     }
 
     void RS232_UART::init() {
