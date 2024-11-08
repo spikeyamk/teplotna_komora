@@ -7,14 +7,14 @@ add_executable(${CMAKE_PROJECT_NAME}
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
-    common::magic
+    magic
+    sml
+    trielo
+    ubitint
 
     Qt6::Core
     Qt6::Charts
     Qt6::Gui
     Qt6::SerialPort
     Qt6::Widgets
-
-    sml
-    trielo
 )

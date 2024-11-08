@@ -7,7 +7,7 @@
 #include <QVBoxLayout>
 #include <QTimer>
 
-#include "common/magic/results/results.hpp"
+#include "magic/results/results.hpp"
 
 class ChartWidget : public QWidget {
     Q_OBJECT
@@ -29,7 +29,7 @@ public:
     ChartWidget();
     ~ChartWidget();
 public:
-    void push(const common::magic::results::ReadSensors& read_sensors);
+    void push(const magic::results::ReadSensors& read_sensors);
 private:
     void autoscale_axes(QChart* chart, QLineSeries* front_series, QLineSeries* rear_series);
 };

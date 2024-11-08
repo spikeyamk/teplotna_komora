@@ -38,7 +38,7 @@ void Transceiver::run() {
             continue;
         }
 
-        const auto connect_serialized { common::magic::commands::Serializer::run(common::magic::commands::Connect()) };
+        const auto connect_serialized { magic::commands::Serializer::run(magic::commands::Connect()) };
         if(serial_port.write(reinterpret_cast<const char*>(connect_serialized.data()), connect_serialized.size()) != static_cast<qint64>(connect_serialized.size())) {
             emit this->error_occured(Error::ConnectWriteWrongSize);
             continue;
@@ -64,13 +64,13 @@ void Transceiver::run() {
 
         const QVector<uint8_t> connect_result_vector(connect_result_buf.begin(), connect_result_buf.end());
 
-        const auto connect_result_decoded { common::magic::results::Deserializer::decode(connect_result_vector.begin(), connect_result_vector.end()) };
+        const auto connect_result_decoded { magic::results::Deserializer::decode(connect_result_vector.begin(), connect_result_vector.end()) };
         if(connect_result_decoded.has_value() == false) {
             emit this->error_occured(Error::ConnectResultDecodedNullopt);
             continue;
         }
 
-        if(is_same<common::magic::results::Connect>(connect_result_decoded.value()) == false) {
+        if(is_same<magic::results::Connect>(connect_result_decoded.value()) == false) {
             emit this->error_occured(Error::ConnectResultDecodedWrongType);
             continue;
         }
@@ -79,7 +79,7 @@ void Transceiver::run() {
             bool command_write_visitor_success { false };
             std::visit(
                 [&](auto&& command) {
-                    const auto command_serialized { common::magic::commands::Serializer::run(command) };
+                    const auto command_serialized { magic::commands::Serializer::run(command) };
                     if(serial_port.write(reinterpret_cast<const char*>(command_serialized.data()), command_serialized.size()) != static_cast<qint64>(command_serialized.size())) {
                         emit this->error_occured(Error::CommandWriteWrongSize);
                         command_write_visitor_success = false;
@@ -116,7 +116,7 @@ void Transceiver::run() {
             continue;
         }
         const QVector<uint8_t> command_result_vector(command_result_buf.begin(), command_result_buf.end());
-        const auto command_result_decoded { common::magic::results::Deserializer::decode(command_result_vector.begin(), command_result_vector.end()) };
+        const auto command_result_decoded { magic::results::Deserializer::decode(command_result_vector.begin(), command_result_vector.end()) };
 
         if(command_result_decoded.has_value() == false) {
             emit this->error_occured(Error::CommandResultDecodedNullopt);
@@ -128,7 +128,7 @@ void Transceiver::run() {
             continue;
         }
 
-        const auto disconnect_serialized { common::magic::commands::Serializer::run(common::magic::commands::Disconnect()) };
+        const auto disconnect_serialized { magic::commands::Serializer::run(magic::commands::Disconnect()) };
         if(serial_port.write(reinterpret_cast<const char*>(disconnect_serialized.data()), disconnect_serialized.size()) != static_cast<qint64>(disconnect_serialized.size())) {
             emit this->error_occured(Error::DisconnectWriteWrongSize);
             continue;
@@ -153,13 +153,13 @@ void Transceiver::run() {
         }
         const QVector<uint8_t> disconnect_result_vector(disconnect_result_buf.begin(), disconnect_result_buf.end());
 
-        const auto disconnect_result_decoded { common::magic::results::Deserializer::decode(disconnect_result_vector.begin(), disconnect_result_vector.end()) };
+        const auto disconnect_result_decoded { magic::results::Deserializer::decode(disconnect_result_vector.begin(), disconnect_result_vector.end()) };
         if(disconnect_result_decoded.has_value() == false) {
             emit this->error_occured(Error::DisconnectResultDecodedNullopt);
             continue;
         }
 
-        if(is_same<common::magic::results::Disconnect>(disconnect_result_decoded.value()) == false) {
+        if(is_same<magic::results::Disconnect>(disconnect_result_decoded.value()) == false) {
             emit this->error_occured(Error::DisconnectResultDecodedWrongType);
             continue;
         }

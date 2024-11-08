@@ -24,10 +24,10 @@ private:
 
     QLabel* command_label { nullptr };
     const QMap<QString, Transceiver::CommandResult> command_map {{
-        { "Nop", { common::magic::commands::Nop(), common::magic::results::Nop() } },
-        { "ReadSensors", { common::magic::commands::ReadSensors(), common::magic::results::ReadSensors() } },
-        { "WriteTemp 13.37f", { common::magic::commands::WriteTemp { 13.37f }, common::magic::results::WriteTemp() } },
-        { "WriteTemp 20.0f", { common::magic::commands::WriteTemp { 20.0f }, common::magic::results::WriteTemp() } },
+        { "Nop", { magic::commands::Nop(), magic::results::Nop() } },
+        { "ReadSensors", { magic::commands::ReadSensors(), magic::results::ReadSensors() } },
+        { "WriteTemp 13.37f", { magic::commands::WriteTemp { 13.37f }, magic::results::WriteTemp() } },
+        { "WriteTemp 20.0f", { magic::commands::WriteTemp { 20.0f }, magic::results::WriteTemp() } },
     }};
     QComboBox* command_combo_box { nullptr };
 

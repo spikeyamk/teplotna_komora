@@ -3,6 +3,7 @@
 #include <QDateTime>
 
 #include "chart_widget.hpp"
+#include "chart_widget.hpp"
 
 ChartWidget::ChartWidget() :
     layout { new QVBoxLayout(this) },
@@ -35,7 +36,7 @@ ChartWidget::ChartWidget() :
         temp_chart->addSeries(temp_rear_series);
 
         temp_chart->createDefaultAxes();
-        temp_chart->setTitle(typeid(common::magic::results::ReadSensors()).name());
+        temp_chart->setTitle(typeid(magic::results::ReadSensors()).name());
         temp_chart->axes(Qt::Vertical).front()->setTitleText("Temperature [°C]");
         temp_chart->axes(Qt::Horizontal).front()->setTitleText("Time [s]");
 
@@ -55,7 +56,7 @@ ChartWidget::ChartWidget() :
         dac_chart->addSeries(dac_rear_series);
 
         dac_chart->createDefaultAxes();
-        dac_chart->setTitle(typeid(common::magic::results::ReadSensors()).name());
+        dac_chart->setTitle(typeid(magic::results::ReadSensors()).name());
         dac_chart->axes(Qt::Vertical).front()->setTitleText("DAC Code (max. 4095)");
         dac_chart->axes(Qt::Horizontal).front()->setTitleText("Time [s]");
 
@@ -70,7 +71,7 @@ ChartWidget::~ChartWidget() {
     delete dac_chart;
 }
 
-void ChartWidget::push(const common::magic::results::ReadSensors& read_sensors) {
+void ChartWidget::push(const magic::results::ReadSensors& read_sensors) {
     const qreal current_x_value { (static_cast<qreal>(QDateTime::currentMSecsSinceEpoch()) - msecs_since_epoch) / 1000.0f };
     {
         temp_front_series->append(current_x_value, read_sensors.temp_front);

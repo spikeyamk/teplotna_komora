@@ -99,7 +99,7 @@ void Dialog::show_result(const Transceiver::ResultVariant& result) {
     std::visit(
         [&](auto&& result) {
             using Decay = std::decay_t<decltype(result)>;
-            if constexpr(std::is_same_v<Decay, common::magic::results::ReadSensors>) {
+            if constexpr(std::is_same_v<Decay, magic::results::ReadSensors>) {
                 static bool was_active_before { false };
                 if(periodic_timer->isActive() && (was_active_before == false)) {
                     std::cout << "[\n";
@@ -114,7 +114,7 @@ void Dialog::show_result(const Transceiver::ResultVariant& result) {
                     std::cout << "]\n";
                     was_active_before = false;
                 }
-            } else if constexpr(std::is_same_v<Decay, common::magic::results::WriteTemp>) {
+            } else if constexpr(std::is_same_v<Decay, magic::results::WriteTemp>) {
                 qDebug()
                     << "Dialog::show_result():"
                     << "std::is_same_v<Decay, common::magic::results::WriteTemp>: "

@@ -18,6 +18,7 @@ find_package(Qt6 REQUIRED COMPONENTS
 )
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/trielo trielo)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/ubitint ubitint)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/3rdparty/pfr pfr)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/serde serde)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/3rdparty/sml sml)
