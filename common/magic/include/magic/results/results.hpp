@@ -15,6 +15,8 @@ namespace results {
     struct ReadSensors {
         uint16_t temp_front;
         uint16_t temp_rear;
+        uint16_t dac_front;
+        uint16_t dac_rear;
     };
 
     using Pack = Serde::pack_holder<

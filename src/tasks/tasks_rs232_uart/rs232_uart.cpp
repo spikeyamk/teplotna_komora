@@ -4,6 +4,7 @@
 #include <boost/sml.hpp>
 
 #include "bksram/bksram.hpp"
+#include "actu/lin_source/lin_source.hpp"
 #include "tasks/senser_killer.hpp"
 #include "tasks/panel.hpp"
 #include "tasks/rs232_uart.hpp"
@@ -42,8 +43,10 @@ namespace tasks {
 
     void RS232_UART::Connection::Actions::read_sensors(const RS232_UART& self) {
         self.transmit(magic::results::ReadSensors {
-            .temp_front = static_cast<uint8_t>(SenserKiller::get_instance().rtd_front.adc_code.value.unwrap()),
-            .temp_rear = static_cast<uint8_t>(SenserKiller::get_instance().rtd_rear.adc_code.value.unwrap()),
+            .temp_front = SenserKiller::get_instance().rtd_front.adc_code.value.unwrap(),
+            .temp_rear = SenserKiller::get_instance().rtd_rear.adc_code.value.unwrap(),
+            .dac_front = actu::lin_source::front::read_output().unwrap(),
+            .dac_rear = actu::lin_source::rear::read_output().unwrap(),
         });
     }
 
