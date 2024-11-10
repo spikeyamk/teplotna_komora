@@ -7,11 +7,9 @@ target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE
     trielo
 )
 target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
-    actu::bridge
     actu::buzzer
     actu::fan_ctl
     actu::fan_fb
-    actu::lin_source
     actu::pump
 
     bksram

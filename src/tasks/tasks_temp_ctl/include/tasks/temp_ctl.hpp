@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "cmsis_os2.h"
-#include "actu/lin_source/lin_source.hpp"
+#include "actu/peltier/peltier.hpp"
 #include "tasks/prototype.hpp"
 
 namespace tasks {

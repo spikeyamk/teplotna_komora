@@ -1,7 +1,7 @@
 #pragma once
 
 namespace actu {
-namespace bridge {
+namespace hbridge {
 namespace front {
     void turn_off();
     void heat();

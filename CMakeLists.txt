@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/check_stm32_programmer_cli.cmake)
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/cmake/gcc-arm-none-eabi.cmake)
 
 option(ENABLE_TESTS "Enable building of tests" OFF)

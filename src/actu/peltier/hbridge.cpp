@@ -1,10 +1,10 @@
 #include "main.h"
 #include "cmsis_os2.h"
 #include "stm32f2xx_hal.h"
-#include "actu/bridge/bridge.hpp"
+#include "hbridge.hpp"
 
 namespace actu {
-namespace bridge {
+namespace hbridge {
 namespace front {
     void turn_off() {
         // Uses NOT gate should turn off with LOG_HIGH

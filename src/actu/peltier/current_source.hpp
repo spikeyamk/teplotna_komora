@@ -4,7 +4,7 @@
 #include "stm32f2xx_hal.h"
 
 namespace actu {
-namespace lin_source {
+namespace current_source {
     void test_dac();
     using uint12_t = ubitint_t<12>;
 namespace front {

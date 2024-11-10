@@ -9,8 +9,6 @@ target_link_libraries(${SUBMODULE_NAME} PRIVATE
     stm32cubef2
     trielo
     actu::fan_ctl
-    actu::lin_source
-    actu::bridge
     actu::pump
     actu::buzzer
     panel::sevseg_white

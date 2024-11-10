@@ -1,10 +1,10 @@
 #include <iostream>
 #include "cmsis_os2.h"
-#include "actu/lin_source/lin_source.hpp"
+#include "current_source.hpp"
 #include "dac.h"
 
 namespace actu {
-namespace lin_source {
+namespace current_source {
     void test_dac() {
         front::start_dac();
         rear::start_dac();
