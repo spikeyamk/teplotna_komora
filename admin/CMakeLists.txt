@@ -9,6 +9,20 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
+    elseif(MSVC)
+        target_compile_options(${PROJECT_NAME} PRIVATE /W4)
+	    set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreadedDebug)
+    endif()
+endif()
+elseif(CMAKE_BUILD_TYPE MATCHES "Release")
+    if(MSVC)
+	    set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
+    endif()
+endif()
+
 find_package(Qt6 REQUIRED COMPONENTS
     Core
     Charts
@@ -25,14 +39,6 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/3rdparty/sml sml)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../common common)
 add_subdirectory(deps)
 add_subdirectory(src)
-
-if(CMAKE_BUILD_TYPE MATCHES "Debug")
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
-    elseif(MSVC)
-        target_compile_options(${PROJECT_NAME} PRIVATE /W4)
-    endif()
-endif()
 
 find_package(Doxygen)
 
