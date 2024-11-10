@@ -74,14 +74,14 @@ ChartWidget::~ChartWidget() {
 void ChartWidget::push(const magic::results::ReadSensors& read_sensors) {
     const qreal current_x_value { (static_cast<qreal>(QDateTime::currentMSecsSinceEpoch()) - msecs_since_epoch) / 1000.0f };
     {
-        temp_front_series->append(current_x_value, read_sensors.temp_front);
-        temp_rear_series->append(current_x_value, read_sensors.temp_rear);
+        temp_front_series->append(current_x_value, sens::max31865::RTD(sens::max31865::ADC_Code(read_sensors.temp_front).serialize()).calculate_approx_temp().value());
+        temp_rear_series->append(current_x_value, sens::max31865::RTD(sens::max31865::ADC_Code(read_sensors.temp_rear).serialize()).calculate_approx_temp().value());
         autoscale_axes(temp_chart, temp_front_series, temp_rear_series);
     }
 
     {
-        dac_front_series->append(current_x_value, sens::max31865::RTD(sens::max31865::ADC_Code(read_sensors.dac_front).serialize()).calculate_approx_temp().value());
-        dac_rear_series->append(current_x_value, sens::max31865::RTD(sens::max31865::ADC_Code(read_sensors.dac_rear).serialize()).calculate_approx_temp().value());
+        dac_front_series->append(current_x_value, static_cast<qreal>(read_sensors.dac_front));
+        dac_rear_series->append(current_x_value, static_cast<qreal>(read_sensors.dac_rear));
         autoscale_axes(dac_chart, dac_front_series, dac_rear_series);
     }
 }
