@@ -28,7 +28,7 @@ target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
     tasks::common
     tasks::panel
     tasks::senser_killer
-    actu::lin_source
+    tasks::temp_ctl
     magic
     sml
 )

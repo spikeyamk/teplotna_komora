@@ -27,7 +27,10 @@ target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE
     trielo
 )
 target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
-    tasks::senser_killer
+    actu::bridge
+    actu::lin_source
     actu::fan_ctl
+    tasks::senser_killer
+    tasks::panel
     util
 )

@@ -6,6 +6,7 @@
 #include "comm/usb_uart/usb_uart.hpp"
 #include "bksram/bksram.hpp"
 #include "tasks/senser_killer.hpp"
+#include "tasks/temp_ctl.hpp"
 #include "tasks/rs232_uart.hpp"
 
 extern "C" int __io_putchar(int ch) {
@@ -27,6 +28,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
         case BUT2_ML_Pin:
             break;
         case BUT3_FL_Pin:
+            tasks::TempCtl::get_instance().release_semaphore();
             break;
         case SPI3_TEMP_NDRDY0_Pin:
             tasks::SenserKiller::get_instance().release_semaphore_front();

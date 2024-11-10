@@ -32,14 +32,14 @@ namespace tasks {
     }
 
     void Panel::increment() {
-        if((desired_rtd.adc_code.value + DESIRED_RTD_STEP.adc_code.value) <= DESIRED_RTD_MAX.adc_code.value) {
-            desired_rtd.adc_code.value += DESIRED_RTD_STEP.adc_code.value;
+        if((desired_rtd.adc_code.value + DESIRED_RTD_ENCODER_STEP.adc_code.value) <= DESIRED_RTD_MAX.adc_code.value) {
+            desired_rtd.adc_code.value += DESIRED_RTD_ENCODER_STEP.adc_code.value;
         }
     }
 
     void Panel::decrement() {
-        if((desired_rtd.adc_code.value - DESIRED_RTD_STEP.adc_code.value) >= DESIRED_RTD_MIN.adc_code.value) {
-            desired_rtd.adc_code.value -= DESIRED_RTD_STEP.adc_code.value;
+        if((desired_rtd.adc_code.value - DESIRED_RTD_ENCODER_STEP.adc_code.value) >= DESIRED_RTD_MIN.adc_code.value) {
+            desired_rtd.adc_code.value -= DESIRED_RTD_ENCODER_STEP.adc_code.value;
         }
     }
 }
