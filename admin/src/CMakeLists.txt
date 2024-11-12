@@ -1,2 +1,21 @@
-add_subdirectory(app)
-add_subdirectory(decoder)
+add_executable(${CMAKE_PROJECT_NAME}
+    main.cpp
+    chart_widget.cpp
+    dialog.cpp
+    to_json.cpp
+    transceiver.cpp
+)
+
+target_link_libraries(${CMAKE_PROJECT_NAME}
+    magic
+    sml
+    trielo
+    ubitint
+    sens::max31865_regs
+
+    Qt6::Core
+    Qt6::Charts
+    Qt6::Gui
+    Qt6::SerialPort
+    Qt6::Widgets
+)

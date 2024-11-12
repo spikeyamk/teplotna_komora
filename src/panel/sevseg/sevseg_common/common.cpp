@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <algorithm>
 #include <string_view>
-#include <ubitint.hpp>
 #include "panel/sevseg/common/common.hpp"
 
 namespace panel {
@@ -38,6 +37,7 @@ namespace common {
         0b0100'0000, // hore
         0b1000'0000, // bodka
     };
+
 
     const sevset minus_sign { 0b0000'0001 };
     const sevset dp_or_mask { 0b1000'0000 };
@@ -111,12 +111,30 @@ namespace common {
         return true;
     }
 
+    /**
+     * @brief Converts a single character in hexadecimal format ('0'-'9', 'A'-'F') to its corresponding uint8_t value.
+     * 
+     * @param value The character to convert. Must be a valid uppercase hexadecimal character ('0'-'9' or 'A'-'F').
+     * 
+     * @return uint8_t The corresponding uint8_t value for the given hexadecimal character:
+     *         - '0' to '9' map to 0x0 to 0x9
+     *         - 'A' to 'F' map to 0xA to 0xF
+     *         - If the character is not a valid hexadecimal character, returns 0xE.
+     * 
+     * @note The return value `0xE` is an error indicator. Ensure that the character is valid by checking it beforehand if necessary.
+     * 
+     * @example
+     * uint8_t hex_value = hex_char_to_uint8_t('A');  // Returns 10
+     * uint8_t hex_value_invalid = hex_char_to_uint8_t('g');  // Returns 0xE (error)
+     */
     inline uint8_t hex_char_to_uint8_t(const char value) {
         if(value >= '0' && value <= '9') {
             return static_cast<uint8_t>(value - '0');
         } else if(value >= 'A' && value <= 'F') {
             return static_cast<uint8_t>(value - 'A') + 10;
         }
+
+        return 0xE;
     }
 
     inline bool is_valid_char_in_hex_snprintf_output(const char value) {
@@ -161,7 +179,9 @@ namespace common {
 
     template<> 
     sevmap to_sevmap<float>(const float value) {
-        if(value > 9999.9f) {
+        if(std::isfinite(value) == false) {
+            return exception_sevmap::error;
+        } else if(value > 9999.9f) {
             return exception_sevmap::positive_overflow;
         } else if(value < -999.9f) {
             return exception_sevmap::negative_overflow;

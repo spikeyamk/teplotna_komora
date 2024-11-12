@@ -1,20 +1,26 @@
 #pragma once
 
 #include <cstdint>
-#include <ubitint.hpp>
+#include <bitint.hpp>
+
 #include "stm32f2xx_hal.h"
 
-#include "util/util.hpp"
+#include "util/tmp.hpp"
 
 namespace bksram {
-    using uint20_t = ubitint_t<20>;
+    using uint20_t = bitint::ubitint<20>;
 
     struct ErrorCodes {
+        static constexpr uint20_t CLEAR      { 0xF'FF'FF };
         static constexpr uint20_t MISSING_LF { 0xE'13'37 };
-        static constexpr uint20_t TWDG       { 0xE'0A'35 };
+        struct TWDG {
+            static constexpr uint20_t INIT   { 0xE'1A'35 };
+            static constexpr uint20_t EXPIRE { 0xE'0A'35 };
+        };
 
         struct RS232_UART {
-            static constexpr uint20_t LAUNCH { 0xE'23'00 };
+            static constexpr uint20_t LAUNCH      { 0xE'23'00 };
+            static constexpr uint20_t SEMAPHORE_NULLPTR { 0xE'23'01 };
         };
 
         struct TempCtl {
@@ -23,6 +29,10 @@ namespace bksram {
 
         struct Panel {
             static constexpr uint20_t LAUNCH { 0xE'5E'80 };
+        };
+
+        struct SevsegWhite {
+            static constexpr uint20_t LAUNCH { 0xE'55'50 };
         };
 
         struct FanSenser {
@@ -67,7 +77,7 @@ namespace bksram {
             };
         };
 
-        struct TempSenser {
+        struct SenserKiller {
             static constexpr uint20_t LAUNCH { 0xE'31'00 };
             struct Init {
                 struct MAX31865 {
@@ -165,14 +175,18 @@ namespace bksram {
         };
         
         using Registry = util::Registry<uint20_t,
+            CLEAR,
             MISSING_LF,
-            TWDG,
+            TWDG::INIT,
+            TWDG::EXPIRE,
 
             RS232_UART::LAUNCH,
+            RS232_UART::SEMAPHORE_NULLPTR,
 
             TempCtl::LAUNCH,
             
             Panel::LAUNCH,
+            SevsegWhite::LAUNCH,
 
             FanSenser::LAUNCH,
             FanSenser::Init::FB_ALL,
@@ -192,57 +206,57 @@ namespace bksram {
             FanSenser::Worker::FAN4_BR,
             FanSenser::Worker::FAN5_FR,
 
-            TempSenser::LAUNCH,
+            SenserKiller::LAUNCH,
 
-            TempSenser::Init::MAX31865::TransceiverInit::FRONT,
-            TempSenser::Init::MAX31865::TransceiverInit::REAR,
+            SenserKiller::Init::MAX31865::TransceiverInit::FRONT,
+            SenserKiller::Init::MAX31865::TransceiverInit::REAR,
 
-            TempSenser::Init::MAX31865::Extension::Init::FRONT,
-            TempSenser::Init::MAX31865::Extension::Init::REAR,
+            SenserKiller::Init::MAX31865::Extension::Init::FRONT,
+            SenserKiller::Init::MAX31865::Extension::Init::REAR,
             
-            TempSenser::Init::MAX31865::Extension::ClearConfigure::FRONT,
-            TempSenser::Init::MAX31865::Extension::ClearConfigure::REAR,
+            SenserKiller::Init::MAX31865::Extension::ClearConfigure::FRONT,
+            SenserKiller::Init::MAX31865::Extension::ClearConfigure::REAR,
             
-            TempSenser::Init::MAX31865::Extension::ClearConfigureValidation::FRONT,
-            TempSenser::Init::MAX31865::Extension::ClearConfigureValidation::REAR,
+            SenserKiller::Init::MAX31865::Extension::ClearConfigureValidation::FRONT,
+            SenserKiller::Init::MAX31865::Extension::ClearConfigureValidation::REAR,
             
-            TempSenser::Init::MAX31865::Extension::SetFilterSelect::FRONT,
-            TempSenser::Init::MAX31865::Extension::SetFilterSelect::REAR,
+            SenserKiller::Init::MAX31865::Extension::SetFilterSelect::FRONT,
+            SenserKiller::Init::MAX31865::Extension::SetFilterSelect::REAR,
             
-            TempSenser::Init::MAX31865::Extension::FilterSelectValidation::FRONT,
-            TempSenser::Init::MAX31865::Extension::FilterSelectValidation::REAR,
+            SenserKiller::Init::MAX31865::Extension::FilterSelectValidation::FRONT,
+            SenserKiller::Init::MAX31865::Extension::FilterSelectValidation::REAR,
             
-            TempSenser::Init::MAX31865::Extension::SetFaultThreshold::FRONT,
-            TempSenser::Init::MAX31865::Extension::SetFaultThreshold::REAR,
+            SenserKiller::Init::MAX31865::Extension::SetFaultThreshold::FRONT,
+            SenserKiller::Init::MAX31865::Extension::SetFaultThreshold::REAR,
             
-            TempSenser::Init::MAX31865::Extension::FaultThresholdValidation::FRONT,
-            TempSenser::Init::MAX31865::Extension::FaultThresholdValidation::REAR,
+            SenserKiller::Init::MAX31865::Extension::FaultThresholdValidation::FRONT,
+            SenserKiller::Init::MAX31865::Extension::FaultThresholdValidation::REAR,
             
-            TempSenser::Init::MAX31865::Extension::Configure::FRONT,
-            TempSenser::Init::MAX31865::Extension::Configure::REAR,
+            SenserKiller::Init::MAX31865::Extension::Configure::FRONT,
+            SenserKiller::Init::MAX31865::Extension::Configure::REAR,
             
-            TempSenser::Init::MAX31865::Extension::ConfigureValidation::FRONT,
-            TempSenser::Init::MAX31865::Extension::ConfigureValidation::REAR,
+            SenserKiller::Init::MAX31865::Extension::ConfigureValidation::FRONT,
+            SenserKiller::Init::MAX31865::Extension::ConfigureValidation::REAR,
             
-            TempSenser::Init::MAX31865::Extension::ClearFaultStatus::FRONT,
-            TempSenser::Init::MAX31865::Extension::ClearFaultStatus::REAR,
+            SenserKiller::Init::MAX31865::Extension::ClearFaultStatus::FRONT,
+            SenserKiller::Init::MAX31865::Extension::ClearFaultStatus::REAR,
             
-            TempSenser::Init::MAX31865::Extension::ClearFaultStatusValidation::FRONT,
-            TempSenser::Init::MAX31865::Extension::ClearFaultStatusValidation::REAR,
+            SenserKiller::Init::MAX31865::Extension::ClearFaultStatusValidation::FRONT,
+            SenserKiller::Init::MAX31865::Extension::ClearFaultStatusValidation::REAR,
             
-            TempSenser::Init::MAX31865::Extension::RunAutoFaultDetection::FRONT,
-            TempSenser::Init::MAX31865::Extension::RunAutoFaultDetection::REAR,
+            SenserKiller::Init::MAX31865::Extension::RunAutoFaultDetection::FRONT,
+            SenserKiller::Init::MAX31865::Extension::RunAutoFaultDetection::REAR,
             
-            TempSenser::Worker::INITED_FALSE,
+            SenserKiller::Worker::INITED_FALSE,
 
-            TempSenser::Worker::MAX31865::RTD::Timeout::FRONT,
-            TempSenser::Worker::MAX31865::RTD::Timeout::REAR,
+            SenserKiller::Worker::MAX31865::RTD::Timeout::FRONT,
+            SenserKiller::Worker::MAX31865::RTD::Timeout::REAR,
 
-            TempSenser::Worker::MAX31865::RTD::HighOrLowFaultThreshold::FRONT,
-            TempSenser::Worker::MAX31865::RTD::HighOrLowFaultThreshold::REAR,
+            SenserKiller::Worker::MAX31865::RTD::HighOrLowFaultThreshold::FRONT,
+            SenserKiller::Worker::MAX31865::RTD::HighOrLowFaultThreshold::REAR,
 
-            TempSenser::Worker::MAX31865::RunAutoFaultDetection::FRONT,
-            TempSenser::Worker::MAX31865::RunAutoFaultDetection::REAR
+            SenserKiller::Worker::MAX31865::RunAutoFaultDetection::FRONT,
+            SenserKiller::Worker::MAX31865::RunAutoFaultDetection::REAR
         >;
     };
 
@@ -261,7 +275,7 @@ namespace bksram {
         NVIC_SystemReset();
     }
 
-    inline ubitint_t<20> read() {
+    inline uint20_t read() {
         HAL_PWR_EnableBkUpAccess();
         HAL_PWREx_EnableBkUpReg();
         __HAL_RCC_BKPSRAM_CLK_ENABLE();

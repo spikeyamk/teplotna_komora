@@ -76,7 +76,7 @@ namespace test {
         }};
 
         for(size_t i = 0; i < expected_pairs.size(); i++) {
-            const auto ret { Trielo::trielo<::panel::sevseg::common::float_to_sevmap>(expected_pairs[i].number) };
+            const auto ret { Trielo::trielo<::panel::sevseg::common::to_sevmap<float>>(expected_pairs[i].number) };
             if(Trielo::trielo<is_same>(ret, expected_pairs[i].expected_result) == false) {
                 return static_cast<int>(i);
             }
@@ -85,9 +85,26 @@ namespace test {
         return 0;
     }
 
+    void print(const common::sevmap& sevmap, const common::sevmap& expected_sevmap) {
+        for(size_t i = 0; i < sevmap.size(); i++) {
+            std::cout
+                << "sevmap["
+                << i
+                << "]: "
+                << sevmap[i]
+                << std::endl;
+            std::cout
+                << "expected_sevmap["
+                << i
+                << "]: "
+                << expected_sevmap[i]
+                << std::endl;
+        }
+    }
+
     int uint20_t_to_sevmap() {
-        const auto sevmap { common::uint20_t_to_sevmap(uint20_t(0xA'E1'55)) };
-        const common::sevmap sevmap_to_compare_against {
+        const auto sevmap { common::to_sevmap(uint20_t(0xA'E1'55)) };
+        const common::sevmap expected_sevmap {
             common::hex_map[0xA],
             common::hex_map[0xE],
             common::hex_map[0x1],
@@ -95,25 +112,93 @@ namespace test {
             common::hex_map[0x5]
         };
 
-        if(sevmap != sevmap_to_compare_against) {
-            std::printf("panel::sevseg::common::test::uitn20_t_to_sevmap: sevmap != sevmap_to_compare_against\n");
-            for(size_t i = 0; i < sevmap.size(); i++) {
-                std::cout
-                    << "sevmap["
-                    << i
-                    << "]: "
-                    << sevmap[i]
-                    << std::endl;
-                std::cout
-                    << "sevmap_to_compare_against["
-                    << i
-                    << "]: "
-                    << sevmap_to_compare_against[i]
-                    << std::endl;
-
-            }
-
+        if(sevmap != expected_sevmap) {
+            print(sevmap, expected_sevmap);
             return 1;
+        }
+
+        return 0;
+    }
+
+    int string_to_sevmap() {
+        {
+            const auto sevmap { common::to_sevmap<"t">() };
+            const common::sevmap expected_map = {
+                common::latin_map['t' - 'a'],
+                common::sevset{},
+                common::sevset{},
+                common::sevset{},
+                common::sevset{}
+            };
+
+            if(sevmap != expected_map) {
+                print(sevmap, expected_map);
+                return 1;
+            }
+        }
+
+        {
+            const auto sevmap { common::to_sevmap<"te">() };
+            const common::sevmap expected_map {
+                common::latin_map['t' - 'a'],
+                common::latin_map['e' - 'a'],
+                common::sevset{},
+                common::sevset{},
+                common::sevset{}
+            };
+
+            if(sevmap != expected_map) {
+                print(sevmap, expected_map);
+                return 2;
+            }
+        }
+
+        {
+            const auto sevmap { common::to_sevmap<"tes">() };
+            const common::sevmap expected_sevmap {
+                common::latin_map['t' - 'a'],
+                common::latin_map['e' - 'a'],
+                common::latin_map['s' - 'a'],
+                common::sevset{},
+                common::sevset{}
+            };
+
+            if(sevmap != expected_sevmap) {
+                print(sevmap, expected_sevmap);
+                return 3;
+            }
+        }
+
+        {
+            const auto sevmap { common::to_sevmap<"test">() };
+            const common::sevmap expected_sevmap {
+                common::latin_map['t' - 'a'],
+                common::latin_map['e' - 'a'],
+                common::latin_map['s' - 'a'],
+                common::latin_map['t' - 'a'],
+                common::sevset{}
+            };
+
+            if(sevmap != expected_sevmap) {
+                print(sevmap, expected_sevmap);
+                return 4;
+            }
+        }
+
+        {
+            const auto sevmap { common::to_sevmap<"teste">() };
+            const common::sevmap expected_sevmap {
+                common::latin_map['t' - 'a'],
+                common::latin_map['e' - 'a'],
+                common::latin_map['s' - 'a'],
+                common::latin_map['t' - 'a'],
+                common::latin_map['e' - 'a']
+            };
+
+            if(sevmap != expected_sevmap) {
+                print(sevmap, expected_sevmap);
+                return 5;
+            }
         }
 
         return 0;

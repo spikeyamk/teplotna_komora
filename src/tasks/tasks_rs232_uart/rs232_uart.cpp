@@ -3,7 +3,9 @@
 #include <functional>
 #include <boost/sml.hpp>
 
-#include "tasks/temp_senser.hpp"
+#include "bksram/bksram.hpp"
+#include "actu/peltier/peltier.hpp"
+#include "tasks/senser_killer.hpp"
 #include "tasks/panel.hpp"
 #include "tasks/rs232_uart.hpp"
 
@@ -16,7 +18,7 @@ namespace tasks {
     auto RS232_UART::Connection::operator()() const {
 		using namespace boost::sml;
 		using namespace std;
-        using namespace common::magic;
+        using namespace magic;
 		return make_transition_table(
 			*"Disconnected"_s + event<commands::Connect> / function{Actions::connect} = "Connected"_s,
             "Connected"_s + event<commands::Disconnect> / function{Actions::disconnect} = "Disconnected"_s,
@@ -28,39 +30,53 @@ namespace tasks {
     }
 
     void RS232_UART::Connection::Actions::connect(RS232_UART& self) {
-        self.transmit(common::magic::results::Connect {});
+        self.transmit(magic::results::Connect {});
     }
 
     void RS232_UART::Connection::Actions::disconnect(RS232_UART& self) {
-        self.transmit(common::magic::results::Disconnect {});
+        self.transmit(magic::results::Disconnect {});
     }
 
     void RS232_UART::Connection::Actions::nop(RS232_UART& self) {
-        self.transmit(common::magic::results::Nop {});
+        self.transmit(magic::results::Nop {});
     }
 
     void RS232_UART::Connection::Actions::read_sensors(const RS232_UART& self) {
-        self.transmit(
-            common::magic::results::ReadSensors {
-                .temp_front = TempSenser::get_instance().rtd_front.calculate_approx_temp().value(),
-                .temp_rear = TempSenser::get_instance().rtd_rear.calculate_approx_temp().value(),
-            }
-        );
+        const auto peltier_front_code { actu::peltier::front::get_code() };
+        const auto peltier_rear_code { actu::peltier::rear::get_code() };
+        self.transmit(magic::results::ReadSensors {
+            .temp_front = SenserKiller::get_instance().rtd_front.adc_code.value.unwrap(),
+            .temp_rear = SenserKiller::get_instance().rtd_rear.adc_code.value.unwrap(),
+            .dac_front = peltier_front_code.has_value() ? peltier_front_code.value().unwrap() : static_cast<int16_t>(0xFF'FF),
+            .dac_rear = peltier_rear_code.has_value() ? peltier_rear_code.value().unwrap() : static_cast<int16_t>(0x7F'FF),
+        });
     }
 
-    void RS232_UART::Connection::Actions::write_temp(RS232_UART& self, const common::magic::commands::WriteTemp& write_temp) {
-        Panel::get_instance().desired_rtd = sens::max31865::RTD(write_temp.value);
-        self.transmit(
-            common::magic::results::WriteTemp {
-                .value = write_temp.value,
-            }
-        );
+    void RS232_UART::Connection::Actions::write_temp(RS232_UART& self, const magic::commands::WriteTemp& write_temp) {
+        //Panel::get_instance().desired_rtd = sens::max31865::RTD(write_temp.value);
+        self.transmit(magic::results::WriteTemp {
+            .value = write_temp.value,
+        });
+    }
+
+    void RS232_UART::init() {
+        const osSemaphoreAttr_t sempahore_attr {
+            .name = "rs232_sem",
+            .attr_bits = 0,
+            .cb_mem = &semaphore_control_block,
+            .cb_size = sizeof(semaphore_control_block),
+        };
+        
+        if((semaphore = osSemaphoreNew(1, 0, &sempahore_attr)) == nullptr) {
+            bksram::write_reset<bksram::ErrorCodes::RS232_UART::SEMAPHORE_NULLPTR>();
+        }
     }
     
     void RS232_UART::worker(void* arg) {
         RS232_UART& self { *static_cast<RS232_UART*>(arg) };
+        self.init();
 
-        using namespace common::magic;
+        using namespace magic;
 
         std::array<uint8_t, MTU> buf {};
         boost::sml::sm<Connection> sm { self };
@@ -127,22 +143,6 @@ namespace tasks {
 
             //std::printf("bottom\n");
         }
-    }
-
-    bool RS232_UART::init() {
-        const osSemaphoreAttr_t sempahore_attr {
-            .name = "rs232_sem",
-            .attr_bits = 0,
-            .cb_mem = &semaphore_control_block,
-            .cb_size = sizeof(semaphore_control_block),
-        };
-        
-        semaphore = osSemaphoreNew(1, 0, &sempahore_attr);
-        if(semaphore == nullptr) {
-            return false;
-        }
-
-        return true;
     }
 
     osStatus RS232_UART::release_semaphore(const uint16_t in_rx_len) {

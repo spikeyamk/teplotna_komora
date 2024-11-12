@@ -1,16 +1,40 @@
 cmake_minimum_required(VERSION 3.28 FATAL_ERROR)
-project("admin" C CXX)
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 20)
+project(admin CXX)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 enable_testing()
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/3rdparty/pfr pfr)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/3rdparty/sml sml)
+
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
+    if(MSVC)
+	    set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreadedDebug)
+    endif()
+elseif(CMAKE_BUILD_TYPE MATCHES "Release")
+    if(MSVC)
+	    set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
+    endif()
+endif()
+
+find_package(Qt6 REQUIRED COMPONENTS
+    Core
+    Charts
+    Gui
+    SerialPort
+    Widgets
+)
+
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/trielo trielo)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/ubitint ubitint)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/3rdparty/pfr pfr)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/serde serde)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/3rdparty/sml sml)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../common common)
-add_subdirectory("deps")
-add_subdirectory("src")
+add_subdirectory(deps)
+add_subdirectory(src)
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -23,8 +47,8 @@ endif()
 find_package(Doxygen)
 
 if(DOXYGEN_FOUND)
-    include("${CMAKE_CURRENT_LIST_DIR}/../cmake/enable_doxygen.cmake")
+    include("cmake/enable_doxygen.cmake")
     enable_doxygen()
-else ()
+else()
     message(WARNING "Doxygen not found. Documentation will not be generated.")
-endif ()
+endif()
