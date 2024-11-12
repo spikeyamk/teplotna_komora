@@ -5,7 +5,6 @@
 #include "cmsis_os2.h"
 #include "main.h"
 #include "spi.h"
-#include "panel/sevseg/common/common.hpp"
 #include "panel/sevseg/green_yellow/green_yellow.hpp"
 
 namespace panel {
@@ -137,19 +136,17 @@ namespace green_yellow {
         write(CONFIGURATION, 0b0000'0000);
     }
 
-    void MAX6549::show(const float value, const decltype(green_address_map)& address_map) const {
-        const auto sevmap { common::to_sevmap(value) };
+    void MAX6549::show(const common::sevmap& sevmap, const decltype(green_address_map)& address_map) const {
         for(size_t i = 0; i < sevmap.size(); i++) {
             write(address_map[i], static_cast<uint8_t>(sevmap[i].to_ulong()));
         }
     }
 
-    void MAX6549::yellow_show(const float value) {
-        show(value, yellow_address_map);
+    void MAX6549::yellow_show(const common::sevmap& sevmap) {
+        show(sevmap, yellow_address_map);
     }
-
-    void MAX6549::green_show(const float value) {
-        show(value, green_address_map);
+    void MAX6549::green_show(const common::sevmap& sevmap) {
+        show(sevmap, green_address_map);
     }
 
     MAX6549::~MAX6549() {

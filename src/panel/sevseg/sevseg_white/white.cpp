@@ -11,8 +11,9 @@
 namespace panel {
 namespace sevseg {
 namespace white {
-    void init_brightness() {
+    void init() {
         HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+        dim();
     }
 
     void dim() {
@@ -42,7 +43,7 @@ namespace white {
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_14, GPIO_PIN_SET); //DP
     }
 
-    const std::array<uint16_t, 8> active_segment {
+    const std::array<uint16_t, 8> segment_pins {
         GPIO_PIN_13, //stred
         GPIO_PIN_9,  //vlavo hore
         GPIO_PIN_8,  //vlavo dole
@@ -53,7 +54,7 @@ namespace white {
         GPIO_PIN_14  //decimal point
     };
 
-    const std::array<uint16_t, 5> active_cathodes {
+    const std::array<uint16_t, 5> common_cathode_pins {
         GPIO_PIN_4,
         GPIO_PIN_3,
         GPIO_PIN_2, 

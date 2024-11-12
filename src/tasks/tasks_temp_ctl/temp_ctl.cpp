@@ -1,5 +1,4 @@
-#include "actu/fan/ctl/ctl.hpp"
-#include "actu/bridge/bridge.hpp"
+#include "actu/peltier/peltier.hpp"
 #include "util/util.hpp"
 #include "tasks/senser_killer.hpp"
 #include "tasks/panel.hpp"
@@ -14,8 +13,8 @@ namespace tasks {
     void TempCtl::init() {
         actu::fan::ctl::all::init();
         util::turn_every_annoying_peripheral_off();
-        actu::lin_source::front::start_dac();
-        actu::lin_source::rear::start_dac();
+        actu::peltier::front::init();
+        actu::peltier::rear::init();
 
         const osSemaphoreAttr_t sempahore_attr {
             .name = "temp_ctl_sem",
@@ -30,21 +29,15 @@ namespace tasks {
     void TempCtl::heat_full_power() {
         actu::fan::ctl::all::start_full_speed();
 
-        set_dac_front(4095);
-        set_dac_rear(4095);
-
-        actu::bridge::front::heat();
-        actu::bridge::rear::heat();
+        actu::peltier::front::set(+4095);
+        actu::peltier::rear::set(+4095);
     }
 
     void TempCtl::cool_full_power() {
         actu::fan::ctl::all::start_full_speed();
 
-        set_dac_front(4095);
-        set_dac_rear(4095);
-
-        actu::bridge::front::cool();
-        actu::bridge::rear::cool();
+        actu::peltier::front::set(-4095);
+        actu::peltier::rear::set(-4095);
     }
 
     void TempCtl::worker(void* arg) {
@@ -60,26 +53,18 @@ namespace tasks {
         self.heat_full_power();
 
         while(1) {
+            /*
             if(SenserKiller::get_instance().rtd_front.adc_code.value >= Panel::DESIRED_RTD_MAX.adc_code.value) {
                 self.cool_full_power();
             } else if(SenserKiller::get_instance().rtd_front.adc_code.value <= Panel::DESIRED_RTD_MIN.adc_code.value) {
                 self.heat_full_power();
             }
+            */
             osDelay(1'000);
         }
     }
 
     void TempCtl::release_semaphore() {
         osSemaphoreRelease(semaphore);
-    }
-    
-    void TempCtl::set_dac_front(const actu::lin_source::uint12_t value) {
-        dac_front = value;
-        actu::lin_source::front::set_output(value);
-    }
-    
-    void TempCtl::set_dac_rear(const actu::lin_source::uint12_t value) {
-        dac_rear = value;
-        actu::lin_source::rear::set_output(value);
     }
 }

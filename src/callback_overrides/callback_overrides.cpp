@@ -6,8 +6,8 @@
 #include "comm/usb_uart/usb_uart.hpp"
 #include "bksram/bksram.hpp"
 #include "tasks/senser_killer.hpp"
-#include "tasks/temp_ctl.hpp"
 #include "tasks/rs232_uart.hpp"
+#include "panel/button/button.hpp"
 
 extern "C" int __io_putchar(int ch) {
     return comm::usb_uart::__io_putchar(ch);
@@ -16,19 +16,22 @@ extern "C" int __io_putchar(int ch) {
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     switch(GPIO_Pin) {
         case ENCA_EXTI10_Pin:
-            panel::encoder::enca_ext10_handler();
+            panel::encoder::enca_exti10_handler();
             break;
         case ENCB_EXTI11_Pin:
-            panel::encoder::encb_ext11_handler();
+            panel::encoder::encb_exti11_handler();
             break;
         case BUT0_FR_Pin:
+            panel::button::but0_fr_handler();
             break;
         case BUT1_MR_Pin:
+            panel::button::but1_mr_handler();
             break;
         case BUT2_ML_Pin:
+            panel::button::but2_ml_handler();
             break;
         case BUT3_FL_Pin:
-            tasks::TempCtl::get_instance().release_semaphore();
+            panel::button::but3_fl_handler();
             break;
         case SPI3_TEMP_NDRDY0_Pin:
             tasks::SenserKiller::get_instance().release_semaphore_front();

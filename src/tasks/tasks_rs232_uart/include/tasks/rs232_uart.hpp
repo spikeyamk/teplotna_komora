@@ -2,10 +2,10 @@
 
 #include "usart.h"
 #include "magic/magic.hpp"
-#include "tasks/prototype.hpp"
+#include "tasks/task.hpp"
 
 namespace tasks {
-    class RS232_UART : public Prototype<RS232_UART, 4 * 1024, "rs232_uart"> {
+    class RS232_UART : public Task<RS232_UART, 4 * 1024, "rs232_uart"> {
         friend CRTP;
     private:
         StaticSemaphore_t semaphore_control_block {};

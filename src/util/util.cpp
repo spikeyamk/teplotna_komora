@@ -1,8 +1,7 @@
 #include "actu/fan/ctl/ctl.hpp"
 #include "actu/pump/pump.hpp"
 #include "actu/buzzer/buzzer.hpp"
-#include "actu/bridge/bridge.hpp"
-#include "actu/lin_source/lin_source.hpp"
+#include "actu/peltier/peltier.hpp"
 #include "panel/sevseg/white/white.hpp"
 #include "iwdg.h"
 #include "tim.h"
@@ -14,12 +13,8 @@ namespace util {
         actu::fan::ctl::all::stop();
         actu::pump::stop();
         actu::buzzer::stop();
-        actu::bridge::front::turn_off();
-        actu::bridge::rear::turn_off();
-        actu::lin_source::front::set_output(0);
-        actu::lin_source::front::stop_dac();
-        actu::lin_source::rear::set_output(0);
-        actu::lin_source::front::stop_dac();
+        actu::peltier::front::set(0);
+        actu::peltier::rear::set(0);
     }
 
     void shutdown_endless_loop() {
@@ -28,24 +23,18 @@ namespace util {
 
         actu::pump::stop();
         actu::buzzer::stop();
-        
-        actu::lin_source::front::set_output(0);
-        actu::lin_source::front::stop_dac();
 
-        actu::lin_source::rear::set_output(0);
-        actu::lin_source::rear::stop_dac();
+        actu::peltier::front::set(0);
+        actu::peltier::rear::set(0);
 
-        actu::bridge::front::turn_off();
-        actu::bridge::rear::turn_off();
-
-        panel::sevseg::white::init_brightness();
+        panel::sevseg::white::init();
         panel::sevseg::white::bright();
 
         const auto bksram_error_sevmap { panel::sevseg::common::to_sevmap(bksram::read()) };
 
         //__disable_irq();
         while(1) {
-            panel::sevseg::white::display_refresh_nodelay(bksram_error_sevmap);
+            panel::sevseg::white::refresh<[]() { for(uint32_t i = 0; i < 1'000; i++) { asm("nop"); } }>(bksram_error_sevmap);
             HAL_IWDG_Refresh(&hiwdg);
         }
     }

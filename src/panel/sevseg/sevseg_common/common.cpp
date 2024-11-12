@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <algorithm>
 #include <string_view>
-#include <ubitint.hpp>
 #include "panel/sevseg/common/common.hpp"
 
 namespace panel {
@@ -38,6 +37,7 @@ namespace common {
         0b0100'0000, // hore
         0b1000'0000, // bodka
     };
+
 
     const sevset minus_sign { 0b0000'0001 };
     const sevset dp_or_mask { 0b1000'0000 };
@@ -179,7 +179,9 @@ namespace common {
 
     template<> 
     sevmap to_sevmap<float>(const float value) {
-        if(value > 9999.9f) {
+        if(std::isfinite(value) == false) {
+            return exception_sevmap::error;
+        } else if(value > 9999.9f) {
             return exception_sevmap::positive_overflow;
         } else if(value < -999.9f) {
             return exception_sevmap::negative_overflow;

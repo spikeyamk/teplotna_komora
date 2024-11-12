@@ -1,6 +1,6 @@
 #include <bitset>
 #include <array>
-#include <ubitint.hpp>
+#include <bitint.hpp>
 
 #include "sens/max31865/masks.hpp"
 #include "sens/max31865/adc_code.hpp"

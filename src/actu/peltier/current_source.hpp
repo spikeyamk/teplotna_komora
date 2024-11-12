@@ -1,23 +1,23 @@
 #pragma once
 
-#include <ubitint.hpp>
+#include <bitint.hpp>
 #include "stm32f2xx_hal.h"
 
 namespace actu {
+namespace peltier {
 namespace current_source {
-    void test_dac();
-    using uint12_t = ubitint_t<12>;
+    void test();
+    using uint12_t = bitint::ubitint<12>;
 namespace front {
-    void start_dac();
-    void stop_dac();
-    void set_output(const uint12_t value);
-    uint12_t read_output();
+    void init();
+    void set(const uint12_t code);
+    uint12_t get_code();
 }
 namespace rear {
-    void start_dac();
-    void stop_dac();
-    void set_output(const uint12_t value);
-    uint12_t read_output();
+    void init();
+    void set(const uint12_t code);
+    uint12_t get_code();
+}
 }
 }
 }

@@ -29,7 +29,7 @@ target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE
 target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
     actu::fan_ctl
     actu::peltier
-    tasks::senser_killer
+    sens::max31865_regs
     tasks::panel
     util
 )

@@ -4,9 +4,9 @@
 #include <boost/sml.hpp>
 
 #include "bksram/bksram.hpp"
+#include "actu/peltier/peltier.hpp"
 #include "tasks/senser_killer.hpp"
 #include "tasks/panel.hpp"
-#include "tasks/temp_ctl.hpp"
 #include "tasks/rs232_uart.hpp"
 
 namespace tasks {
@@ -42,16 +42,18 @@ namespace tasks {
     }
 
     void RS232_UART::Connection::Actions::read_sensors(const RS232_UART& self) {
+        const auto peltier_front_code { actu::peltier::front::get_code() };
+        const auto peltier_rear_code { actu::peltier::rear::get_code() };
         self.transmit(magic::results::ReadSensors {
             .temp_front = SenserKiller::get_instance().rtd_front.adc_code.value.unwrap(),
             .temp_rear = SenserKiller::get_instance().rtd_rear.adc_code.value.unwrap(),
-            .dac_front = TempCtl::get_instance().dac_front.unwrap(),
-            .dac_rear = TempCtl::get_instance().dac_rear.unwrap(),
+            .dac_front = peltier_front_code.has_value() ? peltier_front_code.value().unwrap() : static_cast<int16_t>(0xFF'FF),
+            .dac_rear = peltier_rear_code.has_value() ? peltier_rear_code.value().unwrap() : static_cast<int16_t>(0x7F'FF),
         });
     }
 
     void RS232_UART::Connection::Actions::write_temp(RS232_UART& self, const magic::commands::WriteTemp& write_temp) {
-        Panel::get_instance().desired_rtd = sens::max31865::RTD(write_temp.value);
+        //Panel::get_instance().desired_rtd = sens::max31865::RTD(write_temp.value);
         self.transmit(magic::results::WriteTemp {
             .value = write_temp.value,
         });

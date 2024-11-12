@@ -6,10 +6,10 @@
 #include "main.h"
 #include "spi.h"
 #include "sens/max31865/max31865.hpp"
-#include "tasks/prototype.hpp"
+#include "tasks/task.hpp"
 
 namespace tasks {
-    class SenserKiller : public Prototype<SenserKiller, 2 * 1024, "senser_killer"> {
+    class SenserKiller : public Task<SenserKiller, 2 * 1024, "senser_killer"> {
         friend CRTP;
     public:
         sens::max31865::RTD rtd_front { 0.0f };

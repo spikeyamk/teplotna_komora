@@ -7,8 +7,9 @@ target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
     actu::fan_fb
     bksram
     panel::encoder
+    panel::button
     comm::usb_uart
     tasks::senser_killer
+    tasks::panel
     tasks::rs232_uart
-    tasks::temp_ctl
 )

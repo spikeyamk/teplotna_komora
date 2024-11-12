@@ -12,6 +12,7 @@
 #include "tasks/temp_ctl.hpp"
 #include "tasks/rs232_uart.hpp"
 #include "tasks/panel.hpp"
+#include "tasks/sevseg_white.hpp"
 
 extern "C" void vApplicationIdleHook(void) {
     util::twdg_refresh();
@@ -48,9 +49,17 @@ extern "C" void MX_FREERTOS_Init() {
     if(tasks::TempCtl::get_instance().launch() == false) {
         bksram::write_reset<bksram::ErrorCodes::TempCtl::LAUNCH>();
     }
-
+    
+    std::printf(
+        "tasks::Panel::get_instance().init(): %d\n",
+        tasks::Panel::get_instance().init()
+    );
     if(tasks::Panel::get_instance().launch() == false) {
         bksram::write_reset<bksram::ErrorCodes::Panel::LAUNCH>();
+    }
+    
+    if(tasks::SevsegWhite::get_instance().launch() == false) {
+        bksram::write_reset<bksram::ErrorCodes::SevsegWhite::LAUNCH>();
     }
 
     if(tasks::RS232_UART::get_instance().launch() == false) {

@@ -1,3 +1,5 @@
+#include <tuple>
+
 #include "main.h"
 #include "stm32f2xx_hal.h"
 #include "panel/encoder/encoder.hpp"
@@ -5,29 +7,36 @@
 
 namespace panel {
 namespace encoder {
-    void enca_ext10_handler() {
-        const GPIO_PinState encoder_A = HAL_GPIO_ReadPin(ENCA_EXTI10_GPIO_Port, ENCA_EXTI10_Pin);
-        const GPIO_PinState encoder_B = HAL_GPIO_ReadPin(ENCB_EXTI11_GPIO_Port, ENCB_EXTI11_Pin);
-        if ((encoder_A == GPIO_PIN_SET) && (encoder_B == GPIO_PIN_RESET))
-            tasks::Panel::get_instance().increment();
-        else if ((encoder_A == GPIO_PIN_RESET) && (encoder_B == GPIO_PIN_SET))
-            tasks::Panel::get_instance().increment();
-        else if ((encoder_A == GPIO_PIN_RESET) && (encoder_B == GPIO_PIN_RESET))
-            tasks::Panel::get_instance().decrement();
-        else if ((encoder_A == GPIO_PIN_SET) && (encoder_B == GPIO_PIN_SET))
-            tasks::Panel::get_instance().decrement();
+    std::tuple<GPIO_PinState, GPIO_PinState> read_encoder_pins() {
+        const GPIO_PinState enca { HAL_GPIO_ReadPin(ENCA_EXTI10_GPIO_Port, ENCA_EXTI10_Pin) };
+        const GPIO_PinState encb { HAL_GPIO_ReadPin(ENCB_EXTI11_GPIO_Port, ENCB_EXTI11_Pin) };
+        return std::make_tuple(enca, encb);
     }
-    void encb_ext11_handler() {
-        const GPIO_PinState encoder_A = HAL_GPIO_ReadPin(ENCA_EXTI10_GPIO_Port, ENCA_EXTI10_Pin);
-        const GPIO_PinState encoder_B = HAL_GPIO_ReadPin(ENCB_EXTI11_GPIO_Port, ENCB_EXTI11_Pin);
-        if ((encoder_A == GPIO_PIN_SET) && (encoder_B == GPIO_PIN_RESET))
-            tasks::Panel::get_instance().decrement();
-        else if ((encoder_A == GPIO_PIN_RESET) && (encoder_B == GPIO_PIN_SET))
-            tasks::Panel::get_instance().decrement();
-        else if ((encoder_A == GPIO_PIN_RESET) && (encoder_B == GPIO_PIN_RESET))
-            tasks::Panel::get_instance().increment();
-        else if ((encoder_A == GPIO_PIN_SET) && (encoder_B == GPIO_PIN_SET))
-            tasks::Panel::get_instance().increment();
+
+    void enca_exti10_handler() {
+        const auto [enca, encb] { read_encoder_pins() };
+        if((enca == GPIO_PIN_SET) && (encb == GPIO_PIN_RESET)) {
+            tasks::Panel::get_instance().push(tasks::Panel::Menu::Events::Increment(), tasks::Panel::Timeout::IRQ);
+        } else if((enca == GPIO_PIN_RESET) && (encb == GPIO_PIN_SET)) {
+            tasks::Panel::get_instance().push(tasks::Panel::Menu::Events::Increment(), tasks::Panel::Timeout::IRQ);
+        } else if((enca == GPIO_PIN_RESET) && (encb == GPIO_PIN_RESET)) {
+            tasks::Panel::get_instance().push(tasks::Panel::Menu::Events::Decrement(), tasks::Panel::Timeout::IRQ);
+        } else if((enca == GPIO_PIN_SET) && (encb == GPIO_PIN_SET)) {
+            tasks::Panel::get_instance().push(tasks::Panel::Menu::Events::Decrement(), tasks::Panel::Timeout::IRQ);
+        }
+    }
+
+    void encb_exti11_handler() {
+        const auto [enca, encb] { read_encoder_pins() };
+        if((enca == GPIO_PIN_SET) && (encb == GPIO_PIN_RESET)) {
+            tasks::Panel::get_instance().push(tasks::Panel::Menu::Events::Decrement(), tasks::Panel::Timeout::IRQ);
+        } else if((enca == GPIO_PIN_RESET) && (encb == GPIO_PIN_SET)) {
+            tasks::Panel::get_instance().push(tasks::Panel::Menu::Events::Decrement(), tasks::Panel::Timeout::IRQ);
+        } else if((enca == GPIO_PIN_RESET) && (encb == GPIO_PIN_RESET)) {
+            tasks::Panel::get_instance().push(tasks::Panel::Menu::Events::Increment(), tasks::Panel::Timeout::IRQ);
+        } else if((enca == GPIO_PIN_SET) && (encb == GPIO_PIN_SET)) {
+            tasks::Panel::get_instance().push(tasks::Panel::Menu::Events::Increment(), tasks::Panel::Timeout::IRQ);
+        }
     }
 }
 }

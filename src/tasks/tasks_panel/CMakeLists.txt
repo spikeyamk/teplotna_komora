@@ -25,11 +25,14 @@ target_include_directories(${SUBDIRECTORY_NAME} PUBLIC "include")
 target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE
     stm32cubef2
     trielo
-    panel::sevseg_white
-    panel::sevseg_green_yellow
 )
 target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
+    actu::fan_ctl
     tasks::common
     tasks::senser_killer
+    tasks::temp_ctl
+    tasks::sevseg_white
     panel::sevseg_green_yellow
+    util
+    sml
 )

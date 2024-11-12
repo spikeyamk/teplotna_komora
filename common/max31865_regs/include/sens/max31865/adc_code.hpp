@@ -2,13 +2,13 @@
 
 #include <bitset>
 #include <array>
-#include <ubitint.hpp>
+#include <bitint.hpp>
 
 namespace sens {
 namespace max31865 {
     class ADC_Code {
     public:
-        using uint15_t = ubitint_t<15>;
+        using uint15_t = bitint::ubitint<15>;
         uint15_t value { 0 };
     public:
         ADC_Code() = default;

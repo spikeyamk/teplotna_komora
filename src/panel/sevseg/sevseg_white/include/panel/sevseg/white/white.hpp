@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ranges>
+
 #include "stm32f2xx_hal.h"
 #include "util/util.hpp"
 #include "panel/sevseg/common/common.hpp"
@@ -7,37 +9,25 @@
 namespace panel {
 namespace sevseg {
 namespace white {    
-    extern const std::array<uint16_t, 8> active_segment;
-    extern const std::array<uint16_t, 5> active_cathodes;
+    extern const std::array<uint16_t, 8> segment_pins;
+    extern const std::array<uint16_t, 5> common_cathode_pins;
     
-    void init_brightness();
+    void init();
     void dim();
     void bright();
     void turn_on_all_segments();
     void display_pins();
     uint8_t set_digit(float number, uint8_t position);
 
-    inline void display_refresh(const common::sevmap& sevmap) {
-        for(size_t i = 0; i < sevmap.size(); i++) {
-            for(size_t j = 0; j < sevmap[i].size(); j++) {
-                HAL_GPIO_WritePin(GPIOE, active_segment[j], sevmap[i][j] == true ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    template<auto waiting_functor>
+    inline void refresh(const common::sevmap& sevmap) {
+        for(const auto& [sevset, cathode_pin] : std::ranges::views::zip(sevmap, common_cathode_pins)) {
+            for(size_t i = 0; i < sevset.size(); i++) {
+                HAL_GPIO_WritePin(GPIOE, segment_pins[i], sevset[i] == true ? GPIO_PIN_SET : GPIO_PIN_RESET);
             }
-            HAL_GPIO_WritePin(GPIOE, active_cathodes[i], GPIO_PIN_RESET);
-            util::microsec_blocking_delay(100);
-            HAL_GPIO_WritePin(GPIOE, active_cathodes[i], GPIO_PIN_SET);
-        }
-    }
-
-    inline void display_refresh_nodelay(const common::sevmap& sevmap) {
-        for(size_t i = 0; i < sevmap.size(); i++) {
-            for(size_t j = 0; j < sevmap[i].size(); j++) {
-                HAL_GPIO_WritePin(GPIOE, active_segment[j], sevmap[i][j] == true ? GPIO_PIN_SET : GPIO_PIN_RESET);
-            }
-            HAL_GPIO_WritePin(GPIOE, active_cathodes[i], GPIO_PIN_RESET);
-            for(uint32_t k = 0; k < 1'000; k++) {
-                asm("nop");
-            }
-            HAL_GPIO_WritePin(GPIOE, active_cathodes[i], GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOE, cathode_pin, GPIO_PIN_RESET);
+            waiting_functor();
+            HAL_GPIO_WritePin(GPIOE, cathode_pin, GPIO_PIN_SET);
         }
     }
 }

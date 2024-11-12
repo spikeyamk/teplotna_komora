@@ -1,8 +1,9 @@
 #pragma once
 
 #include <array>
-
 #include "stm32f2xx_hal.h"
+
+#include "panel/sevseg/common/common.hpp"
 
 namespace panel {
 namespace sevseg {
@@ -69,8 +70,8 @@ namespace green_yellow {
         void test_hex();
         void test_single_segment_single_digit();
 
-        void yellow_show(const float value);
-        void green_show(const float value);
+        void yellow_show(const common::sevmap& sevmap);
+        void green_show(const common::sevmap& sevmap);
     private:
         void select() const;
         void deselect() const;
@@ -99,7 +100,7 @@ namespace green_yellow {
         void set_max_global_intensity() const;
 
         void set_digit_7_to_0_to_7seg_or_16seg_type() const;
-        void show(const float value, const std::array<uint8_t, 5>& address_map) const;
+        void show(const common::sevmap& sevmap, const std::array<uint8_t, 5>& address_map) const;
 
         void shutdown() const;
     };

@@ -1,14 +1,14 @@
 #pragma once
 
 #include <cstdint>
-#include <ubitint.hpp>
+#include <bitint.hpp>
 
 #include "stm32f2xx_hal.h"
 
-#include "util/util.hpp"
+#include "util/tmp.hpp"
 
 namespace bksram {
-    using uint20_t = ubitint_t<20>;
+    using uint20_t = bitint::ubitint<20>;
 
     struct ErrorCodes {
         static constexpr uint20_t CLEAR      { 0xF'FF'FF };
@@ -29,6 +29,10 @@ namespace bksram {
 
         struct Panel {
             static constexpr uint20_t LAUNCH { 0xE'5E'80 };
+        };
+
+        struct SevsegWhite {
+            static constexpr uint20_t LAUNCH { 0xE'55'50 };
         };
 
         struct FanSenser {
@@ -182,6 +186,7 @@ namespace bksram {
             TempCtl::LAUNCH,
             
             Panel::LAUNCH,
+            SevsegWhite::LAUNCH,
 
             FanSenser::LAUNCH,
             FanSenser::Init::FB_ALL,
@@ -270,7 +275,7 @@ namespace bksram {
         NVIC_SystemReset();
     }
 
-    inline ubitint_t<20> read() {
+    inline uint20_t read() {
         HAL_PWR_EnableBkUpAccess();
         HAL_PWREx_EnableBkUpReg();
         __HAL_RCC_BKPSRAM_CLK_ENABLE();

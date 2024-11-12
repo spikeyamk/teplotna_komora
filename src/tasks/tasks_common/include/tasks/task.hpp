@@ -10,16 +10,11 @@
 #include "cmsis_os.h"
 #include "cmsis_os2.h"
 #include "FreeRTOSConfig.h"
+#include "util/tmp.hpp"
 
 namespace tasks {
-    template<const size_t N>
-    struct TaskName {
-        constexpr TaskName(const char (&str)[N]) {
-            std::copy_n(str, N, value);
-        }
-        
-        char value[N];
-    };
+    template<size_t N>
+    using TaskName = util::TemplateString<N>;
 
     template<typename Derived, const size_t stack_size, const TaskName t_task_name>
     requires (
@@ -29,9 +24,9 @@ namespace tasks {
             && (sizeof(t_task_name.value) <= configMAX_TASK_NAME_LEN)
         )
     )
-    class Prototype {
+    class Task {
     protected:
-        using CRTP = Prototype<Derived, stack_size, t_task_name>;
+        using CRTP = Task<Derived, stack_size, t_task_name>;
     private:
         std::array<uint32_t, stack_size> stack_mem;
         StaticTask_t cb;
@@ -48,7 +43,7 @@ namespace tasks {
         };
         osThreadId_t handle { nullptr };
     protected:
-        Prototype() = default;
+        Task() = default;
     public:
         const std::string_view task_name { t_task_name.value };
     public:

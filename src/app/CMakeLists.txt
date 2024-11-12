@@ -11,6 +11,7 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     actu::fan_ctl
     actu::fan_fb
     actu::pump
+    actu::peltier
 
     bksram
 
@@ -29,6 +30,7 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     tasks::temp_ctl
     tasks::rs232_uart
     tasks::panel
+    tasks::sevseg_white
 
     util
     rtc

@@ -17,10 +17,11 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD 23)
 
-add_subdirectory("common")
-add_subdirectory("deps")
-add_subdirectory("src")
+add_subdirectory(common)
+add_subdirectory(deps)
+add_subdirectory(src)
 
+set(STM32_PROGRAMMER_CLI STM32_Programmer_CLI)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/flash_targets.cmake)
 
 find_package(Doxygen)
