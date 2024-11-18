@@ -13,15 +13,15 @@ namespace sevseg {
 namespace white {
     void init() {
         HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
-        dim();
+        bright();
     }
 
     void dim() {
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 50'000);
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 60'000);
     }
 
     void bright() {
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 60'000);
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 40'000);
     }
 
     void turn_on_all_segments() {

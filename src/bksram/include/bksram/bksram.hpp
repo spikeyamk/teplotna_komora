@@ -146,6 +146,67 @@ namespace bksram {
                             static constexpr uint20_t FRONT { 0xE'31'98 };
                             static constexpr uint20_t REAR  { 0xE'31'99 };
                         };
+
+                        struct RTD {
+                            struct NoSem {
+                                static constexpr uint20_t FRONT { 0xE'31'9A };
+                                static constexpr uint20_t REAR  { 0xE'31'9B };
+                            };
+
+                            struct NoSemFault {
+                                static constexpr uint20_t FRONT { 0xE'31'9C };
+                                static constexpr uint20_t REAR  { 0xE'31'9D };
+                            };
+
+                            struct Sem {
+                                static constexpr uint20_t FRONT { 0xE'31'9E };
+                                static constexpr uint20_t REAR  { 0xE'31'9F };
+                            };
+
+                            struct SemFault {
+                                static constexpr uint20_t FRONT { 0xE'31'A0 };
+                                static constexpr uint20_t REAR  { 0xE'31'A1 };
+                            };
+                        };
+                    };
+                };
+
+                struct SHT31 {
+                    struct Init {
+                        struct HAL {
+                            static constexpr uint20_t INSIDE { 0xE'31'A2 };
+                            static constexpr uint20_t OUTSIDE { 0xE'31'A3 };
+                        };
+
+                        struct Crc {
+                            static constexpr uint20_t INSIDE { 0xE'31'A4 };
+                            static constexpr uint20_t OUTSIDE { 0xE'31'A5 };
+                        };
+
+                        struct DisableHeater {
+                            static constexpr uint20_t INSIDE { 0xE'31'A6 };
+                            static constexpr uint20_t OUTSIDE { 0xE'31'A7 };
+                        };
+
+                        struct ReadStatus {
+                            static constexpr uint20_t INSIDE { 0xE'31'A8 };
+                            static constexpr uint20_t OUTSIDE { 0xE'31'A9 };
+                        };
+
+                        struct StatusHeater {
+                            static constexpr uint20_t INSIDE { 0xE'31'AA };
+                            static constexpr uint20_t OUTSIDE { 0xE'31'AB };
+                        };
+
+                        struct Start {
+                            static constexpr uint20_t INSIDE { 0xE'31'AC };
+                            static constexpr uint20_t OUTSIDE { 0xE'31'AD };
+                        };
+                    };
+
+                    struct TempHum {
+                        static constexpr uint20_t INSIDE { 0xE'31'B0 };
+                        static constexpr uint20_t OUTSIDE { 0xE'31'B1 };
                     };
                 };
             };
@@ -156,19 +217,26 @@ namespace bksram {
                 struct MAX31865 {
                     struct RTD {
                         struct Timeout {
-                            static constexpr uint20_t FRONT { 0xE'31'A0 };
-                            static constexpr uint20_t REAR  { 0xE'31'A1 };
+                            static constexpr uint20_t FRONT { 0xE'31'F0 };
+                            static constexpr uint20_t REAR  { 0xE'31'F1 };
                         };
 
                         struct HighOrLowFaultThreshold {
-                            static constexpr uint20_t FRONT { 0xE'31'A2 };
-                            static constexpr uint20_t REAR  { 0xE'31'A3 };
+                            static constexpr uint20_t FRONT { 0xE'31'F2 };
+                            static constexpr uint20_t REAR  { 0xE'31'F3 };
                         };
                     };
 
                     struct RunAutoFaultDetection {
-                        static constexpr uint20_t FRONT { 0xE'31'B0 };
-                        static constexpr uint20_t REAR  { 0xE'31'B1 };
+                        static constexpr uint20_t FRONT { 0xE'31'F4 };
+                        static constexpr uint20_t REAR  { 0xE'31'F5 };
+                    };
+                };
+
+                struct SHT31 {
+                    struct TempHum {
+                        static constexpr uint20_t INSIDE { 0xE'31'F6 };
+                        static constexpr uint20_t OUTSIDE { 0xE'31'F7 };
                     };
                 };
             };
@@ -247,6 +315,39 @@ namespace bksram {
             SenserKiller::Init::MAX31865::Extension::RunAutoFaultDetection::FRONT,
             SenserKiller::Init::MAX31865::Extension::RunAutoFaultDetection::REAR,
             
+            SenserKiller::Init::MAX31865::Extension::RTD::NoSem::FRONT,
+            SenserKiller::Init::MAX31865::Extension::RTD::NoSem::REAR,
+
+            SenserKiller::Init::MAX31865::Extension::RTD::NoSemFault::FRONT,
+            SenserKiller::Init::MAX31865::Extension::RTD::NoSemFault::REAR,
+
+            SenserKiller::Init::MAX31865::Extension::RTD::Sem::FRONT,
+            SenserKiller::Init::MAX31865::Extension::RTD::Sem::REAR,
+
+            SenserKiller::Init::MAX31865::Extension::RTD::SemFault::FRONT,
+            SenserKiller::Init::MAX31865::Extension::RTD::SemFault::REAR,
+
+            SenserKiller::Init::SHT31::Init::HAL::INSIDE,
+            SenserKiller::Init::SHT31::Init::HAL::OUTSIDE,
+
+            SenserKiller::Init::SHT31::Init::Crc::INSIDE,
+            SenserKiller::Init::SHT31::Init::Crc::OUTSIDE,
+
+            SenserKiller::Init::SHT31::Init::DisableHeater::INSIDE,
+            SenserKiller::Init::SHT31::Init::DisableHeater::OUTSIDE,
+
+            SenserKiller::Init::SHT31::Init::ReadStatus::INSIDE,
+            SenserKiller::Init::SHT31::Init::ReadStatus::OUTSIDE,
+
+            SenserKiller::Init::SHT31::Init::StatusHeater::INSIDE,
+            SenserKiller::Init::SHT31::Init::StatusHeater::OUTSIDE,
+
+            SenserKiller::Init::SHT31::Init::Start::INSIDE,
+            SenserKiller::Init::SHT31::Init::Start::OUTSIDE,
+
+            SenserKiller::Init::SHT31::TempHum::INSIDE,
+            SenserKiller::Init::SHT31::TempHum::OUTSIDE,
+
             SenserKiller::Worker::INITED_FALSE,
 
             SenserKiller::Worker::MAX31865::RTD::Timeout::FRONT,
@@ -256,7 +357,10 @@ namespace bksram {
             SenserKiller::Worker::MAX31865::RTD::HighOrLowFaultThreshold::REAR,
 
             SenserKiller::Worker::MAX31865::RunAutoFaultDetection::FRONT,
-            SenserKiller::Worker::MAX31865::RunAutoFaultDetection::REAR
+            SenserKiller::Worker::MAX31865::RunAutoFaultDetection::REAR,
+
+            SenserKiller::Worker::SHT31::TempHum::INSIDE,
+            SenserKiller::Worker::SHT31::TempHum::OUTSIDE
         >;
     };
 

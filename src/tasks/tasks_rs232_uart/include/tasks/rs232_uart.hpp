@@ -18,7 +18,7 @@ namespace tasks {
                 static void connect(RS232_UART& self);
                 static void disconnect(RS232_UART& self);
                 static void nop(RS232_UART& self);
-                static void read_sensors(const RS232_UART& self);
+                static void read_temp_ctl(const RS232_UART& self);
                 static void write_temp(RS232_UART& self, const magic::commands::WriteTemp& write_temp);
             };
 

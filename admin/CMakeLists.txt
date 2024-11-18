@@ -9,16 +9,6 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-if(CMAKE_BUILD_TYPE MATCHES "Debug")
-    if(MSVC)
-	    set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreadedDebug)
-    endif()
-elseif(CMAKE_BUILD_TYPE MATCHES "Release")
-    if(MSVC)
-	    set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
-    endif()
-endif()
-
 find_package(Qt6 REQUIRED COMPONENTS
     Core
     Charts
@@ -28,7 +18,7 @@ find_package(Qt6 REQUIRED COMPONENTS
 )
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/trielo trielo)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/ubitint ubitint)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/bitint bitint)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/3rdparty/pfr pfr)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/serde serde)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/3rdparty/sml sml)

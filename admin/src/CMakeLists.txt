@@ -10,8 +10,9 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     magic
     sml
     trielo
-    ubitint
+    bitint
     sens::max31865_regs
+    sens::sht31_regs
 
     Qt6::Core
     Qt6::Charts

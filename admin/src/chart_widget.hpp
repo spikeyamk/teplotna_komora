@@ -14,22 +14,27 @@ class ChartWidget : public QWidget {
 private:
     QVBoxLayout* layout { nullptr };
 
-    QLineSeries* temp_front_series { nullptr };
-    QLineSeries* temp_rear_series { nullptr };
-    QChart* temp_chart { nullptr };
-    QChartView* temp_chart_view { nullptr };
+    QLineSeries* max31865_front_series { nullptr };
+    QLineSeries* max31865_rear_series { nullptr };
+    QChart* max31865_chart { nullptr };
+    QChartView* max31865_chart_view { nullptr };
 
     QLineSeries* dac_front_series { nullptr };
     QLineSeries* dac_rear_series { nullptr };
     QChart* dac_chart { nullptr };
     QChartView* dac_chart_view { nullptr };
 
+    QLineSeries* sht31_inside_series { nullptr };
+    QLineSeries* sht31_outside_series { nullptr };
+    QChart* sht31_chart { nullptr };
+    QChartView* sht31_chart_view { nullptr };
+
     const qreal msecs_since_epoch;
 public:
     ChartWidget();
     ~ChartWidget();
 public:
-    void push(const magic::results::ReadSensors& read_sensors);
+    void push(const magic::results::ReadTempCtl& read_sensors);
 private:
     void autoscale_axes(QChart* chart, QLineSeries* front_series, QLineSeries* rear_series);
 };

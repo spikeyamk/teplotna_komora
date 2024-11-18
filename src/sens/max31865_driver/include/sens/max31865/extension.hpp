@@ -36,10 +36,14 @@ namespace max31865 {
                 .cb_size = sizeof(semaphore_control_block),
             };
             
-            semaphore = osSemaphoreNew(1, 0, &sempahore_attr);
-            if(semaphore == nullptr) {
+            const osSemaphoreId_t tmp_semaphore = osSemaphoreNew(1, 0, &sempahore_attr);
+            if(tmp_semaphore == nullptr) {
                 return false;
             }
+
+            taskDISABLE_INTERRUPTS();
+            semaphore = tmp_semaphore;
+            taskENABLE_INTERRUPTS();
 
             return true;
         }
@@ -53,6 +57,7 @@ namespace max31865 {
         HAL_StatusTypeDef set_filter_select(const Masks::FilterSelect::Or filter_select) const;
         std::expected<Masks::FilterSelect::Or, HAL_StatusTypeDef> read_filter_select() const;
 
+        std::expected<RTD, HAL_StatusTypeDef> read_rtd_no_sem();
         std::expected<RTD, HAL_StatusTypeDef> read_rtd();
         osStatus release_semaphore();
 

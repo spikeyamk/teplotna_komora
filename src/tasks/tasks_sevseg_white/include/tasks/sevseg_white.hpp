@@ -13,7 +13,7 @@ namespace tasks {
         std::optional<panel::sevseg::common::sevmap> sevmap { std::nullopt };
         StaticSemaphore_t sem_control_block;
         osSemaphoreId_t sem { nullptr };
-        static constexpr uint32_t BLINK_TICKS = 1'000;
+        static constexpr uint32_t BLINK_TICKS { 250 };
     private:
         SevsegWhite() = default;
     public:

@@ -55,8 +55,12 @@ namespace sht31 {
         return transceiver.write_command(Commands::SOFT_RESET);
     }
 
-    HAL_StatusTypeDef Extension::start_periodic_mode_ten_hertz_high_repeatability() const {
-        return transceiver.write_command(std::bitset<16>(static_cast<uint16_t>(Commands::Periodic::TEN_HERTZ::HIGH_REPEATABILITY)));
+    HAL_StatusTypeDef Extension::start_periodic_mode_ten_hertz(const Commands::Periodic::TEN_HERTZ repeatibility) const {
+        return transceiver.write_command(std::bitset<16>(static_cast<uint16_t>(repeatibility)));
+    }
+
+    HAL_StatusTypeDef Extension::start_periodic_mode_one_hertz(const Commands::Periodic::ONE_HERTZ repeatibility) const {
+        return transceiver.write_command(std::bitset<16>(static_cast<uint16_t>(repeatibility)));
     }
 
     HAL_StatusTypeDef Extension::stop_periodic_mode() const {

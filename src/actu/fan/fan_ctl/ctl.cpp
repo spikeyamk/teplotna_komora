@@ -12,7 +12,7 @@ namespace ctl {
     }
 
     void set_speed(const common::Fan& fan, const SpeedPercentage speed) {
-        __HAL_TIM_SET_COMPARE(fan.htim, fan.ctl_channel.mask_for_init, speed.unwrap());
+        __HAL_TIM_SET_COMPARE(fan.htim, fan.ctl_channel.mask_for_init, speed.unwrap_less_is_more());
     }
     
     SpeedPercentage get_speed(const common::Fan& fan) {

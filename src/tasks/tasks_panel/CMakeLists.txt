@@ -29,10 +29,11 @@ target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE
 target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
     actu::fan_ctl
     tasks::common
-    tasks::senser_killer
     tasks::temp_ctl
     tasks::sevseg_white
     panel::sevseg_green_yellow
+    sens::max31865_regs
+    sens::sht31_regs
     util
     sml
 )

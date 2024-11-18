@@ -63,6 +63,8 @@ void Error_Handler(void);
 #define SEVW_CC3_GPIO_Port GPIOE
 #define SEVW_CC4_Pin GPIO_PIN_4
 #define SEVW_CC4_GPIO_Port GPIOE
+#define BROILEN_Pin GPIO_PIN_5
+#define BROILEN_GPIO_Port GPIOE
 #define LED0_COOL_Pin GPIO_PIN_0
 #define LED0_COOL_GPIO_Port GPIOC
 #define LED1_HEAT_Pin GPIO_PIN_1

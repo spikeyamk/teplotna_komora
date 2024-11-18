@@ -112,15 +112,7 @@ namespace max31865 {
         return Masks::FilterSelect::Or(static_cast<uint8_t>((ret.value() & Masks::FilterSelect::AND).to_ulong()));
     }
 
-    std::expected<RTD, HAL_StatusTypeDef> Extension::read_rtd() {
-        if(semaphore == nullptr) {
-            return std::unexpected(HAL_ERROR);
-        }
-
-        if(osSemaphoreAcquire(semaphore, semaphore_timeout) != osOK) {
-            return std::unexpected(HAL_ERROR);
-        }
-
+    std::expected<RTD, HAL_StatusTypeDef> Extension::read_rtd_no_sem() {
         const auto ret_rtd_lsbs { transceiver.read(RegAddrs::RO::RTD_LSBS) };
         if(ret_rtd_lsbs.has_value() == false) {
             return std::unexpected(ret_rtd_lsbs.error());
@@ -132,6 +124,18 @@ namespace max31865 {
         }
 
         return RTD { std::array<std::bitset<8>, 2> { ret_rtd_msbs.value(), ret_rtd_lsbs.value() } };
+    }
+
+    std::expected<RTD, HAL_StatusTypeDef> Extension::read_rtd() {
+        if(semaphore == nullptr) {
+            return std::unexpected(HAL_ERROR);
+        }
+
+        if(osSemaphoreAcquire(semaphore, semaphore_timeout) != osOK) {
+            return std::unexpected(HAL_ERROR);
+        }
+        
+        return read_rtd_no_sem();
     }
 
     osStatus Extension::release_semaphore() {
