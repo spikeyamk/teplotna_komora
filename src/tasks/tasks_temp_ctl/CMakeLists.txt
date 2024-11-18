@@ -22,4 +22,19 @@ endif()
 
 add_library(${SUBDIRECTORY_NAME} ${SUBDIRECTORY_SOURCES})
 target_include_directories(${SUBDIRECTORY_NAME} PUBLIC "include")
-target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE stm32cubef2 trielo tasks_common)
+target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE
+    stm32cubef2
+    trielo
+    actu::fan_broiler
+)
+target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
+    actu::fan_broiler
+    actu::fan_ctl
+    actu::peltier
+    actu::pump
+    sens::max31865_regs
+    sens::sht31_regs
+    tasks::common
+    util
+    sml
+)

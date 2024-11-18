@@ -24,7 +24,11 @@ add_library(${SUBDIRECTORY_NAME} ${SUBDIRECTORY_SOURCES})
 target_include_directories(${SUBDIRECTORY_NAME} PUBLIC "include")
 target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE stm32cubef2 trielo)
 target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
-    tasks_common
-    common::magic
+    bksram
+    actu::peltier
+    tasks::common
+    tasks::panel
+    tasks::senser_killer
+    magic
     sml
 )

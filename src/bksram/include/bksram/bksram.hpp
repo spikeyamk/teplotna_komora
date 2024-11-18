@@ -1,20 +1,26 @@
 #pragma once
 
 #include <cstdint>
-#include <ubitint.hpp>
+#include <bitint.hpp>
+
 #include "stm32f2xx_hal.h"
 
-#include "util/util.hpp"
+#include "util/tmp.hpp"
 
 namespace bksram {
-    using uint20_t = ubitint_t<20>;
+    using uint20_t = bitint::ubitint<20>;
 
     struct ErrorCodes {
-        static constexpr uint20_t MISSING_LF { 0x0'13'37 };
-        static constexpr uint20_t TWDG       { 0x0'0A'35 };
+        static constexpr uint20_t CLEAR      { 0xF'FF'FF };
+        static constexpr uint20_t MISSING_LF { 0xE'13'37 };
+        struct TWDG {
+            static constexpr uint20_t INIT   { 0xE'1A'35 };
+            static constexpr uint20_t EXPIRE { 0xE'0A'35 };
+        };
 
         struct RS232_UART {
-            static constexpr uint20_t LAUNCH { 0xE'23'00 };
+            static constexpr uint20_t LAUNCH      { 0xE'23'00 };
+            static constexpr uint20_t SEMAPHORE_NULLPTR { 0xE'23'01 };
         };
 
         struct TempCtl {
@@ -23,6 +29,10 @@ namespace bksram {
 
         struct Panel {
             static constexpr uint20_t LAUNCH { 0xE'5E'80 };
+        };
+
+        struct SevsegWhite {
+            static constexpr uint20_t LAUNCH { 0xE'55'50 };
         };
 
         struct FanSenser {
@@ -67,7 +77,7 @@ namespace bksram {
             };
         };
 
-        struct TempSenser {
+        struct SenserKiller {
             static constexpr uint20_t LAUNCH { 0xE'31'00 };
             struct Init {
                 struct MAX31865 {
@@ -136,6 +146,67 @@ namespace bksram {
                             static constexpr uint20_t FRONT { 0xE'31'98 };
                             static constexpr uint20_t REAR  { 0xE'31'99 };
                         };
+
+                        struct RTD {
+                            struct NoSem {
+                                static constexpr uint20_t FRONT { 0xE'31'9A };
+                                static constexpr uint20_t REAR  { 0xE'31'9B };
+                            };
+
+                            struct NoSemFault {
+                                static constexpr uint20_t FRONT { 0xE'31'9C };
+                                static constexpr uint20_t REAR  { 0xE'31'9D };
+                            };
+
+                            struct Sem {
+                                static constexpr uint20_t FRONT { 0xE'31'9E };
+                                static constexpr uint20_t REAR  { 0xE'31'9F };
+                            };
+
+                            struct SemFault {
+                                static constexpr uint20_t FRONT { 0xE'31'A0 };
+                                static constexpr uint20_t REAR  { 0xE'31'A1 };
+                            };
+                        };
+                    };
+                };
+
+                struct SHT31 {
+                    struct Init {
+                        struct HAL {
+                            static constexpr uint20_t INSIDE { 0xE'31'A2 };
+                            static constexpr uint20_t OUTSIDE { 0xE'31'A3 };
+                        };
+
+                        struct Crc {
+                            static constexpr uint20_t INSIDE { 0xE'31'A4 };
+                            static constexpr uint20_t OUTSIDE { 0xE'31'A5 };
+                        };
+
+                        struct DisableHeater {
+                            static constexpr uint20_t INSIDE { 0xE'31'A6 };
+                            static constexpr uint20_t OUTSIDE { 0xE'31'A7 };
+                        };
+
+                        struct ReadStatus {
+                            static constexpr uint20_t INSIDE { 0xE'31'A8 };
+                            static constexpr uint20_t OUTSIDE { 0xE'31'A9 };
+                        };
+
+                        struct StatusHeater {
+                            static constexpr uint20_t INSIDE { 0xE'31'AA };
+                            static constexpr uint20_t OUTSIDE { 0xE'31'AB };
+                        };
+
+                        struct Start {
+                            static constexpr uint20_t INSIDE { 0xE'31'AC };
+                            static constexpr uint20_t OUTSIDE { 0xE'31'AD };
+                        };
+                    };
+
+                    struct TempHum {
+                        static constexpr uint20_t INSIDE { 0xE'31'B0 };
+                        static constexpr uint20_t OUTSIDE { 0xE'31'B1 };
                     };
                 };
             };
@@ -146,33 +217,44 @@ namespace bksram {
                 struct MAX31865 {
                     struct RTD {
                         struct Timeout {
-                            static constexpr uint20_t FRONT { 0xE'31'A0 };
-                            static constexpr uint20_t REAR  { 0xE'31'A1 };
+                            static constexpr uint20_t FRONT { 0xE'31'F0 };
+                            static constexpr uint20_t REAR  { 0xE'31'F1 };
                         };
 
                         struct HighOrLowFaultThreshold {
-                            static constexpr uint20_t FRONT { 0xE'31'A2 };
-                            static constexpr uint20_t REAR  { 0xE'31'A3 };
+                            static constexpr uint20_t FRONT { 0xE'31'F2 };
+                            static constexpr uint20_t REAR  { 0xE'31'F3 };
                         };
                     };
 
                     struct RunAutoFaultDetection {
-                        static constexpr uint20_t FRONT { 0xE'31'B0 };
-                        static constexpr uint20_t REAR  { 0xE'31'B1 };
+                        static constexpr uint20_t FRONT { 0xE'31'F4 };
+                        static constexpr uint20_t REAR  { 0xE'31'F5 };
+                    };
+                };
+
+                struct SHT31 {
+                    struct TempHum {
+                        static constexpr uint20_t INSIDE { 0xE'31'F6 };
+                        static constexpr uint20_t OUTSIDE { 0xE'31'F7 };
                     };
                 };
             };
         };
         
         using Registry = util::Registry<uint20_t,
+            CLEAR,
             MISSING_LF,
-            TWDG,
+            TWDG::INIT,
+            TWDG::EXPIRE,
 
             RS232_UART::LAUNCH,
+            RS232_UART::SEMAPHORE_NULLPTR,
 
             TempCtl::LAUNCH,
             
             Panel::LAUNCH,
+            SevsegWhite::LAUNCH,
 
             FanSenser::LAUNCH,
             FanSenser::Init::FB_ALL,
@@ -192,57 +274,93 @@ namespace bksram {
             FanSenser::Worker::FAN4_BR,
             FanSenser::Worker::FAN5_FR,
 
-            TempSenser::LAUNCH,
+            SenserKiller::LAUNCH,
 
-            TempSenser::Init::MAX31865::TransceiverInit::FRONT,
-            TempSenser::Init::MAX31865::TransceiverInit::REAR,
+            SenserKiller::Init::MAX31865::TransceiverInit::FRONT,
+            SenserKiller::Init::MAX31865::TransceiverInit::REAR,
 
-            TempSenser::Init::MAX31865::Extension::Init::FRONT,
-            TempSenser::Init::MAX31865::Extension::Init::REAR,
+            SenserKiller::Init::MAX31865::Extension::Init::FRONT,
+            SenserKiller::Init::MAX31865::Extension::Init::REAR,
             
-            TempSenser::Init::MAX31865::Extension::ClearConfigure::FRONT,
-            TempSenser::Init::MAX31865::Extension::ClearConfigure::REAR,
+            SenserKiller::Init::MAX31865::Extension::ClearConfigure::FRONT,
+            SenserKiller::Init::MAX31865::Extension::ClearConfigure::REAR,
             
-            TempSenser::Init::MAX31865::Extension::ClearConfigureValidation::FRONT,
-            TempSenser::Init::MAX31865::Extension::ClearConfigureValidation::REAR,
+            SenserKiller::Init::MAX31865::Extension::ClearConfigureValidation::FRONT,
+            SenserKiller::Init::MAX31865::Extension::ClearConfigureValidation::REAR,
             
-            TempSenser::Init::MAX31865::Extension::SetFilterSelect::FRONT,
-            TempSenser::Init::MAX31865::Extension::SetFilterSelect::REAR,
+            SenserKiller::Init::MAX31865::Extension::SetFilterSelect::FRONT,
+            SenserKiller::Init::MAX31865::Extension::SetFilterSelect::REAR,
             
-            TempSenser::Init::MAX31865::Extension::FilterSelectValidation::FRONT,
-            TempSenser::Init::MAX31865::Extension::FilterSelectValidation::REAR,
+            SenserKiller::Init::MAX31865::Extension::FilterSelectValidation::FRONT,
+            SenserKiller::Init::MAX31865::Extension::FilterSelectValidation::REAR,
             
-            TempSenser::Init::MAX31865::Extension::SetFaultThreshold::FRONT,
-            TempSenser::Init::MAX31865::Extension::SetFaultThreshold::REAR,
+            SenserKiller::Init::MAX31865::Extension::SetFaultThreshold::FRONT,
+            SenserKiller::Init::MAX31865::Extension::SetFaultThreshold::REAR,
             
-            TempSenser::Init::MAX31865::Extension::FaultThresholdValidation::FRONT,
-            TempSenser::Init::MAX31865::Extension::FaultThresholdValidation::REAR,
+            SenserKiller::Init::MAX31865::Extension::FaultThresholdValidation::FRONT,
+            SenserKiller::Init::MAX31865::Extension::FaultThresholdValidation::REAR,
             
-            TempSenser::Init::MAX31865::Extension::Configure::FRONT,
-            TempSenser::Init::MAX31865::Extension::Configure::REAR,
+            SenserKiller::Init::MAX31865::Extension::Configure::FRONT,
+            SenserKiller::Init::MAX31865::Extension::Configure::REAR,
             
-            TempSenser::Init::MAX31865::Extension::ConfigureValidation::FRONT,
-            TempSenser::Init::MAX31865::Extension::ConfigureValidation::REAR,
+            SenserKiller::Init::MAX31865::Extension::ConfigureValidation::FRONT,
+            SenserKiller::Init::MAX31865::Extension::ConfigureValidation::REAR,
             
-            TempSenser::Init::MAX31865::Extension::ClearFaultStatus::FRONT,
-            TempSenser::Init::MAX31865::Extension::ClearFaultStatus::REAR,
+            SenserKiller::Init::MAX31865::Extension::ClearFaultStatus::FRONT,
+            SenserKiller::Init::MAX31865::Extension::ClearFaultStatus::REAR,
             
-            TempSenser::Init::MAX31865::Extension::ClearFaultStatusValidation::FRONT,
-            TempSenser::Init::MAX31865::Extension::ClearFaultStatusValidation::REAR,
+            SenserKiller::Init::MAX31865::Extension::ClearFaultStatusValidation::FRONT,
+            SenserKiller::Init::MAX31865::Extension::ClearFaultStatusValidation::REAR,
             
-            TempSenser::Init::MAX31865::Extension::RunAutoFaultDetection::FRONT,
-            TempSenser::Init::MAX31865::Extension::RunAutoFaultDetection::REAR,
+            SenserKiller::Init::MAX31865::Extension::RunAutoFaultDetection::FRONT,
+            SenserKiller::Init::MAX31865::Extension::RunAutoFaultDetection::REAR,
             
-            TempSenser::Worker::INITED_FALSE,
+            SenserKiller::Init::MAX31865::Extension::RTD::NoSem::FRONT,
+            SenserKiller::Init::MAX31865::Extension::RTD::NoSem::REAR,
 
-            TempSenser::Worker::MAX31865::RTD::Timeout::FRONT,
-            TempSenser::Worker::MAX31865::RTD::Timeout::REAR,
+            SenserKiller::Init::MAX31865::Extension::RTD::NoSemFault::FRONT,
+            SenserKiller::Init::MAX31865::Extension::RTD::NoSemFault::REAR,
 
-            TempSenser::Worker::MAX31865::RTD::HighOrLowFaultThreshold::FRONT,
-            TempSenser::Worker::MAX31865::RTD::HighOrLowFaultThreshold::REAR,
+            SenserKiller::Init::MAX31865::Extension::RTD::Sem::FRONT,
+            SenserKiller::Init::MAX31865::Extension::RTD::Sem::REAR,
 
-            TempSenser::Worker::MAX31865::RunAutoFaultDetection::FRONT,
-            TempSenser::Worker::MAX31865::RunAutoFaultDetection::REAR
+            SenserKiller::Init::MAX31865::Extension::RTD::SemFault::FRONT,
+            SenserKiller::Init::MAX31865::Extension::RTD::SemFault::REAR,
+
+            SenserKiller::Init::SHT31::Init::HAL::INSIDE,
+            SenserKiller::Init::SHT31::Init::HAL::OUTSIDE,
+
+            SenserKiller::Init::SHT31::Init::Crc::INSIDE,
+            SenserKiller::Init::SHT31::Init::Crc::OUTSIDE,
+
+            SenserKiller::Init::SHT31::Init::DisableHeater::INSIDE,
+            SenserKiller::Init::SHT31::Init::DisableHeater::OUTSIDE,
+
+            SenserKiller::Init::SHT31::Init::ReadStatus::INSIDE,
+            SenserKiller::Init::SHT31::Init::ReadStatus::OUTSIDE,
+
+            SenserKiller::Init::SHT31::Init::StatusHeater::INSIDE,
+            SenserKiller::Init::SHT31::Init::StatusHeater::OUTSIDE,
+
+            SenserKiller::Init::SHT31::Init::Start::INSIDE,
+            SenserKiller::Init::SHT31::Init::Start::OUTSIDE,
+
+            SenserKiller::Init::SHT31::TempHum::INSIDE,
+            SenserKiller::Init::SHT31::TempHum::OUTSIDE,
+
+            SenserKiller::Worker::INITED_FALSE,
+
+            SenserKiller::Worker::MAX31865::RTD::Timeout::FRONT,
+            SenserKiller::Worker::MAX31865::RTD::Timeout::REAR,
+
+            SenserKiller::Worker::MAX31865::RTD::HighOrLowFaultThreshold::FRONT,
+            SenserKiller::Worker::MAX31865::RTD::HighOrLowFaultThreshold::REAR,
+
+            SenserKiller::Worker::MAX31865::RunAutoFaultDetection::FRONT,
+            SenserKiller::Worker::MAX31865::RunAutoFaultDetection::REAR,
+
+            SenserKiller::Worker::SHT31::TempHum::INSIDE,
+            SenserKiller::Worker::SHT31::TempHum::OUTSIDE
         >;
     };
 
@@ -261,7 +379,7 @@ namespace bksram {
         NVIC_SystemReset();
     }
 
-    inline ubitint_t<20> read() {
+    inline uint20_t read() {
         HAL_PWR_EnableBkUpAccess();
         HAL_PWREx_EnableBkUpReg();
         __HAL_RCC_BKPSRAM_CLK_ENABLE();

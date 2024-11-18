@@ -5,11 +5,16 @@ set(CTEST_OUTPUT_ON_FAILURE ON)
 project(${SUBDIRECTORY_NAME}_test CXX)
 
 add_subdirectory(${SUBDIRECTORY_DEPS_DIR}/trielo ${CMAKE_BINARY_DIR}/trielo)
-add_subdirectory(${SUBDIRECTORY_DEPS_DIR}/ubitint ${CMAKE_BINARY_DIR}/ubitint)
+add_subdirectory(${SUBDIRECTORY_DEPS_DIR}/bitint ${CMAKE_BINARY_DIR}/bitint)
+
+add_library(util INTERFACE)
+target_include_directories(util INTERFACE ${SUBDIRECTORY_SRC_DIR}/util/include)
+
 add_library(${SUBDIRECTORY_NAME}_test_lib test.cpp ${SUBDIRECTORY_SOURCES})
 target_link_libraries(${SUBDIRECTORY_NAME}_test_lib PUBLIC
     trielo
-    ubitint
+    bitint
+    util
 )
 target_include_directories(${SUBDIRECTORY_NAME}_test_lib PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include

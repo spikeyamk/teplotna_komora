@@ -8,11 +8,11 @@ namespace actu {
 namespace fan {
 namespace ctl {
     HAL_StatusTypeDef init(const common::Fan& fan) {
-        return HAL_TIM_PWM_Start_IT(fan.htim, fan.ctl_channel.mask_for_init);
+        return HAL_TIM_PWM_Start(fan.htim, fan.ctl_channel.mask_for_init);
     }
 
     void set_speed(const common::Fan& fan, const SpeedPercentage speed) {
-        __HAL_TIM_SET_COMPARE(fan.htim, fan.ctl_channel.mask_for_init, speed.unwrap());
+        __HAL_TIM_SET_COMPARE(fan.htim, fan.ctl_channel.mask_for_init, speed.unwrap_less_is_more());
     }
     
     SpeedPercentage get_speed(const common::Fan& fan) {

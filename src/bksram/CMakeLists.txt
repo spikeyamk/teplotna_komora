@@ -5,5 +5,5 @@ target_include_directories(${SUBMODULE_NAME} PUBLIC "include")
 target_link_libraries(${SUBMODULE_NAME} PUBLIC stm32cubef2)
 target_link_libraries(${SUBMODULE_NAME} PUBLIC
     util
-    ubitint
+    bitint
 )

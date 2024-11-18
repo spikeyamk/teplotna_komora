@@ -1,3 +1,4 @@
+add_subdirectory(fan_broiler)
 add_subdirectory(fan_common)
 add_subdirectory(fan_ctl)
 add_subdirectory(fan_fb)

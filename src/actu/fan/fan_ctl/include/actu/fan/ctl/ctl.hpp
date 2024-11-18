@@ -7,41 +7,63 @@ namespace fan {
 namespace ctl {
     class SpeedPercentage {
     private:
-        uint32_t tim_compare_reg_value;
+        uint32_t tim_ccr_value;
+        static constexpr uint32_t min { 0 };
+        static constexpr uint32_t max { 99 };
     public:
         SpeedPercentage() = delete;
         explicit constexpr SpeedPercentage(const uint32_t duty_cycle_percentage_clamped_to_99) :
-            tim_compare_reg_value {
-                duty_cycle_percentage_clamped_to_99 > static_cast<uint32_t>(99) ? static_cast<uint32_t>(0) : (static_cast<uint32_t>(99) - duty_cycle_percentage_clamped_to_99)
+            tim_ccr_value {
+                duty_cycle_percentage_clamped_to_99 > max ? min : (max - duty_cycle_percentage_clamped_to_99)
             }
         {}
     public:
-        constexpr uint32_t unwrap() const {
-            return tim_compare_reg_value;
+        constexpr uint32_t unwrap_less_is_more() const {
+            return tim_ccr_value;
+        }
+
+        constexpr uint32_t unwrap_less_is_less() const {
+            return max - tim_ccr_value;
         }
 
         constexpr bool operator==(const SpeedPercentage& other) const {
-            return tim_compare_reg_value == other.tim_compare_reg_value;
+            return tim_ccr_value == other.tim_ccr_value;
         }
 
         constexpr bool operator!=(const SpeedPercentage& other) const {
-            return tim_compare_reg_value != other.tim_compare_reg_value;
+            return tim_ccr_value != other.tim_ccr_value;
         }
 
         constexpr bool operator<(const SpeedPercentage& other) const {
-            return tim_compare_reg_value > other.tim_compare_reg_value;
+            return tim_ccr_value > other.tim_ccr_value;
         }
 
         constexpr bool operator>(const SpeedPercentage& other) const {
-            return tim_compare_reg_value < other.tim_compare_reg_value;
+            return tim_ccr_value < other.tim_ccr_value;
         }
 
         constexpr bool operator<=(const SpeedPercentage& other) const {
-            return tim_compare_reg_value >= other.tim_compare_reg_value;
+            return tim_ccr_value >= other.tim_ccr_value;
         }
 
         constexpr bool operator>=(const SpeedPercentage& other) const {
-            return tim_compare_reg_value <= other.tim_compare_reg_value;
+            return tim_ccr_value <= other.tim_ccr_value;
+        }
+
+        constexpr SpeedPercentage operator++(int) {
+            const SpeedPercentage ret { *this };
+            if(tim_ccr_value != min) {
+                tim_ccr_value--;
+            }
+            return ret;
+        }
+
+        constexpr SpeedPercentage operator--(int) {
+            const SpeedPercentage ret { *this };
+            if(tim_ccr_value != max) {
+                tim_ccr_value++;
+            }
+            return ret;
         }
     };
     HAL_StatusTypeDef init(const common::Fan& fan);

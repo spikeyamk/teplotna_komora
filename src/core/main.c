@@ -104,7 +104,7 @@ int main(void)
   MX_SPI2_Init();
   MX_SPI3_Init();
   MX_USART3_UART_Init();
-  //MX_IWDG_Init();
+  MX_IWDG_Init();
   MX_TIM6_Init();
   MX_RTC_Init();
   MX_I2C1_Init();
@@ -183,10 +183,6 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 }
-
-/* USER CODE BEGIN 4 */
-
-/* USER CODE END 4 */
 
 /**
   * @brief  This function is executed in case of error occurrence.

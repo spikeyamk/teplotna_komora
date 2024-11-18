@@ -61,34 +61,45 @@ void MX_GPIO_Init(void)
                           |SEVW_CC1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, LED0_COOL_Pin|LED1_HEAT_Pin|LED2_RS232_Pin|LED3_USB_Pin
-                          |BRDGF_LHIGH_Pin|BRDGF_RHIGH_Pin|BRDGR_LLOW_Pin|BRDGR_RHIGH_Pin
-                          |BRDGR_LHIGH_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(BROILEN_GPIO_Port, BROILEN_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, BRDGF_LLOW_Pin|BRDGF_RLOW_Pin|SPI2_SEVYG_NSS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, LED0_COOL_Pin|LED1_HEAT_Pin|LED2_RS232_Pin|LED3_USB_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, BUZZEN_Pin|NPUMPEN_Pin|SPI3_TEMP_NSS0_Pin|SPI3_TEMP_NSS1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, BRDGF_LHIGH_Pin|BRDGF_RHIGH_Pin|BRDGR_LLOW_Pin|BRDGR_RHIGH_Pin
+                          |BRDGR_LHIGH_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(BRDGR_RLOW_GPIO_Port, BRDGR_RLOW_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, BRDGF_LLOW_Pin|BRDGF_RLOW_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(SPI2_SEVYG_NSS_GPIO_Port, SPI2_SEVYG_NSS_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOD, BUZZEN_Pin|SPI3_TEMP_NSS0_Pin|SPI3_TEMP_NSS1_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(NPUMPEN_GPIO_Port, NPUMPEN_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(BRDGR_RLOW_GPIO_Port, BRDGR_RLOW_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : PEPin PEPin PEPin PEPin
                            PEPin PEPin PEPin PEPin
                            PEPin PEPin PEPin PEPin
-                           PEPin */
-  GPIO_InitStruct.Pin = SEVW_CC2_Pin|SEVW_CC3_Pin|SEVW_CC4_Pin|SEVW_SA_Pin
-                          |SEVW_SB_Pin|SEVW_SC_Pin|SEVW_SD_Pin|SEVW_SE_Pin
-                          |SEVW_SF_Pin|SEVW_SG_Pin|SEVW_SDP_Pin|SEVW_CC0_Pin
-                          |SEVW_CC1_Pin;
+                           PEPin PEPin */
+  GPIO_InitStruct.Pin = SEVW_CC2_Pin|SEVW_CC3_Pin|SEVW_CC4_Pin|BROILEN_Pin
+                          |SEVW_SA_Pin|SEVW_SB_Pin|SEVW_SC_Pin|SEVW_SD_Pin
+                          |SEVW_SE_Pin|SEVW_SF_Pin|SEVW_SG_Pin|SEVW_SDP_Pin
+                          |SEVW_CC0_Pin|SEVW_CC1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PE5 PE6 PE15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_15;
+  /*Configure GPIO pins : PE6 PE15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);

@@ -5,10 +5,10 @@
 
 namespace sens {
 namespace sht31 {
-    Transceiver::Transceiver(I2C_HandleTypeDef* hi2c, const SlaveAddress slave_address) :
+    Transceiver::Transceiver(I2C_HandleTypeDef* hi2c, const SlaveAddress7bit slave_address) :
         hi2c { hi2c },
-        slave_address {
-            static_cast<uint16_t>((std::bitset<16>(static_cast<uint16_t>(slave_address)) << 1).to_ulong())
+        slave_address_8bit {
+            static_cast<uint16_t>((std::bitset<8>(static_cast<uint8_t>(slave_address)) << 1).to_ulong())
         }
     {}
 
@@ -17,13 +17,13 @@ namespace sht31 {
             static_cast<uint8_t>((command >> 8).to_ulong()),
             static_cast<uint8_t>((command & std::bitset<16>(0x00'FF)).to_ulong()),
         };
-        return HAL_I2C_Master_Transmit(hi2c, slave_address, buf.data(), buf.size(), HAL_MAX_DELAY);
+        return HAL_I2C_Master_Transmit(hi2c, slave_address_8bit, buf.data(), buf.size(), HAL_MAX_DELAY);
     }
 
     template<>
     std::expected<std::array<std::bitset<8>, 3>, HAL_StatusTypeDef> Transceiver::read() const {
         std::array<uint8_t, 3> buf;
-        const auto err_ret { HAL_I2C_Mem_Read(hi2c, slave_address, static_cast<uint16_t>(Commands::Status::READ.to_ulong()), 2, buf.data(), buf.size(), HAL_MAX_DELAY) };
+        const auto err_ret { HAL_I2C_Mem_Read(hi2c, slave_address_8bit, static_cast<uint16_t>(Commands::Status::READ.to_ulong()), 2, buf.data(), buf.size(), HAL_MAX_DELAY) };
         if(err_ret != HAL_OK) {
             return std::unexpected(err_ret);
         }
@@ -40,7 +40,7 @@ namespace sht31 {
     std::expected<std::array<std::bitset<8>, 6>, HAL_StatusTypeDef> Transceiver::read() const {
         std::array<uint8_t, 6> buf;
         
-        const auto err_ret { HAL_I2C_Master_Receive(hi2c, slave_address, buf.data(), buf.size(), HAL_MAX_DELAY) };
+        const auto err_ret { HAL_I2C_Master_Receive(hi2c, slave_address_8bit, buf.data(), buf.size(), HAL_MAX_DELAY) };
         if(err_ret != HAL_OK) {
             return std::unexpected(err_ret);
         }

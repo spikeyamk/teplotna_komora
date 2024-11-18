@@ -10,11 +10,11 @@ namespace fan {
 namespace fb {
     class FB {
     private:
-        static const size_t ONE_OVERFLOW_DURATION_US { 27 };
-        std::array<size_t, 4> recorded_overflows {};
-        size_t recorded_count { 0 };
-        std::optional<float> rpm { std::nullopt };
-        size_t pwm_pulse_finished_overflows { 0 };
+        static const uint32_t ONE_OVERFLOW_DURATION_US { 27 };
+        std::array<uint32_t, 4> recorded_overflows {};
+        uint32_t recorded_count { 0 };
+        uint32_t pwm_pulse_finished_overflows { 0 };
+        std::optional<uint32_t> one_rotation_total_pwm_pulse_finished_overflows { std::nullopt };
     public:
         const ::actu::fan::common::Fan& fan;
 
@@ -23,13 +23,24 @@ namespace fb {
         {}
 
         inline std::optional<float> consume_rpm() {
-            const auto rpm_temp { rpm };
-            if(rpm_temp.has_value() == false) {
+            const auto one_rotation_total_pwm_pulse_finished_overflows_consumed { consume_one_rotation_total_pwm_pulse_finished_overflows() };
+            if(one_rotation_total_pwm_pulse_finished_overflows_consumed.has_value() == false) {
                 return std::nullopt;
             }
 
-            rpm = std::nullopt;
-            return rpm_temp;
+            return (
+                60'000'000.0f
+                / static_cast<float>(
+                    ONE_OVERFLOW_DURATION_US
+                    * one_rotation_total_pwm_pulse_finished_overflows_consumed.value()
+                )
+            );
+        }
+
+        inline std::optional<uint32_t> consume_one_rotation_total_pwm_pulse_finished_overflows() {
+            const auto ret { one_rotation_total_pwm_pulse_finished_overflows };
+            one_rotation_total_pwm_pulse_finished_overflows = std::nullopt;
+            return ret;
         }
 
         inline void increment_pwm_pulse_finished_overflows() {
@@ -40,18 +51,9 @@ namespace fb {
             recorded_overflows[recorded_count] = pwm_pulse_finished_overflows;
             recorded_count++;
             if(recorded_count == 4) {
-                refresh_rpm();
+                one_rotation_total_pwm_pulse_finished_overflows = (recorded_overflows.back() - recorded_overflows.front());
                 recorded_count = 0;
             }
-        }
-    private:
-        inline void refresh_rpm() {
-            const size_t one_rotation_total_pwm_pulse_finished_overflows {
-                recorded_overflows.back()
-                - recorded_overflows.front()
-            };
-            const size_t one_rotation_duration_us { ONE_OVERFLOW_DURATION_US * one_rotation_total_pwm_pulse_finished_overflows };
-            rpm = (60'000'000.0f / static_cast<float>(one_rotation_duration_us));
         }
     };
 
@@ -67,8 +69,10 @@ namespace fb {
 
     void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim);
     void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim);
+
 namespace all {
     HAL_StatusTypeDef init();
+    void test();
 }
 }
 }

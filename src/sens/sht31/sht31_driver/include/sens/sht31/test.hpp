@@ -2,6 +2,6 @@
 
 namespace sens {
 namespace sht31 {
-    void test();
+    int test();
 }
 }

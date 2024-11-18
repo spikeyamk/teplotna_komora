@@ -7,12 +7,11 @@ target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE
     trielo
 )
 target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
-    actu::bridge
     actu::buzzer
     actu::fan_ctl
     actu::fan_fb
-    actu::lin_source
     actu::pump
+    actu::peltier
 
     bksram
 
@@ -21,18 +20,17 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     panel::button
     panel::encoder
     panel::led
-    panel::green_yellow
-    sevseg_common
-    panel::white
+    panel::sevseg_green_yellow
+    panel::sevseg_white
 
     sens::sht31_driver
     sens::max31865_driver
 
-    tasks::fan_senser
-    tasks::panel
-    tasks::rs232_uart
-    tasks::temp_senser
+    tasks::senser_killer
     tasks::temp_ctl
+    tasks::rs232_uart
+    tasks::panel
+    tasks::sevseg_white
 
     util
     rtc

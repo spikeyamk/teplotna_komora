@@ -21,7 +21,8 @@ namespace sht31 {
         HAL_StatusTypeDef enable_heater() const;
         HAL_StatusTypeDef disable_heater() const;
         HAL_StatusTypeDef soft_reset() const;
-        HAL_StatusTypeDef start_periodic_mode_ten_hertz_high_repeatability() const;
+        HAL_StatusTypeDef start_periodic_mode_ten_hertz(const Commands::Periodic::TEN_HERTZ repeatibility) const;
+        HAL_StatusTypeDef start_periodic_mode_one_hertz(const Commands::Periodic::ONE_HERTZ repeatibility) const;
         HAL_StatusTypeDef stop_periodic_mode() const;
         std::expected<TempHum, HAL_StatusTypeDef> read_temp_hum_periodic_mode() const;
     };

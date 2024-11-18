@@ -1,7 +1,5 @@
 #include <trielo/trielo.hpp>
-#include "common/magic/magic.hpp"
+#include "magic/magic.hpp"
 
-namespace common {
 namespace magic {
-}
 }
