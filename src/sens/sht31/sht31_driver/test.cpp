@@ -4,8 +4,8 @@
 
 namespace sens {
 namespace sht31 {
-    int test() {
-        Transceiver transceiver(&hi2c1, SlaveAddress7bit::ADDR_PIN_HIGH);
+    int test(const SlaveAddress7bit addr) {
+        Transceiver transceiver(&hi2c1, addr);
         Extension extension(transceiver);
 
         const auto ret_init { extension.init() };
@@ -78,9 +78,9 @@ namespace sht31 {
             return 11;
         }
 
-        const auto ret_start_periodic_mode_ten_hertz_high_repeatability { extension.start_periodic_mode_ten_hertz_high_repeatability() };
-        if(ret_start_periodic_mode_ten_hertz_high_repeatability != HAL_OK) {
-            std::printf("sens::sht31::test: ret_start_periodic_mode_ten_hertz_high_repeatability != HAL_OK: 0x%02X\n", ret_start_periodic_mode_ten_hertz_high_repeatability);
+        const auto ret_start_periodic_mode_ten_hertz { extension.start_periodic_mode_ten_hertz(Commands::Periodic::TEN_HERTZ::HIGH_REPEATABILITY) };
+        if(ret_start_periodic_mode_ten_hertz != HAL_OK) {
+            std::printf("sens::sht31::test: ret_start_periodic_mode_ten_hertz != HAL_OK: 0x%02X\n", ret_start_periodic_mode_ten_hertz);
             return 12;
         }
 
@@ -92,7 +92,7 @@ namespace sht31 {
             return 13;
         }
 
-        std::printf("sens::sht31::test: ret_read_temp_hum_periodic_mode.value().get_temp(): %f, ret_read_temp_hum_periodic_mode.value().get_hum(): %f\n", ret_read_temp_hum_periodic_mode.value().get_temp(), ret_read_temp_hum_periodic_mode.value().get_hum());
+        std::printf("sens::sht31::test: ret_read_temp_hum_periodic_mode.value().get_temp(): %f, ret_read_temp_hum_periodic_mode.value().calculate_hum(): %f\n", ret_read_temp_hum_periodic_mode.value().calculate_temp(), ret_read_temp_hum_periodic_mode.value().calculate_hum());
 
         if(extension.disable_heater() != HAL_OK) {
             std::printf("extension.disable_heater() != HAL_OK\n");
@@ -105,8 +105,21 @@ namespace sht31 {
                 std::printf("sens::sht31::test: temp_hum.has_value() == false: temp_hum.error(): 0x%02X\n", temp_hum.error());
                 return tick;
             }
-            std::printf("sens::sht31::test: tick: %ld: temp: %f: hum: %f\n", tick, temp_hum.value().get_temp(), temp_hum.value().get_hum());
+            std::printf("sens::sht31::test: tick: %ld: temp: %f: hum: %f\n", tick, temp_hum.value().calculate_temp(), temp_hum.value().calculate_hum());
             osDelay(1'000);
+        }
+
+        return 0;
+    }
+
+    int test() {
+        int ret { test(sens::sht31::SlaveAddress7bit::ADDR_PIN_HIGH) };
+        if(ret != 0) {
+            return ret;
+        }
+        ret = test(sens::sht31::SlaveAddress7bit::ADDR_PIN_HIGH);
+        if(ret != 0) {
+            return 2 * ret;
         }
 
         return 0;

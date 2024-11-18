@@ -1,6 +1,6 @@
 #pragma once
 
-#include <optional>
+#include <iostream>
 
 namespace actu {
 namespace peltier {
@@ -10,19 +10,24 @@ namespace hbridge {
         Heat,
         Cool,
     };
+
 namespace front {
     void turn_off();
     void heat();
     void cool();
-    std::optional<State> get_state();
+    void set_state(const State state);
+    State get_state();
 }
 
 namespace rear {
     void turn_off();
     void heat();
     void cool();
-    std::optional<State> get_state();
+    void set_state(const State state);
+    State get_state();
 }
 }
 }
 }
+
+std::ostream& operator<<(std::ostream& os, const actu::peltier::hbridge::State& obj);

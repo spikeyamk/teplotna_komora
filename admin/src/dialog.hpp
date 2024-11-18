@@ -25,7 +25,7 @@ private:
     QLabel* command_label { nullptr };
     const QMap<QString, Transceiver::CommandResult> command_map {{
         { "Nop", { magic::commands::Nop(), magic::results::Nop() } },
-        { "ReadSensors", { magic::commands::ReadSensors(), magic::results::ReadSensors() } },
+        { "ReadTempCtl", { magic::commands::ReadTempCtl(), magic::results::ReadTempCtl() } },
         { "WriteTemp 13.37f", { magic::commands::WriteTemp { 13.37f }, magic::results::WriteTemp() } },
         { "WriteTemp 20.0f", { magic::commands::WriteTemp { 20.0f }, magic::results::WriteTemp() } },
     }};

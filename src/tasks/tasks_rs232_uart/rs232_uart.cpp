@@ -24,7 +24,7 @@ namespace tasks {
             "Connected"_s + event<commands::Disconnect> / function{Actions::disconnect} = "Disconnected"_s,
 
             "Connected"_s + event<commands::Nop> / function{Actions::nop} = "Connected"_s,
-            "Connected"_s + event<commands::ReadSensors> / function{Actions::read_sensors} = "Connected"_s,
+            "Connected"_s + event<commands::ReadTempCtl> / function{Actions::read_temp_ctl} = "Connected"_s,
             "Connected"_s + event<commands::WriteTemp> / function{Actions::write_temp} = "Connected"_s
 		);
     }
@@ -41,14 +41,30 @@ namespace tasks {
         self.transmit(magic::results::Nop {});
     }
 
-    void RS232_UART::Connection::Actions::read_sensors(const RS232_UART& self) {
-        const auto peltier_front_code { actu::peltier::front::get_code() };
-        const auto peltier_rear_code { actu::peltier::rear::get_code() };
-        self.transmit(magic::results::ReadSensors {
-            .temp_front = SenserKiller::get_instance().rtd_front.adc_code.value.unwrap(),
-            .temp_rear = SenserKiller::get_instance().rtd_rear.adc_code.value.unwrap(),
-            .dac_front = peltier_front_code.has_value() ? peltier_front_code.value().unwrap() : static_cast<int16_t>(0xFF'FF),
-            .dac_rear = peltier_rear_code.has_value() ? peltier_rear_code.value().unwrap() : static_cast<int16_t>(0x7F'FF),
+    void RS232_UART::Connection::Actions::read_temp_ctl(const RS232_UART& self) {
+        self.transmit(magic::results::ReadTempCtl {
+            .max31865_front = SenserKiller::get_instance().rtd_front.adc_code.value.unwrap(),
+            .max31865_rear = SenserKiller::get_instance().rtd_rear.adc_code.value.unwrap(),
+            .dac_front = (
+                actu::peltier::hbridge::front::get_state() == actu::peltier::hbridge::State::Off
+                    ? 0
+                    : (
+                        actu::peltier::hbridge::front::get_state() == actu::peltier::hbridge::State::Heat
+                            ? static_cast<int16_t>(actu::peltier::current_source::front::get_code().unwrap())
+                            : -static_cast<int16_t>(actu::peltier::current_source::front::get_code().unwrap())
+                    )
+            ),
+            .dac_rear = (
+                actu::peltier::hbridge::rear::get_state() == actu::peltier::hbridge::State::Off
+                    ? 0
+                    : (
+                        actu::peltier::hbridge::rear::get_state() == actu::peltier::hbridge::State::Heat
+                            ? static_cast<int16_t>(actu::peltier::current_source::rear::get_code().unwrap())
+                            : -static_cast<int16_t>(actu::peltier::current_source::rear::get_code().unwrap())
+                    )
+            ),
+            .sht31_inside = SenserKiller::get_instance().temp_hum_inside.temp_raw,
+            .sht31_outside = SenserKiller::get_instance().temp_hum_outside.temp_raw,
         });
     }
 

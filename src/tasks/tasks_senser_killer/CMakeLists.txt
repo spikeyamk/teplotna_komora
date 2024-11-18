@@ -29,5 +29,7 @@ target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE
 )
 target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
     sens::max31865_driver
-    tasks::common
+    sens::sht31_driver
+    tasks::panel
+    tasks::temp_ctl
 )

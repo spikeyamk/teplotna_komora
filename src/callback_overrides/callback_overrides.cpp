@@ -1,5 +1,4 @@
 #include "stm32f2xx_hal.h"
-#include <iostream>
 #include "main.h"
 #include "panel/encoder/encoder.hpp"
 #include "actu/fan/fb/fb.hpp"

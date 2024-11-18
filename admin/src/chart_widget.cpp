@@ -3,20 +3,26 @@
 #include <QDateTime>
 
 #include "sens/max31865/rtd.hpp"
+#include "sens/sht31/temp_hum.hpp"
 #include "chart_widget.hpp"
 
 ChartWidget::ChartWidget() :
     layout { new QVBoxLayout(this) },
 
-    temp_front_series { new QLineSeries(this) },
-    temp_rear_series { new QLineSeries(this) },
-    temp_chart { new QChart() },
-    temp_chart_view { new QChartView(temp_chart) },
+    max31865_front_series { new QLineSeries(this) },
+    max31865_rear_series { new QLineSeries(this) },
+    max31865_chart { new QChart() },
+    max31865_chart_view { new QChartView(max31865_chart) },
 
     dac_front_series { new QLineSeries(this) },
     dac_rear_series { new QLineSeries(this) },
     dac_chart { new QChart() },
     dac_chart_view { new QChartView(dac_chart) },
+
+    sht31_inside_series { new QLineSeries(this) },
+    sht31_outside_series { new QLineSeries(this) },
+    sht31_chart { new QChart() },
+    sht31_chart_view { new QChartView(sht31_chart) },
 
     msecs_since_epoch { static_cast<qreal>(QDateTime::currentMSecsSinceEpoch()) }
 {
@@ -26,23 +32,23 @@ ChartWidget::ChartWidget() :
     rear_pen.setWidth(2);
 
     {
-        temp_front_series->setName("temp_front");
-        temp_front_series->setPen(front_pen);
+        max31865_front_series->setName("max31865_front");
+        max31865_front_series->setPen(front_pen);
 
-        temp_rear_series->setName("temp_rear");
-        temp_rear_series->setPen(rear_pen);
+        max31865_rear_series->setName("max31865_rear");
+        max31865_rear_series->setPen(rear_pen);
 
-        temp_chart->addSeries(temp_front_series);
-        temp_chart->addSeries(temp_rear_series);
+        max31865_chart->addSeries(max31865_front_series);
+        max31865_chart->addSeries(max31865_rear_series);
 
-        temp_chart->createDefaultAxes();
-        temp_chart->setTitle(typeid(magic::results::ReadSensors()).name());
-        temp_chart->axes(Qt::Vertical).front()->setTitleText("Temperature [°C]");
-        temp_chart->axes(Qt::Horizontal).front()->setTitleText("Time [s]");
+        max31865_chart->createDefaultAxes();
+        max31865_chart->setTitle(typeid(magic::results::ReadTempCtl()).name());
+        max31865_chart->axes(Qt::Vertical).front()->setTitleText("Temperature [°C]");
+        max31865_chart->axes(Qt::Horizontal).front()->setTitleText("Time [s]");
 
-        temp_chart_view->setRenderHint(QPainter::Antialiasing);
+        max31865_chart_view->setRenderHint(QPainter::Antialiasing);
 
-        layout->addWidget(temp_chart_view);
+        layout->addWidget(max31865_chart_view);
     }
 
     {
@@ -56,7 +62,7 @@ ChartWidget::ChartWidget() :
         dac_chart->addSeries(dac_rear_series);
 
         dac_chart->createDefaultAxes();
-        dac_chart->setTitle(typeid(magic::results::ReadSensors()).name());
+        dac_chart->setTitle(typeid(magic::results::ReadTempCtl()).name());
         dac_chart->axes(Qt::Vertical).front()->setTitleText("DAC Code (max. 4095)");
         dac_chart->axes(Qt::Horizontal).front()->setTitleText("Time [s]");
 
@@ -64,25 +70,52 @@ ChartWidget::ChartWidget() :
 
         layout->addWidget(dac_chart_view);
     }
+
+    {
+        sht31_inside_series->setName("sht31_inside");
+        sht31_inside_series->setPen(front_pen);
+
+        sht31_outside_series->setName("sht31_outside");
+        sht31_outside_series->setPen(rear_pen);
+
+        sht31_chart->addSeries(sht31_inside_series);
+        sht31_chart->addSeries(sht31_outside_series);
+
+        sht31_chart->createDefaultAxes();
+        sht31_chart->setTitle(typeid(magic::results::ReadTempCtl()).name());
+        sht31_chart->axes(Qt::Vertical).front()->setTitleText("Temperature [°C]");
+        sht31_chart->axes(Qt::Horizontal).front()->setTitleText("Time [s]");
+
+        sht31_chart_view->setRenderHint(QPainter::Antialiasing);
+
+        layout->addWidget(sht31_chart_view);
+    }
 }
 
 ChartWidget::~ChartWidget() {
-    delete temp_chart;
+    delete max31865_chart;
     delete dac_chart;
+    delete sht31_chart;
 }
 
-void ChartWidget::push(const magic::results::ReadSensors& read_sensors) {
+void ChartWidget::push(const magic::results::ReadTempCtl& read_sensors) {
     const qreal current_x_value { (static_cast<qreal>(QDateTime::currentMSecsSinceEpoch()) - msecs_since_epoch) / 1000.0f };
     {
-        temp_front_series->append(current_x_value, sens::max31865::RTD(sens::max31865::ADC_Code(read_sensors.temp_front).serialize()).calculate_approx_temp().value());
-        temp_rear_series->append(current_x_value, sens::max31865::RTD(sens::max31865::ADC_Code(read_sensors.temp_rear).serialize()).calculate_approx_temp().value());
-        autoscale_axes(temp_chart, temp_front_series, temp_rear_series);
+        max31865_front_series->append(current_x_value, sens::max31865::RTD(sens::max31865::ADC_Code(read_sensors.max31865_front).serialize()).calculate_approx_temp().value());
+        max31865_rear_series->append(current_x_value, sens::max31865::RTD(sens::max31865::ADC_Code(read_sensors.max31865_rear).serialize()).calculate_approx_temp().value());
+        autoscale_axes(max31865_chart, max31865_front_series, max31865_rear_series);
     }
 
     {
         dac_front_series->append(current_x_value, static_cast<qreal>(read_sensors.dac_front));
         dac_rear_series->append(current_x_value, static_cast<qreal>(read_sensors.dac_rear));
         autoscale_axes(dac_chart, dac_front_series, dac_rear_series);
+    }
+
+    {
+        sht31_inside_series->append(current_x_value, static_cast<qreal>(sens::sht31::TempHum(read_sensors.sht31_inside, 0).calculate_temp()));
+        sht31_outside_series->append(current_x_value, static_cast<qreal>(sens::sht31::TempHum(read_sensors.sht31_outside, 0).calculate_temp()));
+        autoscale_axes(sht31_chart, sht31_inside_series, sht31_outside_series);
     }
 }
 
@@ -100,6 +133,7 @@ void ChartWidget::autoscale_axes(QChart* chart, QLineSeries* front_series, QLine
             min_x = point.x();
         }
     }
+
     for(const auto& point : rear_series->points()) {
         if(point.x() > max_x) {
             max_x = point.x();
@@ -117,6 +151,7 @@ void ChartWidget::autoscale_axes(QChart* chart, QLineSeries* front_series, QLine
             min_y = point.y();
         }
     }
+    
     for(const auto& point : rear_series->points()) {
         if(point.y() > max_y) {
             max_y = point.y();

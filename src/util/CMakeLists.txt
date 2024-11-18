@@ -8,6 +8,7 @@ target_link_libraries(${SUBMODULE_NAME} PUBLIC
 target_link_libraries(${SUBMODULE_NAME} PRIVATE
     stm32cubef2
     trielo
+    actu::fan_broiler
     actu::fan_ctl
     actu::peltier
     actu::pump

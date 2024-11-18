@@ -18,8 +18,12 @@ namespace ctl {
             }
         {}
     public:
-        constexpr uint32_t unwrap() const {
+        constexpr uint32_t unwrap_less_is_more() const {
             return tim_ccr_value;
+        }
+
+        constexpr uint32_t unwrap_less_is_less() const {
+            return max - tim_ccr_value;
         }
 
         constexpr bool operator==(const SpeedPercentage& other) const {
@@ -46,23 +50,9 @@ namespace ctl {
             return tim_ccr_value <= other.tim_ccr_value;
         }
 
-        constexpr SpeedPercentage& operator++() {
-            if((tim_ccr_value - 1) >= min) {
-                tim_ccr_value--;
-            }
-            return *this;
-        }
-
-        constexpr SpeedPercentage& operator--() {
-            if((tim_ccr_value + 1) <= max) {
-                tim_ccr_value++;
-            }
-            return *this;
-        }
-
         constexpr SpeedPercentage operator++(int) {
             const SpeedPercentage ret { *this };
-            if((tim_ccr_value - 1) >= min) {
+            if(tim_ccr_value != min) {
                 tim_ccr_value--;
             }
             return ret;
@@ -70,7 +60,7 @@ namespace ctl {
 
         constexpr SpeedPercentage operator--(int) {
             const SpeedPercentage ret { *this };
-            if((tim_ccr_value + 1) <= max) {
+            if(tim_ccr_value != max) {
                 tim_ccr_value++;
             }
             return ret;

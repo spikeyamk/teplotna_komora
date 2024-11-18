@@ -12,15 +12,14 @@ namespace commands {
         float value;
     };
 
-    struct ReadSensors {};
-
+    struct ReadTempCtl {};
 
     using Pack = Serde::pack_holder<
         Connect,
         Disconnect,
         Nop,
         WriteTemp,
-        ReadSensors
+        ReadTempCtl
     >;
 }
 }

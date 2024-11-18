@@ -1,3 +1,4 @@
+#include "actu/fan/broiler/broiler.hpp"
 #include "actu/fan/ctl/ctl.hpp"
 #include "actu/pump/pump.hpp"
 #include "actu/buzzer/buzzer.hpp"
@@ -11,21 +12,27 @@
 namespace util {
     void turn_every_annoying_peripheral_off() {
         actu::fan::ctl::all::stop();
+        actu::fan::broiler::stop();
+        
         actu::pump::stop();
         actu::buzzer::stop();
-        actu::peltier::front::set(0);
-        actu::peltier::rear::set(0);
+
+        actu::peltier::hbridge::front::turn_off();
+        actu::peltier::hbridge::rear::turn_off();
+
+        actu::peltier::current_source::rear::set(0);
+        actu::peltier::current_source::front::set(0);
     }
 
     void shutdown_endless_loop() {
         actu::fan::ctl::all::init();
         actu::fan::ctl::all::start_min_speed();
 
-        actu::pump::stop();
-        actu::buzzer::stop();
+        actu::peltier::hbridge::front::turn_off();
+        actu::peltier::hbridge::rear::turn_off();
 
-        actu::peltier::front::set(0);
-        actu::peltier::rear::set(0);
+        actu::peltier::current_source::rear::set(0);
+        actu::peltier::current_source::front::set(0);
 
         panel::sevseg::white::init();
         panel::sevseg::white::bright();

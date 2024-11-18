@@ -12,11 +12,13 @@ namespace results {
         float value;
     };
 
-    struct ReadSensors {
-        uint16_t temp_front;
-        uint16_t temp_rear;
+    struct ReadTempCtl {
+        uint16_t max31865_front;
+        uint16_t max31865_rear;
         int16_t dac_front;
         int16_t dac_rear;
+        uint16_t sht31_inside;
+        uint16_t sht31_outside;
     };
 
     using Pack = Serde::pack_holder<
@@ -24,7 +26,7 @@ namespace results {
         Disconnect,
         Nop,
         WriteTemp,
-        ReadSensors
+        ReadTempCtl
     >;
 }
 }

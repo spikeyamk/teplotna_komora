@@ -1,7 +1,7 @@
 #include <iostream>
 #include "cmsis_os2.h"
-#include "current_source.hpp"
 #include "dac.h"
+#include "actu/peltier/current_source.hpp"
 
 namespace actu {
 namespace peltier {

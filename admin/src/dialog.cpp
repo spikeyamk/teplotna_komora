@@ -99,7 +99,7 @@ void Dialog::show_result(const Transceiver::ResultVariant& result) {
     std::visit(
         [&](auto&& result) {
             using Decay = std::decay_t<decltype(result)>;
-            if constexpr(std::is_same_v<Decay, magic::results::ReadSensors>) {
+            if constexpr(std::is_same_v<Decay, magic::results::ReadTempCtl>) {
                 static bool was_active_before { false };
                 if(periodic_timer->isActive() && (was_active_before == false)) {
                     std::cout << "[\n";
