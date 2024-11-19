@@ -1,10 +1,14 @@
 #include <algorithm>
 
+#include <QFile>
 #include <QDateTime>
+#include <QTextStream>
+#include <QJsonDocument>
 
 #include "sens/max31865/rtd.hpp"
 #include "sens/sht31/temp_hum.hpp"
 #include "chart_widget.hpp"
+#include "to_json.hpp"
 
 ChartWidget::ChartWidget() :
     layout { new QVBoxLayout(this) },
@@ -98,7 +102,7 @@ ChartWidget::~ChartWidget() {
     delete sht31_chart;
 }
 
-void ChartWidget::push(const magic::results::ReadTempCtl& read_sensors) {
+void ChartWidget::push_to_charts(const magic::results::ReadTempCtl& read_sensors) {
     const qreal current_x_value { (static_cast<qreal>(QDateTime::currentMSecsSinceEpoch()) - msecs_since_epoch) / 1000.0f };
     {
         max31865_front_series->append(current_x_value, sens::max31865::RTD(sens::max31865::ADC_Code(read_sensors.max31865_front).serialize()).calculate_approx_temp().value());
@@ -117,6 +121,10 @@ void ChartWidget::push(const magic::results::ReadTempCtl& read_sensors) {
         sht31_outside_series->append(current_x_value, static_cast<qreal>(sens::sht31::TempHum(read_sensors.sht31_outside, 0).calculate_temp()));
         autoscale_axes(sht31_chart, sht31_inside_series, sht31_outside_series);
     }
+
+    QJsonObject json_object { to_json(read_sensors) };
+    json_object["unix_timestamp"] = current_x_value;
+    json_array.append(json_object);
 }
 
 void ChartWidget::autoscale_axes(QChart* chart, QLineSeries* front_series, QLineSeries* rear_series) {
@@ -165,4 +173,18 @@ void ChartWidget::autoscale_axes(QChart* chart, QLineSeries* front_series, QLine
     chart->axes(Qt::Horizontal).first()->setMin(min_x);
     chart->axes(Qt::Vertical).first()->setMax(max_y);
     chart->axes(Qt::Vertical).first()->setMin(min_y);
+}
+
+void ChartWidget::dump_to_file(const QString& file_path) {
+    qDebug()
+        << "void ChartWidget::dump_to_file(const QString& file_path)";
+
+    QFile file(file_path);
+    if(file.open(QIODevice::WriteOnly)) {
+        QJsonDocument json_document(json_array);
+        file.write(json_document.toJson(QJsonDocument::Indented)); // Indented for readability
+        qDebug() << "Data successfully written to" << file_path;
+    } else {
+        qDebug() << "Error: Unable to open the file for writing.";
+    }
 }

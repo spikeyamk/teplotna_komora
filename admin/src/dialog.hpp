@@ -8,6 +8,7 @@
 #include <QCheckBox>
 #include <QTimer>
 #include <QSlider>
+#include <QFileDialog>
 
 #include "transceiver.hpp"
 #include "chart_widget.hpp"
@@ -21,6 +22,7 @@ private:
     QComboBox* device_combo_box { nullptr };
 
     QPushButton* transmit_button { nullptr };
+    QPushButton* save_button { nullptr };
 
     QLabel* command_label { nullptr };
     const QMap<QString, Transceiver::CommandResult> command_map {{
@@ -50,6 +52,7 @@ private slots:
     void show_result(const Transceiver::ResultVariant& result);
     void show_result_buf(const QByteArray& result);
     void error_occured(const Transceiver::Error error);
+    void open_file_picker();
 public:
     Dialog(ChartWidget& chart_widget, QWidget* parent = nullptr);
 };

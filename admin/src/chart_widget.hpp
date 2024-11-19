@@ -6,6 +6,8 @@
 #include <QChartView>
 #include <QVBoxLayout>
 #include <QTimer>
+#include <QJsonObject>
+#include <QJsonArray>
 
 #include "magic/results/results.hpp"
 
@@ -28,13 +30,15 @@ private:
     QLineSeries* sht31_outside_series { nullptr };
     QChart* sht31_chart { nullptr };
     QChartView* sht31_chart_view { nullptr };
+    QJsonArray json_array {};
 
     const qreal msecs_since_epoch;
 public:
     ChartWidget();
     ~ChartWidget();
 public:
-    void push(const magic::results::ReadTempCtl& read_sensors);
+    void push_to_charts(const magic::results::ReadTempCtl& read_sensors);
+    void dump_to_file(const QString& file_path);
 private:
     void autoscale_axes(QChart* chart, QLineSeries* front_series, QLineSeries* rear_series);
 };

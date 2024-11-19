@@ -241,7 +241,7 @@ namespace tasks {
                     }
                 private:
                     actu::peltier::current_source::uint12_t heat_transfer_function() {
-                        static constexpr int32_t FACTOR { 13 * 10'000 };
+                        static constexpr int32_t FACTOR { 20 * 10'000 };
 
                         if(this->err() <= 0) {
                             return 0;
@@ -299,14 +299,94 @@ namespace tasks {
                 template<typename ControlFunctorSpecialized, const uint32_t k_p, const uint32_t k_i>
                 class PI_Algorithm : public AlgorithmFunctor<ControlFunctorSpecialized> {
                 public:
+                    using Base = AlgorithmFunctor<ControlFunctorSpecialized>;
                     void run() {
                         this->pid.i += this->err();
                         this->pid.p = this->err();
 
-                        ControlFunctorSpecialized(
-                            actu::peltier::hbridge::State::Off,
-                            0
-                        ).run();
+                        switch(this->get_action()) {
+                            default:
+                                ControlFunctorSpecialized(
+                                    actu::peltier::hbridge::State::Off,
+                                    0
+                                ).run();
+                                return;
+                            case Base::ActionType::ShouldHeat:
+                                ControlFunctorSpecialized(
+                                    actu::peltier::hbridge::State::Heat,
+                                    heat_proportional_transfer_function() + heat_integral_transfer_function()
+                                ).run();
+                                return;
+                            case Base::ActionType::ShouldCool:
+                                ControlFunctorSpecialized(
+                                    actu::peltier::hbridge::State::Cool,
+                                    cool_proportional_transfer_function()
+                                ).run();
+                                return;
+                        }
+                    }
+
+                    actu::peltier::current_source::uint12_t heat_integral_transfer_function() {
+                        static constexpr int32_t FACTOR { (10 * 10'000) / 10 };
+
+                        if(this->pid.i <= 0) {
+                            return 0;
+                        }
+
+                        const int32_t tmp_result {
+                            FACTOR * this->pid.i
+                        };
+
+                        if(tmp_result > 4095) {
+                            return static_cast<uint16_t>(4095);
+                        }
+
+                        return tmp_result;
+                    }
+
+                    actu::peltier::current_source::uint12_t cool_integral_transfer_function() {
+
+                    }
+
+                    actu::peltier::current_source::uint12_t heat_proportional_transfer_function() {
+                        static constexpr int32_t FACTOR { 10 * 10'000 };
+
+                        if(this->err() <= 0) {
+                            return 0;
+                        } else {
+                            const int32_t tmp_result {
+                                std::abs(
+                                    (
+                                        this->err()
+                                        * FACTOR
+                                    ) / 10'000
+                                )
+                            };
+
+                            if(tmp_result > 4095) {
+                                return static_cast<uint16_t>(4095);
+                            }
+                            
+                            return tmp_result;
+                        }
+                    }
+
+                    actu::peltier::current_source::uint12_t cool_proportional_transfer_function() {
+                        if(this->err() >= 0) {
+                            return 0;
+                        } else {
+                            return static_cast<uint16_t>(
+                                std::abs(
+                                    (
+                                        this->err()
+                                        * (
+                                            (static_cast<int32_t>(bitint::ubitint<12>::max) * 10'000)
+                                            / COOL_MIN_ERR
+                                        )
+                                    ) / 10'000
+                                )
+                            );
+                        }
                     }
                 };
 

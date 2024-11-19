@@ -14,6 +14,7 @@ Dialog::Dialog(ChartWidget& chart_widget, QWidget* parent) :
     device_label { new QLabel("Device: ") },
     device_combo_box { new QComboBox() },
     transmit_button { new QPushButton("Transmit") },
+    save_button { new QPushButton("Save") },
 
     command_label { new QLabel("Command: ") },
     command_combo_box { new QComboBox() },
@@ -35,6 +36,7 @@ Dialog::Dialog(ChartWidget& chart_widget, QWidget* parent) :
     layout->addWidget(device_combo_box, 0, 1);
     transmit_button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     layout->addWidget(transmit_button, 0, 2, 3, 1);
+    layout->addWidget(save_button, 0, 3, 3, 1);
 
     for(const auto& e: command_map.keys()) {
         command_combo_box->addItem(e);
@@ -69,6 +71,7 @@ Dialog::Dialog(ChartWidget& chart_widget, QWidget* parent) :
     });
 
     connect(transmit_button, &QPushButton::clicked, this, &Dialog::start_transmit);
+    connect(save_button, &QPushButton::clicked, this, &Dialog::open_file_picker);
     connect(&transceiver, &Transceiver::result, this, &Dialog::show_result);
     //connect(&transceiver, &Transceiver::result_buf, this, &Dialog::show_result_buf);
     connect(&transceiver, &Transceiver::error_occured, this, &Dialog::error_occured);
@@ -81,6 +84,14 @@ void Dialog::start_transmit() {
         transmit_button->setEnabled(false);
         periodic_timer->start();
     }
+}
+
+void Dialog::open_file_picker() {
+    qDebug()
+        << "Dialog::open_file_picker()";
+
+    const QString file_path { QFileDialog::getSaveFileName(this, "Save File", "", "All Files (*.*)") };
+    chart_widget.dump_to_file(file_path);
 }
 
 void Dialog::transmit() {
@@ -108,7 +119,7 @@ void Dialog::show_result(const Transceiver::ResultVariant& result) {
 
                 std::cout << QString(QJsonDocument(to_json(result)).toJson(QJsonDocument::Compact)).toStdString() << ",\n";
 
-                chart_widget.push(result);
+                chart_widget.push_to_charts(result);
 
                 if(periodic_timer->isActive() == false) {
                     std::cout << "]\n";
