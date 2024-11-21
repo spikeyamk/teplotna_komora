@@ -9,7 +9,35 @@
 #include "panel/button/button.hpp"
 
 extern "C" int __io_putchar(int ch) {
-    return comm::usb_uart::__io_putchar(ch);
+    return comm::usb_uart::RedirectStdout::get_instance().transmit(ch);
+}
+
+extern "C" int _write(int file, char *ptr, int len) {
+    (void)file;
+    int DataIdx;
+
+    if(xPortIsInsideInterrupt() == false) {
+        comm::usb_uart::RedirectStdout::get_instance().acquire_mutex();
+    }
+
+    for(DataIdx = 0; DataIdx < len; DataIdx++) {
+        if(xPortIsInsideInterrupt()) {
+            const HAL_StatusTypeDef ret_err { comm::usb_uart::RedirectStdout::get_instance().transmit(*ptr++) };
+            if(ret_err != HAL_OK) {
+                return ret_err;
+            }
+        } else if(comm::usb_uart::RedirectStdout::get_instance().push(*ptr++) == false) {
+            comm::usb_uart::RedirectStdout::get_instance().flush();
+            comm::usb_uart::RedirectStdout::get_instance().push(*ptr++);
+        }
+    }
+
+    if(xPortIsInsideInterrupt() == false) {
+        comm::usb_uart::RedirectStdout::get_instance().flush();
+        comm::usb_uart::RedirectStdout::get_instance().release_mutex();
+    }
+
+    return len;
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {

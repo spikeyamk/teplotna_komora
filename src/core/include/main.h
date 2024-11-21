@@ -85,6 +85,8 @@ void Error_Handler(void);
 #define DAC_OUT1_LSF_GPIO_Port GPIOA
 #define DAC_OUT2_LSR_Pin GPIO_PIN_5
 #define DAC_OUT2_LSR_GPIO_Port GPIOA
+#define DHTD_Pin GPIO_PIN_7
+#define DHTD_GPIO_Port GPIOA
 #define BRDGF_LHIGH_Pin GPIO_PIN_4
 #define BRDGF_LHIGH_GPIO_Port GPIOC
 #define BRDGF_RHIGH_Pin GPIO_PIN_5

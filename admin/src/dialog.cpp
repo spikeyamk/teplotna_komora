@@ -37,6 +37,7 @@ Dialog::Dialog(ChartWidget& chart_widget, QWidget* parent) :
     transmit_button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     layout->addWidget(transmit_button, 0, 2, 3, 1);
     layout->addWidget(save_button, 0, 3, 3, 1);
+    save_button->setEnabled(false);
 
     for(const auto& e: command_map.keys()) {
         command_combo_box->addItem(e);
@@ -89,8 +90,7 @@ void Dialog::start_transmit() {
 void Dialog::open_file_picker() {
     qDebug()
         << "Dialog::open_file_picker()";
-
-    const QString file_path { QFileDialog::getSaveFileName(this, "Save File", "", "All Files (*.*)") };
+    const QString file_path { QFileDialog::getSaveFileName(this, "Save File", "", "JSON Files (*.json)") };
     chart_widget.dump_to_file(file_path);
 }
 
@@ -111,20 +111,8 @@ void Dialog::show_result(const Transceiver::ResultVariant& result) {
         [&](auto&& result) {
             using Decay = std::decay_t<decltype(result)>;
             if constexpr(std::is_same_v<Decay, magic::results::ReadTempCtl>) {
-                static bool was_active_before { false };
-                if(periodic_timer->isActive() && (was_active_before == false)) {
-                    std::cout << "[\n";
-                    was_active_before = true;
-                }
-
-                std::cout << QString(QJsonDocument(to_json(result)).toJson(QJsonDocument::Compact)).toStdString() << ",\n";
-
+                save_button->setEnabled(true);
                 chart_widget.push_to_charts(result);
-
-                if(periodic_timer->isActive() == false) {
-                    std::cout << "]\n";
-                    was_active_before = false;
-                }
             } else if constexpr(std::is_same_v<Decay, magic::results::WriteTemp>) {
                 qDebug()
                     << "Dialog::show_result():"

@@ -9,7 +9,5 @@ target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
     panel::encoder
     panel::button
     comm::usb_uart
-    tasks::senser_killer
-    tasks::panel
-    tasks::rs232_uart
+    tasks
 )

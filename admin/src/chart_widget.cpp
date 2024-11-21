@@ -23,10 +23,10 @@ ChartWidget::ChartWidget() :
     dac_chart { new QChart() },
     dac_chart_view { new QChartView(dac_chart) },
 
-    sht31_inside_series { new QLineSeries(this) },
-    sht31_outside_series { new QLineSeries(this) },
-    sht31_chart { new QChart() },
-    sht31_chart_view { new QChartView(sht31_chart) },
+    dmax31865_front_series { new QLineSeries(this) },
+    dmax31865_rear_series { new QLineSeries(this) },
+    dmax31865_chart { new QChart() },
+    dmax31865_chart_view { new QChartView(dmax31865_chart) },
 
     msecs_since_epoch { static_cast<qreal>(QDateTime::currentMSecsSinceEpoch()) }
 {
@@ -56,6 +56,26 @@ ChartWidget::ChartWidget() :
     }
 
     {
+        dmax31865_front_series->setName("dmax31865_front");
+        dmax31865_front_series->setPen(front_pen);
+
+        dmax31865_rear_series->setName("dmax31865_rear");
+        dmax31865_rear_series->setPen(rear_pen);
+
+        dmax31865_chart->addSeries(dmax31865_front_series);
+        dmax31865_chart->addSeries(dmax31865_rear_series);
+
+        dmax31865_chart->createDefaultAxes();
+        dmax31865_chart->setTitle(typeid(magic::results::ReadTempCtl()).name());
+        dmax31865_chart->axes(Qt::Vertical).front()->setTitleText("dTemperature [°C/s]");
+        dmax31865_chart->axes(Qt::Horizontal).front()->setTitleText("Time [s]");
+
+        dmax31865_chart_view->setRenderHint(QPainter::Antialiasing);
+
+        layout->addWidget(dmax31865_chart_view);
+    }
+
+    {
         dac_front_series->setName("dac_front");
         dac_front_series->setPen(front_pen);
 
@@ -74,40 +94,35 @@ ChartWidget::ChartWidget() :
 
         layout->addWidget(dac_chart_view);
     }
-
-    {
-        sht31_inside_series->setName("sht31_inside");
-        sht31_inside_series->setPen(front_pen);
-
-        sht31_outside_series->setName("sht31_outside");
-        sht31_outside_series->setPen(rear_pen);
-
-        sht31_chart->addSeries(sht31_inside_series);
-        sht31_chart->addSeries(sht31_outside_series);
-
-        sht31_chart->createDefaultAxes();
-        sht31_chart->setTitle(typeid(magic::results::ReadTempCtl()).name());
-        sht31_chart->axes(Qt::Vertical).front()->setTitleText("Temperature [°C]");
-        sht31_chart->axes(Qt::Horizontal).front()->setTitleText("Time [s]");
-
-        sht31_chart_view->setRenderHint(QPainter::Antialiasing);
-
-        layout->addWidget(sht31_chart_view);
-    }
 }
 
 ChartWidget::~ChartWidget() {
     delete max31865_chart;
     delete dac_chart;
-    delete sht31_chart;
+    delete dmax31865_chart;
 }
 
 void ChartWidget::push_to_charts(const magic::results::ReadTempCtl& read_sensors) {
     const qreal current_x_value { (static_cast<qreal>(QDateTime::currentMSecsSinceEpoch()) - msecs_since_epoch) / 1000.0f };
+
+    const qreal max31865_front_value { sens::max31865::RTD(sens::max31865::ADC_Code(read_sensors.max31865_front).serialize()).calculate_approx_temp().value() };
+    const qreal max31865_rear_value { sens::max31865::RTD(sens::max31865::ADC_Code(read_sensors.max31865_rear).serialize()).calculate_approx_temp().value() };
     {
-        max31865_front_series->append(current_x_value, sens::max31865::RTD(sens::max31865::ADC_Code(read_sensors.max31865_front).serialize()).calculate_approx_temp().value());
-        max31865_rear_series->append(current_x_value, sens::max31865::RTD(sens::max31865::ADC_Code(read_sensors.max31865_rear).serialize()).calculate_approx_temp().value());
+        max31865_front_series->append(current_x_value, max31865_front_value);
+        max31865_rear_series->append(current_x_value, max31865_rear_value);
         autoscale_axes(max31865_chart, max31865_front_series, max31865_rear_series);
+    }
+
+    {
+        static qreal max31865_front_before { max31865_front_value };
+        static qreal max31865_rear_before { max31865_rear_value };
+
+        dmax31865_front_series->append(current_x_value, max31865_front_before - max31865_front_value);
+        dmax31865_rear_series->append(current_x_value, max31865_rear_before - max31865_rear_value);
+        autoscale_axes(dmax31865_chart, dmax31865_front_series, dmax31865_rear_series);
+
+        max31865_front_before = max31865_front_value;
+        max31865_rear_before = max31865_rear_value;
     }
 
     {
@@ -116,14 +131,8 @@ void ChartWidget::push_to_charts(const magic::results::ReadTempCtl& read_sensors
         autoscale_axes(dac_chart, dac_front_series, dac_rear_series);
     }
 
-    {
-        sht31_inside_series->append(current_x_value, static_cast<qreal>(sens::sht31::TempHum(read_sensors.sht31_inside, 0).calculate_temp()));
-        sht31_outside_series->append(current_x_value, static_cast<qreal>(sens::sht31::TempHum(read_sensors.sht31_outside, 0).calculate_temp()));
-        autoscale_axes(sht31_chart, sht31_inside_series, sht31_outside_series);
-    }
-
     QJsonObject json_object { to_json(read_sensors) };
-    json_object["unix_timestamp"] = current_x_value;
+    json_object["time"] = current_x_value;
     json_array.append(json_object);
 }
 
