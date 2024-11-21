@@ -1,3 +1,4 @@
+#include "main.h"
 #include "sens/dht/dht.hpp"
 #include "tasks/dht_test.hpp"
 
@@ -8,10 +9,19 @@ namespace tasks {
     }
 
     void DHT_Test::worker(void* arg) {
-        DHT_Test& self { *static_cast<DHT_Test*>(arg) };
+        (void) arg;
+        //DHT_Test& self { *static_cast<DHT_Test*>(arg) };
+        sens::dht::Extension extension { sens::dht::Model::DHT11, DHTD_GPIO_Port, DHTD_Pin };
         while(1) {
-            //std::printf("tasks::DHT_Test::worker: self.rpm: %f\n", self.rpm);
-            
+            const auto ret { extension.get_data() };
+            if(ret.has_value()) {
+                std::cout
+                    << "ret.value().Humidity: "
+                    << ret.value().Humidity
+                    << "ret.value().Temperature: "
+                    << ret.value().Temperature
+                    << std::endl;
+            }
             osDelay(1'000);
         }
     }
