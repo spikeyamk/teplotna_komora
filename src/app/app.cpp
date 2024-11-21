@@ -6,13 +6,7 @@
 
 #include "bksram/bksram.hpp"
 #include "util/util.hpp"
-
-#include "tasks/senser_killer.hpp"
-#include "tasks/temp_ctl.hpp"
-#include "tasks/rs232_uart.hpp"
-#include "tasks/panel.hpp"
-#include "tasks/sevseg_white.hpp"
-#include "tasks/dht_test.hpp"
+#include "tasks/tasks.hpp"
 
 extern "C" void vApplicationIdleHook(void) {
     util::twdg_refresh();
@@ -57,6 +51,4 @@ extern "C" void MX_FREERTOS_Init() {
     if(tasks::TempCtl::get_instance().launch() == false) {
         bksram::write_reset<bksram::ErrorCodes::TempCtl::LAUNCH>();
     }
-
-    tasks::DHT_Test::get_instance().launch();
 }

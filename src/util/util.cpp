@@ -26,6 +26,9 @@ namespace util {
 
     void shutdown_endless_loop() {
         actu::fan::ctl::all::init();
+
+        turn_every_annoying_peripheral_off();
+
         actu::fan::ctl::all::start_min_speed();
 
         actu::peltier::hbridge::front::turn_off();

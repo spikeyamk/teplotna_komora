@@ -33,7 +33,6 @@ target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
     sens::max31865_driver
     sens::sht31_driver
     actu::peltier
-    sens::dht
     panel::sevseg_common
     panel::sevseg_green_yellow
     panel::sevseg_white
