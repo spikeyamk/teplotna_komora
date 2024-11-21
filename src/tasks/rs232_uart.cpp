@@ -1,6 +1,7 @@
 #include <iostream>
 #include <array>
 #include <functional>
+#include <cassert>
 #include <boost/sml.hpp>
 
 #include "bksram/bksram.hpp"
@@ -75,7 +76,7 @@ namespace tasks {
         });
     }
 
-    void RS232_UART::init() {
+    RS232_UART::RS232_UART() {
         const osSemaphoreAttr_t sempahore_attr {
             .name = "rs232_sem",
             .attr_bits = 0,
@@ -83,14 +84,12 @@ namespace tasks {
             .cb_size = sizeof(semaphore_control_block),
         };
         
-        if((semaphore = osSemaphoreNew(1, 0, &sempahore_attr)) == nullptr) {
-            bksram::write_reset<bksram::ErrorCodes::RS232_UART::SEMAPHORE_NULLPTR>();
-        }
+        semaphore = osSemaphoreNew(1, 0, &sempahore_attr);
+        assert(semaphore != nullptr);
     }
     
     void RS232_UART::worker(void* arg) {
         RS232_UART& self { *static_cast<RS232_UART*>(arg) };
-        self.init();
 
         using namespace magic;
 

@@ -375,13 +375,11 @@ namespace tasks {
                     using Algorithm = Detail::EnumProperty<
                         "algo",
                         TempCtl::Algorithm,
-                        util::EnumHolder<"Arbet", TempCtl::Algorithm::Arbet> {},
-                        util::EnumHolder<"SAR", TempCtl::Algorithm::SAR> {},
                         util::EnumHolder<"P", TempCtl::Algorithm::P> {},
-                        util::EnumHolder<"PD", TempCtl::Algorithm::PD> {},
                         util::EnumHolder<"PI", TempCtl::Algorithm::PI> {},
+                        util::EnumHolder<"PD", TempCtl::Algorithm::PD> {},
                         util::EnumHolder<"PID", TempCtl::Algorithm::PID> {},
-                        util::EnumHolder<"FullP", TempCtl::Algorithm::FullPower> {},
+                        util::EnumHolder<"PBIN", TempCtl::Algorithm::PBIN> {},
                         util::EnumHolder<"ManOp", TempCtl::Algorithm::ManOp> {}
                     >;
                     using Broiler = Detail::BoolProperty<"broil">;
@@ -408,7 +406,15 @@ namespace tasks {
                 Usings::PeltierFront peltier_front { dac_front, hbridge_front };
                 Usings::PeltierRear peltier_rear { dac_rear, hbridge_rear };
 
-                using Variant = std::variant<
+                template<typename ... Args>
+                requires util::is_unique_by_type<Args...>::value
+                struct PackHolder {
+                    using Variant = std::variant<Args...>;
+                    using Array = std::array<Variant, 12>;
+                    static constexpr size_t algorithm_index { Variant(static_cast<Usings::Algorithm*>(nullptr)).index()  };
+                };
+
+                using Pack = PackHolder<
                     Usings::Running*,
                     Usings::DesiredRTD*,
                     Usings::Broiler*,
@@ -423,7 +429,7 @@ namespace tasks {
                     Usings::PeltierRear*
                 >;
 
-                std::array<Variant, 12> properties {
+                Pack::Array properties {
                     &running,
                     &desired_rtd,
                     &broiler,
@@ -437,38 +443,6 @@ namespace tasks {
                     &peltier_front,
                     &peltier_rear,
                 };
-            };
-                
-            struct States {
-                struct Off {};
-
-                struct MAX31865 {
-                    DisplaySevmaps display_sevmaps {
-                        .white = panel::sevseg::common::sevmap{},
-                        .yellow = panel::sevseg::common::sevmap{},
-                        .green = panel::sevseg::common::sevmap{},
-                    };
-                    static constexpr size_t sample_threshold { 1 };
-                    size_t sample_counter { sample_threshold - 1 };
-                };
-
-                struct Detail {
-                    template<typename Dummy>
-                    struct SHT31 {
-                        DisplaySevmaps display_sevmaps {
-                            .white = panel::sevseg::common::sevmap{},
-                            .yellow = panel::sevseg::common::sevmap{},
-                            .green = panel::sevseg::common::sevmap{},
-                        };
-                        static constexpr size_t sample_threshold { 1 };
-                        size_t sample_counter { sample_threshold - 1 };
-                    };
-                };
-
-                using SHT31_Inside = Detail::SHT31<int>;
-                using SHT31_Outside = Detail::SHT31<bool>;
-
-                struct Property {};
             };
 
             struct Events {
@@ -535,100 +509,73 @@ namespace tasks {
                     NextStep
                 >;
             };
+                
+            struct States {
+                struct Off {};
+
+                struct MAX31865 {
+                    std::optional<Events::MAX31865_Sample> event { std::nullopt };
+                    std::optional<DisplaySevmaps> display_sevmaps { std::nullopt };
+                    static constexpr size_t sample_threshold { 1 };
+                    size_t sample_counter { sample_threshold - 1 };
+                };
+
+                struct Detail {
+                    template<typename SampleType>
+                    struct SHT31 {
+                        std::optional<SampleType> event { std::nullopt };
+                        std::optional<DisplaySevmaps> display_sevmaps { std::nullopt };
+                        static constexpr size_t sample_threshold { 1 };
+                        size_t sample_counter { sample_threshold - 1 };
+                    };
+                };
+
+                using SHT31_Inside = Detail::SHT31<Events::SHT31_InsideSample>;
+                using SHT31_Outside = Detail::SHT31<Events::SHT31_OutsideSample>;
+
+                struct Property {};
+
+                struct OrthogonalSample {};
+            };
 
             struct Actions {
-                static constexpr auto update_display_state = [](const DisplaySevmaps& display_sevmaps, panel::sevseg::green_yellow::MAX6549& max6549) {
-                    max6549.yellow_show(display_sevmaps.yellow);
-                    osDelay(1);
-                    max6549.green_show(display_sevmaps.green);
-                    osDelay(1);
-                    SevsegWhite::get_instance().push(display_sevmaps.white);
-                };
+                static void update_display_state(const DisplaySevmaps& display_sevmaps, panel::sevseg::green_yellow::MAX6549& max6549);
 
                 template<typename State>
-                static constexpr auto show_previous_sevmaps = [](State& state, bool& on_off, panel::sevseg::green_yellow::MAX6549& max6549) {
-                    update_display_state(state.display_sevmaps, max6549);
+                static void show_previous_sevmaps(State& state, bool& on_off, panel::sevseg::green_yellow::MAX6549& max6549) {
+                    update_display_state(state.display_sevmaps.value_or(DisplaySevmaps{}), max6549);
                     on_off = true;
-                };
+                }
 
-                static constexpr auto turn_off = [](bool& on_off, panel::sevseg::green_yellow::MAX6549& max6549) {
-                    max6549.clear_all();
-                    osDelay(1);
-                    SevsegWhite::get_instance().push(panel::sevseg::common::sevmap());
-                    on_off = false;
-                };
-
-                static constexpr auto start_blinking = []() {
-                    SevsegWhite::get_instance().blinking = true;
-                };
-
+                static void turn_off(bool& on_off, panel::sevseg::green_yellow::MAX6549& max6549);
+                static void start_blinking();
                 static void stop_blinking(Panel& self);
+                static void first_property(Properties::Pack::Variant& property, const Properties::Pack::Array& properties, panel::sevseg::green_yellow::MAX6549& max6549);
+                static void next_property(Properties::Pack::Variant& property, const Properties::Pack::Array& properties, panel::sevseg::green_yellow::MAX6549& max6549);
 
-                static constexpr auto first_property = [](Properties::Variant& property, const decltype(Properties::properties)& properties, panel::sevseg::green_yellow::MAX6549& max6549) {
-                    property = properties.front();
-                    std::visit([&](auto&& e) {
-                        update_display_state(e->to_display_state(), max6549);
-                    }, property);
-                };
-
-                static constexpr auto next_property = [](Properties::Variant& property, const decltype(Properties::properties)& properties, panel::sevseg::green_yellow::MAX6549& max6549) {
-                    if(property.index() == (properties.size() - 1)) {
-                        property = properties.front();
-                    } else {
-                        property = properties[property.index() + 1];
+                template<typename State, typename Sample>
+                static void save_sample(State& state, const Sample& event) {
+                    state.event = event;
+                    if(state.display_sevmaps.has_value() == false) {
+                        state.display_sevmaps = event.to_display_state();
                     }
-                    std::visit([&](auto&& e) {
-                        update_display_state(e->to_display_state(), max6549);
-                    }, property);
-                };
+                }
 
-                template<typename State, typename Sample>
-                static constexpr auto save_sample = [](State& state, const Sample& event) {
-                    state.display_sevmaps = event.to_display_state();
-                };
-
-                template<typename State, typename Sample>
-                static constexpr auto show_sample = [](State& state, const Sample& event, panel::sevseg::green_yellow::MAX6549& max6549) {
+                template<typename State>
+                static void show_state(State& state, panel::sevseg::green_yellow::MAX6549& max6549) {
                     state.sample_counter++;
-                    save_sample<State, Sample>(state, event);
                     if(state.sample_counter == state.sample_threshold) {
-                        update_display_state(state.display_sevmaps, max6549);
+                        if(state.event.has_value()) {
+                            state.display_sevmaps = state.event.value().to_display_state();
+                        }
+                        update_display_state(state.display_sevmaps.value_or(DisplaySevmaps{}), max6549);
                         state.sample_counter = 0;
                     }
-                };
+                }
 
-                static constexpr auto increment = [](Properties::Variant& property, panel::sevseg::green_yellow::MAX6549& max6549) {
-                    std::visit([&](auto&& e) {
-                        (*e)++;
-                        update_display_state(e->to_display_state(), max6549);
-                    }, property);
-                };
-
-                static constexpr auto decrement = [](Properties::Variant& property, panel::sevseg::green_yellow::MAX6549& max6549) {
-                    std::visit([&](auto&& e) {
-                        (*e)--;
-                        update_display_state(e->to_display_state(), max6549);
-                    }, property);
-                };
-
-                static constexpr auto next_step = [](Properties::Variant& property, panel::sevseg::green_yellow::MAX6549& max6549) {
-                    std::visit([&](auto&& e) {
-                        using Decay = std::remove_pointer_t<std::remove_reference_t<decltype(e)>>;
-                        if constexpr (
-                            std::is_same_v<Decay, Properties::Usings::DacFront>
-                            || std::is_same_v<Decay, Properties::Usings::DacRear>
-                        ) {
-                            e->next_step();
-                            update_display_state(e->to_display_state(), max6549);
-                        } else if constexpr (
-                            std::is_same_v<Decay, Properties::Usings::PeltierFront>
-                            || std::is_same_v<Decay, Properties::Usings::PeltierRear>
-                        ) {
-                            e->dac.next_step();
-                            update_display_state(e->to_display_state(), max6549);
-                        }
-                    }, property);
-                };
+                static void increment(Properties::Pack::Variant& property, panel::sevseg::green_yellow::MAX6549& max6549);
+                static void decrement(Properties::Pack::Variant& property, panel::sevseg::green_yellow::MAX6549& max6549);
+                static void next_step(Properties::Pack::Variant& property, panel::sevseg::green_yellow::MAX6549& max6549);
             };
 
             struct Guards {
@@ -644,32 +591,13 @@ namespace tasks {
                     return !SevsegWhite::get_instance().blinking;
                 };
 
-                static constexpr auto is_last_property_and_is_not_blinking = [](const Properties::Variant& property, const decltype(Properties::properties)& properties) {
+                static constexpr auto is_last_property_and_is_not_blinking = [](const Properties::Pack::Variant& property, const Properties::Pack::Array& properties) {
                     const size_t stopper_index {
-                        is_algorithm_manop()
-                        ? properties.size() - 1
-                        : [&properties]() {
-                            const auto it {
-                                std::find_if(
-                                    properties.begin(),
-                                    properties.end(),
-                                    [](const auto& property_variant) {
-                                        bool is_algorithm_property { false };
-                                        std::visit([&is_algorithm_property](auto&& property) {
-                                            if constexpr (
-                                                std::is_same_v<
-                                                    std::remove_pointer_t<std::remove_reference_t<decltype(property)>>,
-                                                    Properties::Usings::Algorithm
-                                                >
-                                            ) {
-                                                is_algorithm_property = true;
-                                            }
-                                        }, property_variant);
-                                        return is_algorithm_property;
-                                    }
-                                )
-                            };
-                            return it - properties.begin();
+                        [&properties]() -> size_t {
+                            if(is_algorithm_manop()) {
+                                return properties.size() - 1;
+                            }
+                            return Properties::Pack::algorithm_index;
                         }()
                     };
 
@@ -680,8 +608,6 @@ namespace tasks {
                 };
             };
 
-
-
             auto operator()() const;
         };
     public: 
@@ -691,16 +617,15 @@ namespace tasks {
         StaticQueue_t queue_control_block {};
         osMessageQueueId_t queue { nullptr };
         Menu::Properties menu_properties {};
-        Menu::Properties::Variant menu_property { menu_properties.properties.front() };
+        Menu::Properties::Pack::Variant menu_property { menu_properties.properties.front() };
     public:
         Menu::States::MAX31865 max31865 {};
         Menu::States::SHT31_Inside sht31_inside {};
         Menu::States::SHT31_Outside sht31_outside {};
     private:
-        Panel() = default;
+        Panel();
     public:
         static Panel& get_instance();
-        bool init();
     private:
         static void worker(void* arg);
     public:

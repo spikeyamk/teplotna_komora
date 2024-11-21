@@ -124,7 +124,6 @@ namespace tasks {
             bksram::write_reset<bksram::ErrorCodes::SenserKiller::Init::MAX31865::Extension::RTD::SemFault::REAR>();
         }
 
-        tasks::Panel::get_instance().init();
         Panel::get_instance().push(
             Panel::Menu::Events::MAX31865_Sample(
                 rtd_front.value(),

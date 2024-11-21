@@ -1,4 +1,5 @@
 #include <functional>
+#include <cassert>
 #include <trielo/trielo.hpp>
 #include "actu/fan/broiler/broiler.hpp"
 #include "actu/peltier/peltier.hpp"
@@ -15,8 +16,10 @@ namespace tasks {
 
     void TempCtl::Controller::Actions::turn_off(TempCtl& self) {
         util::turn_every_annoying_peripheral_off();
-        self.pid_front.reset();
-        self.pid_rear.reset();
+        std::visit([](auto&& algo) {
+            algo->front.pid.reset();
+            algo->rear.pid.reset();
+        }, *self.algorithm_pairs.active_pair);
     }
 
     void TempCtl::Controller::Actions::save_configuration(TempCtl& self, const Events::Configuration& event) {
@@ -38,10 +41,10 @@ namespace tasks {
         self.apply_configuration();
         std::visit([&](auto&& algo) {
             algo->run();
-        }, *self.algorithm_pairs_active_algorithm);
+        }, *self.algorithm_pairs.active_pair);
     };
 
-    bool TempCtl::init() {
+    TempCtl::TempCtl() {
         actu::fan::ctl::all::init();
 
         actu::peltier::current_source::front::init();
@@ -58,7 +61,8 @@ namespace tasks {
             .mq_size = (events.size() * sizeof(decltype(events)::value_type)),
         };
 
-        return (queue = osMessageQueueNew(events.size(), sizeof(decltype(events)::value_type), &queue_attr)) != nullptr;
+        queue = osMessageQueueNew(events.size(), sizeof(decltype(events)::value_type), &queue_attr);
+        assert(queue != nullptr);
     }
 
     auto TempCtl::Controller::operator()() const {
@@ -113,6 +117,6 @@ namespace tasks {
 
         actu::fan::ctl::all::set_speed(configuration.fan_max_rpm);
 
-        algorithm_pairs_active_algorithm = algorithm_pairs_array.begin() + static_cast<size_t>(configuration.algorithm);
+        algorithm_pairs.active_pair = algorithm_pairs.array.begin() + static_cast<size_t>(configuration.algorithm);
     }
 }

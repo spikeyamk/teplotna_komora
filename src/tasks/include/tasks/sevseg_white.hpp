@@ -11,11 +11,11 @@ namespace tasks {
     class SevsegWhite : public TaskBase<SevsegWhite, 2 * 1024, "sevseg_white"> {
     private:
         std::optional<panel::sevseg::common::sevmap> sevmap { std::nullopt };
-        StaticSemaphore_t sem_control_block;
-        osSemaphoreId_t sem { nullptr };
+        StaticSemaphore_t mutex_control_block;
+        osMutexId_t mutex { nullptr };
         static constexpr uint32_t BLINK_TICKS { 250 };
     private:
-        SevsegWhite() = default;
+        SevsegWhite();
     public:
         bool blinking { false };
         static SevsegWhite& get_instance();

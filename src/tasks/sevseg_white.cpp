@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "panel/sevseg/white/white.hpp"
 #include "tasks/sevseg_white.hpp"
 
@@ -5,6 +7,18 @@ namespace tasks {
     SevsegWhite& SevsegWhite::get_instance() {
         static SevsegWhite instance {};
         return instance;
+    }
+
+    SevsegWhite::SevsegWhite() {
+        const osMutexAttr_t mutex_attr {
+            .name = "sevw_mutex",
+            .attr_bits = 0,
+            .cb_mem = &mutex_control_block,
+            .cb_size = sizeof(mutex_control_block),
+        };
+        
+        mutex = osMutexNew(&mutex_attr);
+        assert(mutex != nullptr);
     }
 
     void SevsegWhite::worker(void* arg) {
@@ -46,7 +60,9 @@ namespace tasks {
     }
 
     void SevsegWhite::push(const panel::sevseg::common::sevmap& in_sevmap) {
+        osMutexAcquire(mutex, osWaitForever);
         sevmap = in_sevmap;
+        osMutexRelease(mutex);
     }
 
     panel::sevseg::common::sevmap SevsegWhite::consume() {

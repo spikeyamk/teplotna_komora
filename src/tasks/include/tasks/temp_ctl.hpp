@@ -16,13 +16,11 @@ namespace tasks {
         friend CRTP;
     public:
         enum class Algorithm {
-            Arbet,
-            SAR,
             P,
-            PD,
             PI,
+            PD,
             PID,
-            FullPower,
+            PBIN,
             ManOp,
         };
 
@@ -84,14 +82,14 @@ namespace tasks {
         StaticQueue_t queue_control_block {};
         osMessageQueueId_t queue { nullptr };
     private:
-        TempCtl() = default;
+        TempCtl();
     public:
         Controller::Events::Configuration configuration {
             .desired_rtd = 40.0f,
             .broiler = false,
             .pump = false,
             .fan_max_rpm = actu::fan::ctl::SpeedPercentage(0),
-            .algorithm = Algorithm::Arbet,
+            .algorithm = Algorithm::P,
             .dac_front = 0,
             .dac_rear = 0,
             .hbridge_front = actu::peltier::hbridge::State::Off,
@@ -133,34 +131,22 @@ namespace tasks {
         struct Algorithms {
             struct Detail {
                 template<auto current_source_set_func, auto hbridge_set_func>
-                class ControlFunctor {
-                    const actu::peltier::hbridge::State hbridge_state;
-                    const actu::peltier::current_source::uint12_t dac_code;
-                public:
-                    ControlFunctor() = delete;
-                    ControlFunctor(
-                        const actu::peltier::hbridge::State hbridge_state,
-                        const actu::peltier::current_source::uint12_t dac_code
-                    ) :
-                        hbridge_state { hbridge_state },
-                        dac_code { dac_code }
-                    {}
-
-                    void run() {
-                        current_source_set_func(dac_code);
-                        hbridge_set_func(hbridge_state);
-                    }
+                static constexpr auto control = [](
+                    const actu::peltier::hbridge::State hbridge_state,
+                    const actu::peltier::current_source::uint12_t dac_code
+                ) {
+                    current_source_set_func(dac_code);
+                    hbridge_set_func(hbridge_state);
                 };
 
-                using ControlFront = ControlFunctor<actu::peltier::current_source::front::set, actu::peltier::hbridge::front::set_state>;
-                using ControlRear = ControlFunctor<actu::peltier::current_source::rear::set, actu::peltier::hbridge::rear::set_state>;
+                static constexpr auto control_front = control<actu::peltier::current_source::front::set, actu::peltier::hbridge::front::set_state>;
+                static constexpr auto control_rear = control<actu::peltier::current_source::rear::set, actu::peltier::hbridge::rear::set_state>;
 
-                template<typename ControlFunctorSpecialized>
                 class AlgorithmFunctor {
                 public:
                     const sens::max31865::RTD& actual_rtd;
                     const Controller::Events::Configuration& configuration;
-                    PID& pid;
+                    PID pid {};
                 protected:
                     inline int32_t err() const {
                         return
@@ -199,43 +185,31 @@ namespace tasks {
                     }
                 };
 
-                template<typename ControlFunctorSpecialized>
-                class ArbetAlgorithm : public AlgorithmFunctor<ControlFunctorSpecialized> {
+                template<auto control_specialized, const uint32_t k_p>
+                class P_Algorithm : public AlgorithmFunctor {
                 public:
-                    void run() {}
-                };
-
-                template<typename ControlFunctorSpecialized>
-                class SAR_Algorithm : public AlgorithmFunctor<ControlFunctorSpecialized> {
-                public:
-                    void run() {}
-                };
-
-                template<typename ControlFunctorSpecialized, const uint32_t k_p>
-                class P_Algorithm : public AlgorithmFunctor<ControlFunctorSpecialized> {
-                public:
-                    using Base = AlgorithmFunctor<ControlFunctorSpecialized>;
+                    using Base = AlgorithmFunctor;
                     void run() {
                         this->pid.p = this->err();
 
                         switch(this->get_action()) {
                             default:
-                                ControlFunctorSpecialized(
+                                control_specialized(
                                     actu::peltier::hbridge::State::Off,
                                     0
-                                ).run();
+                                );
                                 return;
                             case Base::ActionType::ShouldHeat:
-                                ControlFunctorSpecialized(
+                                control_specialized(
                                     actu::peltier::hbridge::State::Heat,
                                     heat_transfer_function()
-                                ).run();
+                                );
                                 return;
                             case Base::ActionType::ShouldCool:
-                                ControlFunctorSpecialized(
+                                control_specialized(
                                     actu::peltier::hbridge::State::Cool,
                                     cool_transfer_function()
-                                ).run();
+                                );
                                 return;
                         }
                     }
@@ -282,46 +256,46 @@ namespace tasks {
                     }
                 };
 
-                template<typename ControlFunctorSpecialized, const uint32_t k_p, const uint32_t k_d>
-                class PD_Algorithm : public AlgorithmFunctor<ControlFunctorSpecialized> {
+                template<auto control_specialized, const uint32_t k_p, const uint32_t k_d>
+                class PD_Algorithm : public AlgorithmFunctor {
                 public:
                     void run() {
                         this->pid.d = this->derr();
                         this->pid.p = this->err();
 
-                        ControlFunctorSpecialized(
+                        control_specialized(
                             actu::peltier::hbridge::State::Off,
                             0
-                        ).run();
+                        );
                     }
                 };
 
-                template<typename ControlFunctorSpecialized, const uint32_t k_p, const uint32_t k_i>
-                class PI_Algorithm : public AlgorithmFunctor<ControlFunctorSpecialized> {
+                template<auto control_specialized, const uint32_t k_p, const uint32_t k_i>
+                class PI_Algorithm : public AlgorithmFunctor {
                 public:
-                    using Base = AlgorithmFunctor<ControlFunctorSpecialized>;
+                    using Base = AlgorithmFunctor;
                     void run() {
                         this->pid.i += this->err();
                         this->pid.p = this->err();
 
                         switch(this->get_action()) {
                             default:
-                                ControlFunctorSpecialized(
+                                control_specialized(
                                     actu::peltier::hbridge::State::Off,
                                     0
-                                ).run();
+                                );
                                 return;
                             case Base::ActionType::ShouldHeat:
-                                ControlFunctorSpecialized(
+                                control_specialized(
                                     actu::peltier::hbridge::State::Heat,
                                     heat_proportional_transfer_function() + heat_integral_transfer_function()
-                                ).run();
+                                );
                                 return;
                             case Base::ActionType::ShouldCool:
-                                ControlFunctorSpecialized(
+                                control_specialized(
                                     actu::peltier::hbridge::State::Cool,
                                     cool_proportional_transfer_function()
-                                ).run();
+                                );
                                 return;
                         }
                     }
@@ -390,186 +364,149 @@ namespace tasks {
                     }
                 };
 
-                template<typename ControlFunctorSpecialized, const uint32_t k_p, const uint32_t k_i, const uint32_t k_d>
-                class PID_Algorithm : public AlgorithmFunctor<ControlFunctorSpecialized> {
+                template<auto control_specialized, const uint32_t k_p, const uint32_t k_i, const uint32_t k_d>
+                class PID_Algorithm : public AlgorithmFunctor {
                 public:
                     void run() {
                         this->pid.d = this->derr();
                         this->pid.i = this->ierr();
                         this->pid.p = this->err();
 
-                        ControlFunctorSpecialized(
+                        control_specialized(
                             actu::peltier::hbridge::State::Off,
                             0
-                        ).run();
+                        );
                     }
                 };
 
-                template<typename ControlFunctorSpecialized>
-                class FullPower_Algorithm : public AlgorithmFunctor<ControlFunctorSpecialized> {
+                template<auto control_specialized>
+                class PBIN_Algorithm : public AlgorithmFunctor {
                 public:
                     void run() {
-                        static size_t i = 0;
-                        if(i % 100 == 0) {
-                            std::cout
-                                << "this->actual_rtd.adc_code.value: "
-                                << this->actual_rtd.adc_code.value
-                                << " this->configuration.desired_rtd.adc_code.value: "
-                                << this->configuration.desired_rtd.adc_code.value
-                                << std::endl;
-                        }
-                        i++;
-
-                        ControlFunctorSpecialized(
+                        control_specialized(
                             this->actual_rtd.adc_code.value > this->configuration.desired_rtd.adc_code.value
                             ? actu::peltier::hbridge::State::Cool
                             : actu::peltier::hbridge::State::Heat,
                             4095
-                        ).run();
+                        );
                     }
                 };
                 
-                template<typename ControlFunctorSpecialized>
-                class ManOpAlgorithm : public AlgorithmFunctor<ControlFunctorSpecialized> {
+                template<auto control_specialized>
+                class ManOpAlgorithm : public AlgorithmFunctor {
                 public:
                     void run() {
-                        ControlFunctorSpecialized(
-                            std::is_same_v<ControlFunctorSpecialized, ControlFront>
+                        control_specialized(
+                            control_specialized == control_front
                             ? this->configuration.hbridge_front
                             : this->configuration.hbridge_rear
                             ,
-                            std::is_same_v<ControlFunctorSpecialized, ControlFront>
+                            control_specialized == control_front
                             ? this->configuration.dac_front
                             : this->configuration.dac_rear
-                        ).run();
+                        );
                     }
                 };
 
                 template<typename AlgorithmFront, typename AlgorithmRear>
                 class AlgorithmPair {
-                private:
-                    const Controller::Events::MAX31865_Sample& max31865_sample;
-                    const Controller::Events::Configuration& configuration;
-                    PID& pid_front;
-                    PID& pid_rear;
+                public:
+                    AlgorithmFront front;
+                    AlgorithmRear rear;
                 public:
                     AlgorithmPair() = delete;
-                    inline AlgorithmPair(
+                    AlgorithmPair(
                         const Controller::Events::MAX31865_Sample& max31865_sample,
-                        const Controller::Events::Configuration& configuration,
-                        PID& pid_front,
-                        PID& pid_rear
+                        const Controller::Events::Configuration& configuration
                     ) :
-                        max31865_sample { max31865_sample },
-                        configuration { configuration },
-                        pid_front { pid_front },
-                        pid_rear { pid_rear }
+                        front { max31865_sample.front, configuration },
+                        rear { max31865_sample.rear, configuration }
                     {}
-
+                public:
                     void run() {
-                        AlgorithmFront front  { max31865_sample.front, configuration, pid_front };
                         front.run();
-                        AlgorithmRear rear { max31865_sample.rear, configuration, pid_rear };
                         rear.run(); 
                     }
                 };
             };
 
             struct Usings {
-                using ArbetAlgorithmFront = Detail::ArbetAlgorithm<Detail::ControlFront>;
-                using ArbetAlgorithmRear = Detail::ArbetAlgorithm<Detail::ControlRear>;
+                using P_AlgorithmFront = Detail::P_Algorithm<Detail::control_front, 1>;
+                using P_AlgorithmRear = Detail::P_Algorithm<Detail::control_rear, 1>;
 
-                using SAR_AlgorithmFront = Detail::SAR_Algorithm<Detail::ControlFront>;
-                using SAR_AlgorithmRear = Detail::SAR_Algorithm<Detail::ControlRear>;
+                using PI_AlgorithmFront = Detail::PI_Algorithm<Detail::control_front, 1, 1>;
+                using PI_AlgorithmRear = Detail::PI_Algorithm<Detail::control_rear, 1, 1>;
 
-                using P_AlgorithmFront = Detail::P_Algorithm<Detail::ControlFront, 1>;
-                using P_AlgorithmRear = Detail::P_Algorithm<Detail::ControlRear, 1>;
+                using PD_AlgorithmFront = Detail::PD_Algorithm<Detail::control_front, 1, 1>;
+                using PD_AlgorithmRear = Detail::PD_Algorithm<Detail::control_rear, 1, 1>;
 
-                using PD_AlgorithmFront = Detail::PD_Algorithm<Detail::ControlFront, 1, 1>;
-                using PD_AlgorithmRear = Detail::PD_Algorithm<Detail::ControlRear, 1, 1>;
+                using PID_AlgorithmFront = Detail::PID_Algorithm<Detail::control_front, 1, 1, 1>;
+                using PID_AlgorithmRear = Detail::PID_Algorithm<Detail::control_rear, 1, 1, 1>;
 
-                using PI_AlgorithmFront = Detail::PI_Algorithm<Detail::ControlFront, 1, 1>;
-                using PI_AlgorithmRear = Detail::PI_Algorithm<Detail::ControlRear, 1, 1>;
+                using PBIN_AlgorithmFront = Detail::PBIN_Algorithm<Detail::control_front>;
+                using PBIN_AlgorithmRear = Detail::PBIN_Algorithm<Detail::control_rear>;
 
-                using PID_AlgorithmFront = Detail::PID_Algorithm<Detail::ControlFront, 1, 1, 1>;
-                using PID_AlgorithmRear = Detail::PID_Algorithm<Detail::ControlRear, 1, 1, 1>;
-
-                using FullPower_AlgorithmFront = Detail::FullPower_Algorithm<Detail::ControlFront>;
-                using FullPower_AlgorithmRear = Detail::FullPower_Algorithm<Detail::ControlRear>;
-
-                using ManOpAlgorithmFront = Detail::ManOpAlgorithm<Detail::ControlFront>;
-                using ManOpAlgorithmRear = Detail::ManOpAlgorithm<Detail::ControlRear>;
+                using ManOpAlgorithmFront = Detail::ManOpAlgorithm<Detail::control_front>;
+                using ManOpAlgorithmRear = Detail::ManOpAlgorithm<Detail::control_rear>;
             };
 
             class Pairs {
             public:
-                using ArbetPair = Detail::AlgorithmPair<Usings::ArbetAlgorithmFront, Usings::ArbetAlgorithmRear>;
-                using SAR_Pair = Detail::AlgorithmPair<Usings::SAR_AlgorithmFront, Usings::SAR_AlgorithmRear>;
                 using P_Pair = Detail::AlgorithmPair<Usings::P_AlgorithmFront, Usings::P_AlgorithmRear>;
-                using PD_Pair = Detail::AlgorithmPair<Usings::PD_AlgorithmFront, Usings::PD_AlgorithmRear>;
                 using PI_Pair = Detail::AlgorithmPair<Usings::PI_AlgorithmFront, Usings::PI_AlgorithmRear>;
+                using PD_Pair = Detail::AlgorithmPair<Usings::PD_AlgorithmFront, Usings::PD_AlgorithmRear>;
                 using PID_Pair = Detail::AlgorithmPair<Usings::PID_AlgorithmFront, Usings::PID_AlgorithmRear>;
-                using FullPowerPair = Detail::AlgorithmPair<Usings::FullPower_AlgorithmFront, Usings::FullPower_AlgorithmRear>;
+                using FullPowerPair = Detail::AlgorithmPair<Usings::PBIN_AlgorithmFront, Usings::PBIN_AlgorithmRear>;
                 using ManOpPair = Detail::AlgorithmPair<Usings::ManOpAlgorithmFront, Usings::ManOpAlgorithmRear>;
 
                 using Variant = std::variant<
-                    ArbetPair*,
-                    SAR_Pair*,
                     P_Pair*,
-                    PD_Pair*,
                     PI_Pair*,
+                    PD_Pair*,
                     PID_Pair*,
                     FullPowerPair*,
                     ManOpPair*
                 >;
 
-                ArbetPair arbet_pair;
-                SAR_Pair sar_pair;
                 P_Pair p_pair;
-                PD_Pair pd_pair;
                 PI_Pair pi_pair;
+                PD_Pair pd_pair;
                 PID_Pair pid_pair;
                 FullPowerPair fullpower_pair;
                 ManOpPair manop_pair;
+
+                std::array<Algorithms::Pairs::Variant, 6> array;
+
+                decltype(array.begin()) active_pair;
             public:
                 Pairs() = delete;
 
                 Pairs(
                     const Controller::Events::MAX31865_Sample& max31865_sample,
-                    const Controller::Events::Configuration& configuration,
-                    PID& pid_front,
-                    PID& pid_rear
+                    const Controller::Events::Configuration& configuration
                 ) :
-                    arbet_pair { max31865_sample, configuration, pid_front, pid_rear },
-                    sar_pair { max31865_sample, configuration, pid_front, pid_rear },
-                    p_pair { max31865_sample, configuration, pid_front, pid_rear },
-                    pd_pair { max31865_sample, configuration, pid_front, pid_rear },
-                    pi_pair { max31865_sample, configuration, pid_front, pid_rear },
-                    pid_pair { max31865_sample, configuration, pid_front, pid_rear },
-                    fullpower_pair { max31865_sample, configuration, pid_front, pid_rear },
-                    manop_pair { max31865_sample, configuration, pid_front, pid_rear }
+                    p_pair { max31865_sample, configuration },
+                    pi_pair { max31865_sample, configuration },
+                    pd_pair { max31865_sample, configuration },
+                    pid_pair { max31865_sample, configuration },
+                    fullpower_pair { max31865_sample, configuration },
+                    manop_pair { max31865_sample, configuration },
+                    array {
+                        &p_pair,
+                        &pi_pair,
+                        &pd_pair,
+                        &pid_pair,
+                        &fullpower_pair,
+                        &manop_pair,
+                    },
+                    active_pair { array.begin() }
                 {}
             };
         };
 
-        PID pid_front {};
-        PID pid_rear {};
-
-        Algorithms::Pairs algorithm_pairs { max31865_sample, configuration, pid_front, pid_rear };
-        std::array<Algorithms::Pairs::Variant, 8> algorithm_pairs_array {
-            &algorithm_pairs.arbet_pair,
-            &algorithm_pairs.sar_pair,
-            &algorithm_pairs.p_pair,
-            &algorithm_pairs.pd_pair,
-            &algorithm_pairs.pi_pair,
-            &algorithm_pairs.pid_pair,
-            &algorithm_pairs.fullpower_pair,
-            &algorithm_pairs.manop_pair,
-        };
-        decltype(algorithm_pairs_array.begin()) algorithm_pairs_active_algorithm { algorithm_pairs_array.begin() };
+        Algorithms::Pairs algorithm_pairs { max31865_sample, configuration };
     public:
         static TempCtl& get_instance();
-        bool init();
         osStatus_t push(const Controller::Events::Variant& event);
         Controller::Events::Variant pop();
     private:

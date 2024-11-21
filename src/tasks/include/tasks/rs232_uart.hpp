@@ -27,12 +27,11 @@ namespace tasks {
     public:
         uint16_t rx_len { 0 };
     private:
-        RS232_UART() = default;
+        RS232_UART();
     public:
         static RS232_UART& get_instance();
         osStatus release_semaphore(const uint16_t in_rx_len);
     private:
-        void init();
         static void worker(void* arg);
 
         template<typename T>

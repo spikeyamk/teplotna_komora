@@ -47,7 +47,6 @@ extern "C" void MX_FREERTOS_Init() {
         bksram::write_reset<bksram::ErrorCodes::RS232_UART::LAUNCH>();
     }
 
-    tasks::TempCtl::get_instance().init();
     if(tasks::TempCtl::get_instance().launch() == false) {
         bksram::write_reset<bksram::ErrorCodes::TempCtl::LAUNCH>();
     }

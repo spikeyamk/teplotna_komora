@@ -74,8 +74,7 @@ namespace util {
 
     template<TemplateStringNonNullTerminated template_name, auto template_value>
     requires std::is_enum_v<decltype(template_value)>
-    class EnumHolder {
-    public:
+    struct EnumHolder {
         static constexpr decltype(template_value) value { template_value };
         static constexpr decltype(template_name) name { template_name };
     };
