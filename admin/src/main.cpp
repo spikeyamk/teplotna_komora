@@ -4,14 +4,12 @@
 #include "chart_widget.hpp"
 
 int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
-
+    QApplication app { argc, argv };
     ChartWidget chart_widget {};
     chart_widget.resize(400, 400);
     chart_widget.show();
 
     Dialog dialog { chart_widget };
     dialog.show();
-
-    return app.exec();
+    app.exec();
 }

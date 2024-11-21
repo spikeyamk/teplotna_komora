@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <algorithm>
 #include <string_view>
+#include <ranges>
 #include "panel/sevseg/common/common.hpp"
 
 namespace panel {
@@ -37,7 +38,6 @@ namespace common {
         0b0100'0000, // hore
         0b1000'0000, // bodka
     };
-
 
     const sevset minus_sign { 0b0000'0001 };
     const sevset dp_or_mask { 0b1000'0000 };
@@ -89,8 +89,8 @@ namespace common {
         };
     }
 
-    inline uint8_t float_char_to_uint8_t(const char value) {
-        return static_cast<uint8_t>(value - '0');
+    inline size_t float_char_to_hex_map_index(const char value) {
+        return static_cast<size_t>(value - '0');
     }
 
     inline bool is_valid_char_in_float_snprintf_output(const char value) {
@@ -124,14 +124,14 @@ namespace common {
      * @note The return value `0xE` is an error indicator. Ensure that the character is valid by checking it beforehand if necessary.
      * 
      * @example
-     * uint8_t hex_value = hex_char_to_uint8_t('A');  // Returns 10
-     * uint8_t hex_value_invalid = hex_char_to_uint8_t('g');  // Returns 0xE (error)
+     * uint8_t hex_value = hex_char_to_hex_map_index('A');  // Returns 10
+     * uint8_t hex_value_invalid = hex_char_to_hex_map_index('g');  // Returns 0xE (error)
      */
-    inline uint8_t hex_char_to_uint8_t(const char value) {
+    inline size_t hex_char_to_hex_map_index(const char value) {
         if(value >= '0' && value <= '9') {
-            return static_cast<uint8_t>(value - '0');
+            return static_cast<size_t>(value - '0');
         } else if(value >= 'A' && value <= 'F') {
-            return static_cast<uint8_t>(value - 'A') + 10;
+            return static_cast<size_t>(value - 'A') + 10;
         }
 
         return 0xE;
@@ -153,6 +153,31 @@ namespace common {
         
         return true;
     }
+
+    template<>
+    sevmap to_sevmap<int14_t>(const int14_t value) {
+        std::array<char, 6> buf {};
+        const int ret_err_len { std::snprintf(buf.data(), buf.size(), "%d", value.unwrap()) };
+        if(ret_err_len < 0) {
+            return exception_sevmap::error;
+        }
+        if(check_snprintf_float_output(std::string_view(buf.data(), ret_err_len)) == false) {
+            return exception_sevmap::error;
+        }
+
+        sevmap ret {};
+        std::ranges::transform(
+            buf | std::ranges::views::take(ret_err_len),
+            ret.begin(),
+            [](const char e) {
+                if(e == '-') {
+                    return minus_sign;
+                }
+                return hex_map[float_char_to_hex_map_index(e)];
+            }
+        );
+        return ret;
+    }
     
     template<> 
     sevmap to_sevmap<uint20_t>(const uint20_t value) {
@@ -165,15 +190,13 @@ namespace common {
         }
 
         sevmap ret {};
-        std::for_each(
+        std::ranges::transform(
+            buf | std::ranges::views::take(ret.size()),
             ret.begin(),
-            ret.end(),
-            [&buf, index = static_cast<size_t>(0)](auto& e) mutable {
-                e = hex_map[hex_char_to_uint8_t(buf[index])];
-                index++;
+            [](const char e) {
+                return hex_map[hex_char_to_hex_map_index(e)];
             }
         );
-
         return ret;
     }
 
@@ -200,6 +223,7 @@ namespace common {
         }
 
         sevmap ret {};
+
         std::for_each(
             ret.rbegin(),
             ret.rend(),
@@ -208,10 +232,10 @@ namespace common {
                     e = minus_sign;
                 } else if(buf[index] == '.') {
                     index--;
-                    e = hex_map[float_char_to_uint8_t(buf[index])];
+                    e = hex_map[float_char_to_hex_map_index(buf[index])];
                     e |= dp_or_mask;
                 } else {
-                    e = hex_map[float_char_to_uint8_t(buf[index])];
+                    e = hex_map[float_char_to_hex_map_index(buf[index])];
                 }
                 index--;
             }

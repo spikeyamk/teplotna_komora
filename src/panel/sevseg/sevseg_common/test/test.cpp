@@ -203,6 +203,110 @@ namespace test {
 
         return 0;
     }
+
+    int int14_t_to_sevmap() {
+        {
+            const auto sevmap { common::to_sevmap(common::int14_t(4)) };
+            const common::sevmap expected_map = {
+                common::hex_map[4],
+                common::sevset{},
+                common::sevset{},
+                common::sevset{},
+                common::sevset{}
+            };
+
+            if(sevmap != expected_map) {
+                print(sevmap, expected_map);
+                return 1;
+            }
+        }
+        
+        {
+            const auto sevmap { common::to_sevmap(common::int14_t(40)) };
+            const common::sevmap expected_map = {
+                common::hex_map[4],
+                common::hex_map[0],
+                common::sevset{},
+                common::sevset{},
+                common::sevset{}
+            };
+
+            if(sevmap != expected_map) {
+                print(sevmap, expected_map);
+                return 2;
+            }
+        }
+
+        {
+            const auto sevmap { common::to_sevmap(common::int14_t(409)) };
+            const common::sevmap expected_map = {
+                common::hex_map[4],
+                common::hex_map[0],
+                common::hex_map[9],
+                common::sevset{},
+                common::sevset{}
+            };
+
+            if(sevmap != expected_map) {
+                print(sevmap, expected_map);
+                return 3;
+            }
+        }
+
+        {
+            const auto sevmap { common::to_sevmap(common::int14_t(4095)) };
+            const common::sevmap expected_map = {
+                common::hex_map[4],
+                common::hex_map[0],
+                common::hex_map[9],
+                common::hex_map[5],
+                common::sevset{}
+            };
+
+            if(sevmap != expected_map) {
+                print(sevmap, expected_map);
+                return 4;
+            }
+        }
+
+        {
+            const auto sevmap { common::to_sevmap(common::int14_t(common::int14_t::max)) };
+            const common::sevmap expected_map = {
+                common::hex_map[8],
+                common::hex_map[1],
+                common::hex_map[9],
+                common::hex_map[1],
+                common::sevset{}
+            };
+
+            if(sevmap != expected_map) {
+                print(sevmap, expected_map);
+                return 5;
+            }
+        }
+
+        {
+            const auto sevmap { common::to_sevmap(common::int14_t(common::int14_t::min)) };
+            std::cout
+                << "common::int14_t::min"
+                << common::int14_t::min
+                << std::endl;
+            const common::sevmap expected_map = {
+                common::minus_sign,
+                common::hex_map[8],
+                common::hex_map[1],
+                common::hex_map[9],
+                common::hex_map[2],
+            };
+
+            if(sevmap != expected_map) {
+                print(sevmap, expected_map);
+                return 6;
+            }
+        }
+
+        return 0;
+    }
 }
 }
 }

@@ -1,17 +1,40 @@
-add_subdirectory(tasks_common)
-add_library(tasks::common ALIAS tasks_common)
+get_filename_component(SUBDIRECTORY_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+file(GLOB SUBDIRECTORY_SOURCES "*.cpp")
 
-add_subdirectory(tasks_panel)
-add_library(tasks::panel ALIAS tasks_panel)
+set(SUBDIRECTORY_TEST_VAR "${SUBDIRECTORY_NAME}_TEST")
+if(DEFINED ${SUBDIRECTORY_TEST_VAR})
+    if(${${SUBDIRECTORY_TEST_VAR}} STREQUAL TRUE)
+        ExternalProject_Add(${SUBDIRECTORY_NAME}_test
+            SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test
+            CMAKE_GENERATOR Ninja
+            CMAKE_CACHE_ARGS
+                -DSUBDIRECTORY_NAME:STRING=${SUBDIRECTORY_NAME}
+                -DSUBDIRECTORY_SOURCES:STRING=${SUBDIRECTORY_SOURCES}
+                -DSUBDIRECTORY_DEPS:STRING=${CMAKE_SOURCE_DIR}/deps/trielo
+            CONFIGURE_HANDLED_BY_BUILD FALSE
+            BUILD_ALWAYS TRUE
+            INSTALL_COMMAND ""
+            TEST_COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+            TEST_BEFORE_INSTALL TRUE
+        )
+    endif()
+endif()
 
-add_subdirectory(tasks_rs232_uart)
-add_library(tasks::rs232_uart ALIAS tasks_rs232_uart)
-
-add_subdirectory(tasks_senser_killer)
-add_library(tasks::senser_killer ALIAS tasks_senser_killer)
-
-add_subdirectory(tasks_sevseg_white)
-add_library(tasks::sevseg_white ALIAS tasks_sevseg_white)
-
-add_subdirectory(tasks_temp_ctl)
-add_library(tasks::temp_ctl ALIAS tasks_temp_ctl)
+add_library(${SUBDIRECTORY_NAME} ${SUBDIRECTORY_SOURCES})
+target_include_directories(${SUBDIRECTORY_NAME} PUBLIC "include")
+target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE stm32cubef2 trielo)
+target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
+    actu::fan_ctl
+    actu::fan_broiler
+    actu::pump
+    util
+    sml
+    magic
+    sens::max31865_driver
+    sens::sht31_driver
+    actu::peltier
+    sens::dht
+    panel::sevseg_common
+    panel::sevseg_green_yellow
+    panel::sevseg_white
+)
