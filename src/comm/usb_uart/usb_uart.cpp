@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string_view>
 #include <limits>
+#include <cassert>
 
 #include "usart.h"
 #include "comm/usb_uart/usb_uart.hpp"
@@ -12,45 +13,24 @@ namespace usb_uart {
         return instance;
     }
 
-    size_t RedirectStdout::get_data_count() const {
-        return data_count;
-    }
-
     osStatus_t RedirectStdout::acquire_mutex() {
-        const auto ret { osMutexAcquire(mutex, 10'000) };
-        if(ret == osOK) {
-            mutex_acquires++;
-        }
-        return ret;
+        return osMutexAcquire(mutex, MUTEX_TIMEOUT_MS);
     }
 
     osStatus_t RedirectStdout::release_mutex() {
-        for(size_t i = 0; i < mutex_acquires; i++) {
-            const auto ret { osMutexRelease(mutex) };
-            if(ret != osOK) {
-                return ret;
-            }
-        }
-
-        mutex_acquires = 0;
-        return osOK;
+        return osMutexRelease(mutex);
     }
 
-    bool RedirectStdout::init_threadsafe() {
+    RedirectStdout::RedirectStdout() {
         const osMutexAttr_t mutex_attr {
             .name = "usb_buf_mutex",
-            .attr_bits = osMutexRecursive,
+            .attr_bits = 0,
             .cb_mem = &mutex_control_block,
             .cb_size = sizeof(mutex_control_block),
         };
         
         mutex = osMutexNew(&mutex_attr);
-        if(mutex == nullptr) {
-            return false;
-        }
-
-        threadsafe = true;
-        return true;
+        assert(mutex != nullptr);
     }
 
     bool RedirectStdout::push(int ch) {
@@ -77,34 +57,14 @@ namespace usb_uart {
         data_count = 0;
     }
 
-    bool RedirectStdout::get_threadsafe() const {
-        const bool ret { threadsafe };
-        return ret;
-    }
-
-    void RedirectStdout::turn_off_threadsafe() {
-        threadsafe = false;
-    }
-
     int __io_putchar(int ch) {
         if(xPortIsInsideInterrupt()) {
             RedirectStdout::transmit(ch);
             return ch;
         }
 
-        taskENTER_CRITICAL();
-        RedirectStdout& redirect_stdout { RedirectStdout::get_instance() };
-        const bool threadsafe { redirect_stdout.get_threadsafe() };
-        taskEXIT_CRITICAL();
-
-        if(threadsafe == false) {
-            RedirectStdout::transmit(ch);
-            return ch;
-        }
-
-        const osStatus acquire_mutex { redirect_stdout.acquire_mutex() };
+        const osStatus acquire_mutex { RedirectStdout::get_instance().acquire_mutex() };
         if(acquire_mutex != osOK) {
-            redirect_stdout.turn_off_threadsafe();
             RedirectStdout::transmit(ch);
             static constexpr std::string_view error_message { "\r\n__io_putchar: acquire_mutex != osOK\r\n" };
             HAL_UART_Transmit(&huart1, reinterpret_cast<const uint8_t*>(error_message.data()), error_message.size(), HAL_MAX_DELAY);
@@ -112,9 +72,9 @@ namespace usb_uart {
             return ch;
         }
 
-        if(redirect_stdout.push(ch) == false || ch == '\n') {
-            redirect_stdout.flush();
-            redirect_stdout.release_mutex();
+        if(RedirectStdout::get_instance().push(ch) == false || ch == '\n') {
+            RedirectStdout::get_instance().flush();
+            RedirectStdout::get_instance().release_mutex();
         }
         
         return ch;

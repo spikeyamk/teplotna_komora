@@ -14,6 +14,7 @@ namespace sevseg {
 namespace common {
     using sevset = std::bitset<8>;
     using sevmap = std::array<sevset, 5>;
+    using int14_t = bitint::bitint<14>;
     using uint20_t = bitint::ubitint<20>;
 
     extern const std::array<sevset, 16> hex_map;
@@ -64,7 +65,7 @@ namespace common {
 
     template<util::TemplateStringNonNullTerminated string>
     requires(
-        (sizeof(string.value) <= 5)
+        (sizeof(string.value) <= (sevmap{}).size())
         && std::ranges::all_of(
             std::ranges::subrange(string.value, string.value + sizeof(string.value)),
             [](const char c) { return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')); }
@@ -72,11 +73,9 @@ namespace common {
     )
     consteval sevmap to_sevmap() {
         sevmap ret {};
-
-        for(auto&& [ch, r] : std::ranges::views::zip(string.value, ret)) {
+        for(auto&& [r, ch] : std::ranges::views::zip(ret, string.value)) {
             r = latin_map[static_cast<size_t>(ch - ((ch >= 'a' && ch <= 'z') ? 'a' : 'A'))];
         }
-
         return ret;
     }
 }

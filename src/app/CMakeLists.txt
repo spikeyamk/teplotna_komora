@@ -26,12 +26,7 @@ target_link_libraries("${SUBDIRECTORY_NAME}" PRIVATE
     sens::sht31_driver
     sens::max31865_driver
 
-    tasks::senser_killer
-    tasks::temp_ctl
-    tasks::rs232_uart
-    tasks::panel
-    tasks::sevseg_white
+    tasks
 
     util
-    rtc
 )
