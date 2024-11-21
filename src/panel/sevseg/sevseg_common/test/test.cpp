@@ -26,6 +26,23 @@ namespace test {
         return rhs == lhs;
     }
 
+    void print(const common::sevmap& sevmap, const common::sevmap& expected_sevmap) {
+        for(size_t i = 0; i < sevmap.size(); i++) {
+            std::cout
+                << "sevmap["
+                << i
+                << "]: "
+                << sevmap[i]
+                << std::endl;
+            std::cout
+                << "expected_sevmap["
+                << i
+                << "]: "
+                << expected_sevmap[i]
+                << std::endl;
+        }
+    }
+
     int float_to_sevmap() {
         struct ExpectedPair {
             float number;
@@ -76,31 +93,16 @@ namespace test {
         }};
 
         for(size_t i = 0; i < expected_pairs.size(); i++) {
-            const auto ret { Trielo::trielo<::panel::sevseg::common::to_sevmap<float>>(expected_pairs[i].number) };
-            if(Trielo::trielo<is_same>(ret, expected_pairs[i].expected_result) == false) {
-                return static_cast<int>(i);
+            const auto ret { ::panel::sevseg::common::to_sevmap<float>(expected_pairs[i].number) };
+            if(ret != expected_pairs[i].expected_result) {
+                print(ret, expected_pairs[i].expected_result);
+                return static_cast<int>(i - 1);
             }
         }
 
         return 0;
     }
 
-    void print(const common::sevmap& sevmap, const common::sevmap& expected_sevmap) {
-        for(size_t i = 0; i < sevmap.size(); i++) {
-            std::cout
-                << "sevmap["
-                << i
-                << "]: "
-                << sevmap[i]
-                << std::endl;
-            std::cout
-                << "expected_sevmap["
-                << i
-                << "]: "
-                << expected_sevmap[i]
-                << std::endl;
-        }
-    }
 
     int uint20_t_to_sevmap() {
         const auto sevmap { common::to_sevmap(uint20_t(0xA'E1'55)) };

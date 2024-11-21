@@ -69,7 +69,6 @@ namespace common {
             }()
         };
 
-
         const sevmap positive_underflow { 
             []() {
                 sevmap ret;
@@ -191,7 +190,7 @@ namespace common {
 
         sevmap ret {};
         std::ranges::transform(
-            buf | std::ranges::views::take(ret.size()),
+            std::ranges::views::take(buf, ret.size()),
             ret.begin(),
             [](const char e) {
                 return hex_map[hex_char_to_hex_map_index(e)];
@@ -224,22 +223,28 @@ namespace common {
 
         sevmap ret {};
 
-        std::for_each(
-            ret.rbegin(),
-            ret.rend(),
-            [&buf, index = ret.size()](auto& e) mutable {
-                if(buf[index] == '-') {
-                    e = minus_sign;
-                } else if(buf[index] == '.') {
-                    index--;
-                    e = hex_map[float_char_to_hex_map_index(buf[index])];
-                    e |= dp_or_mask;
-                } else {
-                    e = hex_map[float_char_to_hex_map_index(buf[index])];
-                }
-                index--;
+        for(auto&& [r, ch] : std::ranges::views::zip(ret,
+            std::ranges::views::filter(buf, [](const char e) { return e != '.'; }))
+            | std::ranges::views::take(ret.size()
+        )) {
+            if(ch == '-') {
+                r = minus_sign;
+            } else {
+                r = hex_map[float_char_to_hex_map_index(ch)];
             }
-        );
+        }
+
+        for(auto&& [r, ch] : std::ranges::views::zip(
+            std::ranges::views::reverse(ret),
+            std::ranges::views::reverse(buf)
+                | std::ranges::views::drop(1)
+                | std::ranges::views::take(ret.size())
+        )) {
+            if(ch == '.') {
+                r |= dp_or_mask;
+                return ret;
+            }
+        }
 
         return ret;
     }
