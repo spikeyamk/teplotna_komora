@@ -8,7 +8,7 @@ namespace sens {
 namespace dht {
 	static constexpr Model MODEL { Model::DHT11 };
 
-	void Extension::set_pin_output(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin) {
+	void Extension::set_pin_output() {
 		GPIO_InitTypeDef GPIO_InitStruct {
 			.Pin = pin,
 			.Mode = GPIO_MODE_OUTPUT_PP,
@@ -16,10 +16,10 @@ namespace dht {
 			.Speed = GPIO_SPEED_FREQ_LOW,
 			.Alternate = 0,
 		};
-		HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+		HAL_GPIO_Init(port, &GPIO_InitStruct);
 	}
 
-	void Extension::set_pin_input(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin) {
+	void Extension::set_pin_input() {
 		GPIO_InitTypeDef GPIO_InitStruct {
 			.Pin = pin,
 			.Mode = GPIO_MODE_INPUT,
@@ -27,19 +27,21 @@ namespace dht {
 			.Speed = GPIO_SPEED_FREQ_LOW,
 			.Alternate = 0,
 		};
-		HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+		HAL_GPIO_Init(port, &GPIO_InitStruct);
 	}
 
 	void Extension::start() {
-		set_pin_output(port, pin);  // set the pin as output
+		set_pin_output();  // set the pin as output
 		HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);   // pull the pin low
-		if constexpr(MODEL == Model::DHT11) {
+		if(MODEL == Model::DHT11) {
 			util::microsec_blocking_delay(18000);   // wait for 18ms
+		} else {
+			util::microsec_blocking_delay(1200);   // wait for 18ms
 		}
 
 		HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);   // pull the pin high
 		util::microsec_blocking_delay(20);   // wait for 30us
-		set_pin_input(port, pin);    // set as input
+		set_pin_input();    // set as input
 	}
 
 	uint8_t Extension::check_response() {

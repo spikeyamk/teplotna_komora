@@ -34,8 +34,8 @@ namespace dht {
 			pin { pin }
 		{}
 	private:
-		void set_pin_output(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin);
-        void set_pin_input(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin);
+		void set_pin_output();
+        void set_pin_input();
         void start();
         uint8_t check_response();
         uint8_t read();

@@ -14,13 +14,12 @@ extern "C" int __io_putchar(int ch) {
 
 extern "C" int _write(int file, char *ptr, int len) {
     (void)file;
-    int DataIdx;
 
     if(xPortIsInsideInterrupt() == false) {
         comm::usb_uart::RedirectStdout::get_instance().acquire_mutex();
     }
 
-    for(DataIdx = 0; DataIdx < len; DataIdx++) {
+    for(int i = 0; i < len; i++) {
         if(xPortIsInsideInterrupt()) {
             const HAL_StatusTypeDef ret_err { comm::usb_uart::RedirectStdout::get_instance().transmit(*ptr++) };
             if(ret_err != HAL_OK) {

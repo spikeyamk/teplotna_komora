@@ -12,7 +12,7 @@ namespace util {
 
         do {
             const uint32_t start = SysTick->VAL;
-            const uint32_t ticks = (us * SYSTICK_LOAD)-SYSTICK_DELAY_CALIB;
+            const uint32_t ticks = (us * SYSTICK_LOAD) - SYSTICK_DELAY_CALIB;
             while((start - SysTick->VAL) < ticks);
         } while (0);
     }

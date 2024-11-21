@@ -4,6 +4,7 @@ add_library(${SUBMODULE_NAME} ${SUBMODULE_SOURCE_FILES})
 target_include_directories(${SUBMODULE_NAME} PUBLIC "include")
 target_link_libraries(${SUBMODULE_NAME} PUBLIC
     bksram
+    sml
 )
 target_link_libraries(${SUBMODULE_NAME} PRIVATE
     stm32cubef2
