@@ -9,7 +9,8 @@ Intro
 - **CMake** >= v3.22.0
 - **Ninja** >= v1.11.0
 - **gcc-arm-none-eabi** >= v12.3.0
-- **Doxygen** >= 1.12.0 (optional for docs generation)
+- **Doxygen** >= v1.12.0 (optional for docs generation)
+- **Graphviz** >= v12.2.0 (optional for docs generation)
 - **PuTTY, Minicom** or similar program to read serial COM port
 - **STM32CubeProg** >= v2.17.0 used for flashing FW
 - **STM32CubeIDE** (optional Eclipse based IDE used for programming and debugging STM32 projects)
@@ -19,7 +20,7 @@ Intro
 
 You can use the `winget` pkg manager to get the previously mentioned prerequisites via command:
 ```
-winget install Kitware.CMake Ninja-build.Ninja Arm.GnuArmEmbeddedToolchain DimitriVanHeesch.Doxygen PuTTY.PuTTY
+winget install Kitware.CMake Ninja-build.Ninja Arm.GnuArmEmbeddedToolchain DimitriVanHeesch.Doxygen PuTTY.PuTTY Graphviz.Graphviz
 ```
 
 Make sure to reload the PowerShell session after installation, or add any additional missing installation directories to your `$env:PATH`. Alternatively, run the PowerShell script under `misc\env.ps1`, which temporarily adds `gcc-arm-none-eabi` and `STM32CubeProg` (installed in default locations) to your `$env:PATH`.
@@ -27,7 +28,7 @@ Make sure to reload the PowerShell session after installation, or add any additi
 #### Installation Ubuntu
 
 ```
-# apt install cmake ninja gcc-arm-none-eabi doxygen minicom
+# apt install cmake ninja gcc-arm-none-eabi doxygen graphviz minicom
 ```
 
 #### STM32Cube Installation

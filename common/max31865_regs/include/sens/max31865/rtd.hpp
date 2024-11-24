@@ -22,7 +22,6 @@ namespace max31865 {
             fault { Masks::RTD_LSBs::Fault::Or::NOFAULT }
         {}
 
-
         constexpr RTD(const std::array<std::bitset<8>, 2>& serialized) :
             adc_code { serialized },
             fault { (serialized[1][0] == true) ? Masks::RTD_LSBs::Fault::Or::FAULT : Masks::RTD_LSBs::Fault::Or::NOFAULT }

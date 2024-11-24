@@ -4,6 +4,13 @@
 #include <boost/sml.hpp>
 
 namespace util {
+    /** Sender class. Can be used to send a command to the server.
+     *  The receiver will acknowledge the command by calling Ack().
+     *  \startuml
+     *    Sender->Receiver  : Command()
+     *    Sender<--Receiver : Ack()
+     *  \enduml
+     */
     class SML_Logger {
     public:
         template<class SM, class TEvent>

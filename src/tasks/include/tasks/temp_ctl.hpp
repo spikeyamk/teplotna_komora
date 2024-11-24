@@ -131,16 +131,21 @@ namespace tasks {
         struct Algorithms {
             struct Detail {
                 template<auto current_source_set_func, auto hbridge_set_func>
-                static constexpr auto control = [](
-                    const actu::peltier::hbridge::State hbridge_state,
-                    const actu::peltier::current_source::uint12_t dac_code
-                ) {
-                    current_source_set_func(dac_code);
-                    hbridge_set_func(hbridge_state);
+                class ControlFunctor {
+                public:
+                    ControlFunctor() = delete;
+
+                    static void run(
+                        const actu::peltier::hbridge::State hbridge_state,
+                        const actu::peltier::current_source::uint12_t dac_code
+                    ) {
+                        current_source_set_func(dac_code);
+                        hbridge_set_func(hbridge_state);
+                    }
                 };
 
-                static constexpr auto control_front = control<actu::peltier::current_source::front::set, actu::peltier::hbridge::front::set_state>;
-                static constexpr auto control_rear = control<actu::peltier::current_source::rear::set, actu::peltier::hbridge::rear::set_state>;
+                using ControlFront = ControlFunctor<actu::peltier::current_source::front::set, actu::peltier::hbridge::front::set_state>;
+                using ControlRear = ControlFunctor<actu::peltier::current_source::rear::set, actu::peltier::hbridge::rear::set_state>;
 
                 class AlgorithmFunctor {
                 public:
@@ -185,7 +190,7 @@ namespace tasks {
                     }
                 };
 
-                template<auto control_specialized, const uint32_t k_p>
+                template<typename Control, const uint32_t k_p>
                 class P_Algorithm : public AlgorithmFunctor {
                 public:
                     using Base = AlgorithmFunctor;
@@ -194,19 +199,19 @@ namespace tasks {
 
                         switch(this->get_action()) {
                             default:
-                                control_specialized(
+                                Control::run(
                                     actu::peltier::hbridge::State::Off,
                                     0
                                 );
                                 return;
                             case Base::ActionType::ShouldHeat:
-                                control_specialized(
+                                Control::run(
                                     actu::peltier::hbridge::State::Heat,
                                     heat_transfer_function()
                                 );
                                 return;
                             case Base::ActionType::ShouldCool:
-                                control_specialized(
+                                Control::run(
                                     actu::peltier::hbridge::State::Cool,
                                     cool_transfer_function()
                                 );
@@ -256,21 +261,21 @@ namespace tasks {
                     }
                 };
 
-                template<auto control_specialized, const uint32_t k_p, const uint32_t k_d>
+                template<typename Control, const uint32_t k_p, const uint32_t k_d>
                 class PD_Algorithm : public AlgorithmFunctor {
                 public:
                     void run() {
                         this->pid.d = this->derr();
                         this->pid.p = this->err();
 
-                        control_specialized(
+                        Control::run(
                             actu::peltier::hbridge::State::Off,
                             0
                         );
                     }
                 };
 
-                template<auto control_specialized, const uint32_t k_p, const uint32_t k_i>
+                template<typename Control, const uint32_t k_p, const uint32_t k_i>
                 class PI_Algorithm : public AlgorithmFunctor {
                 public:
                     using Base = AlgorithmFunctor;
@@ -280,19 +285,19 @@ namespace tasks {
 
                         switch(this->get_action()) {
                             default:
-                                control_specialized(
+                                Control::run(
                                     actu::peltier::hbridge::State::Off,
                                     0
                                 );
                                 return;
                             case Base::ActionType::ShouldHeat:
-                                control_specialized(
+                                Control::run(
                                     actu::peltier::hbridge::State::Heat,
                                     heat_proportional_transfer_function() + heat_integral_transfer_function()
                                 );
                                 return;
                             case Base::ActionType::ShouldCool:
-                                control_specialized(
+                                Control::run(
                                     actu::peltier::hbridge::State::Cool,
                                     cool_proportional_transfer_function()
                                 );
@@ -364,7 +369,7 @@ namespace tasks {
                     }
                 };
 
-                template<auto control_specialized, const uint32_t k_p, const uint32_t k_i, const uint32_t k_d>
+                template<typename Control, const uint32_t k_p, const uint32_t k_i, const uint32_t k_d>
                 class PID_Algorithm : public AlgorithmFunctor {
                 public:
                     void run() {
@@ -372,18 +377,18 @@ namespace tasks {
                         this->pid.i = this->ierr();
                         this->pid.p = this->err();
 
-                        control_specialized(
+                        Control::run(
                             actu::peltier::hbridge::State::Off,
                             0
                         );
                     }
                 };
 
-                template<auto control_specialized>
+                template<typename Control>
                 class PBIN_Algorithm : public AlgorithmFunctor {
                 public:
                     void run() {
-                        control_specialized(
+                        Control::run(
                             this->actual_rtd.adc_code.value > this->configuration.desired_rtd.adc_code.value
                             ? actu::peltier::hbridge::State::Cool
                             : actu::peltier::hbridge::State::Heat,
@@ -392,16 +397,16 @@ namespace tasks {
                     }
                 };
                 
-                template<auto control_specialized>
+                template<typename Control>
                 class ManOpAlgorithm : public AlgorithmFunctor {
                 public:
                     void run() {
-                        control_specialized(
-                            control_specialized == control_front
+                        Control::run(
+                            std::is_same_v<Control, ControlFront>
                             ? this->configuration.hbridge_front
                             : this->configuration.hbridge_rear
                             ,
-                            control_specialized == control_front
+                            std::is_same_v<Control, ControlRear>
                             ? this->configuration.dac_front
                             : this->configuration.dac_rear
                         );
@@ -431,33 +436,33 @@ namespace tasks {
             };
 
             struct Usings {
-                using P_AlgorithmFront = Detail::P_Algorithm<Detail::control_front, 1>;
-                using P_AlgorithmRear = Detail::P_Algorithm<Detail::control_rear, 1>;
+                using P_AlgorithmFront = Detail::P_Algorithm<Detail::ControlFront, 1>;
+                using P_AlgorithmRear = Detail::P_Algorithm<Detail::ControlRear, 1>;
 
-                using PI_AlgorithmFront = Detail::PI_Algorithm<Detail::control_front, 1, 1>;
-                using PI_AlgorithmRear = Detail::PI_Algorithm<Detail::control_rear, 1, 1>;
+                using PI_AlgorithmFront = Detail::PI_Algorithm<Detail::ControlFront, 1, 1>;
+                using PI_AlgorithmRear = Detail::PI_Algorithm<Detail::ControlRear, 1, 1>;
 
-                using PD_AlgorithmFront = Detail::PD_Algorithm<Detail::control_front, 1, 1>;
-                using PD_AlgorithmRear = Detail::PD_Algorithm<Detail::control_rear, 1, 1>;
+                using PD_AlgorithmFront = Detail::PD_Algorithm<Detail::ControlFront, 1, 1>;
+                using PD_AlgorithmRear = Detail::PD_Algorithm<Detail::ControlRear, 1, 1>;
 
-                using PID_AlgorithmFront = Detail::PID_Algorithm<Detail::control_front, 1, 1, 1>;
-                using PID_AlgorithmRear = Detail::PID_Algorithm<Detail::control_rear, 1, 1, 1>;
+                using PID_AlgorithmFront = Detail::PID_Algorithm<Detail::ControlFront, 1, 1, 1>;
+                using PID_AlgorithmRear = Detail::PID_Algorithm<Detail::ControlRear, 1, 1, 1>;
 
-                using PBIN_AlgorithmFront = Detail::PBIN_Algorithm<Detail::control_front>;
-                using PBIN_AlgorithmRear = Detail::PBIN_Algorithm<Detail::control_rear>;
+                using PBIN_AlgorithmFront = Detail::PBIN_Algorithm<Detail::ControlFront>;
+                using PBIN_AlgorithmRear = Detail::PBIN_Algorithm<Detail::ControlRear>;
 
-                using ManOpAlgorithmFront = Detail::ManOpAlgorithm<Detail::control_front>;
-                using ManOpAlgorithmRear = Detail::ManOpAlgorithm<Detail::control_rear>;
+                using ManOpAlgorithmFront = Detail::ManOpAlgorithm<Detail::ControlFront>;
+                using ManOpAlgorithmRear = Detail::ManOpAlgorithm<Detail::ControlRear>;
             };
 
             class Pairs {
             public:
-                using P_Pair = Detail::AlgorithmPair<Usings::P_AlgorithmFront, Usings::P_AlgorithmRear>;
-                using PI_Pair = Detail::AlgorithmPair<Usings::PI_AlgorithmFront, Usings::PI_AlgorithmRear>;
-                using PD_Pair = Detail::AlgorithmPair<Usings::PD_AlgorithmFront, Usings::PD_AlgorithmRear>;
-                using PID_Pair = Detail::AlgorithmPair<Usings::PID_AlgorithmFront, Usings::PID_AlgorithmRear>;
-                using FullPowerPair = Detail::AlgorithmPair<Usings::PBIN_AlgorithmFront, Usings::PBIN_AlgorithmRear>;
-                using ManOpPair = Detail::AlgorithmPair<Usings::ManOpAlgorithmFront, Usings::ManOpAlgorithmRear>;
+                using P_Pair = ::tasks::TempCtl::Algorithms::Detail::AlgorithmPair<Usings::P_AlgorithmFront, Usings::P_AlgorithmRear>;
+                using PI_Pair = ::tasks::TempCtl::Algorithms::Detail::AlgorithmPair<Usings::PI_AlgorithmFront, Usings::PI_AlgorithmRear>;
+                using PD_Pair = ::tasks::TempCtl::Algorithms::Detail::AlgorithmPair<Usings::PD_AlgorithmFront, Usings::PD_AlgorithmRear>;
+                using PID_Pair = ::tasks::TempCtl::Algorithms::Detail::AlgorithmPair<Usings::PID_AlgorithmFront, Usings::PID_AlgorithmRear>;
+                using FullPowerPair = ::tasks::TempCtl::Algorithms::Detail::AlgorithmPair<Usings::PBIN_AlgorithmFront, Usings::PBIN_AlgorithmRear>;
+                using ManOpPair = ::tasks::TempCtl::Algorithms::Detail::AlgorithmPair<Usings::ManOpAlgorithmFront, Usings::ManOpAlgorithmRear>;
 
                 using Variant = std::variant<
                     P_Pair*,

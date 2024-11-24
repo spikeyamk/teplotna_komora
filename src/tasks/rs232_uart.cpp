@@ -4,11 +4,11 @@
 #include <cassert>
 #include <boost/sml.hpp>
 
-#include "bksram/bksram.hpp"
 #include "actu/peltier/peltier.hpp"
-#include "tasks/senser_killer.hpp"
 #include "tasks/panel.hpp"
 #include "tasks/rs232_uart.hpp"
+#include "tasks/temp_ctl.hpp"
+#include "tasks/senser_killer.hpp"
 
 namespace tasks {
     RS232_UART& RS232_UART::get_instance() {
@@ -44,9 +44,21 @@ namespace tasks {
 
     void RS232_UART::Connection::Actions::read_temp_ctl(const RS232_UART& self) {
         self.transmit(magic::results::ReadTempCtl {
-            .max31865_front = SenserKiller::get_instance().rtd_front.adc_code.value.unwrap(),
-            .max31865_rear = SenserKiller::get_instance().rtd_rear.adc_code.value.unwrap(),
-            .dac_front = (
+            .max31865_front = []() {
+                uint16_t ret { 0 };
+                std::visit([&ret](auto&& algo) {
+                    ret = algo->front.actual_rtd.adc_code.value.unwrap();
+                }, *TempCtl::get_instance().algorithm_pairs.active_pair);
+                return ret;
+            }(),
+            .max31865_rear = []() {
+                uint16_t ret { 0 };
+                std::visit([&ret](auto&& algo) {
+                    ret = algo->rear.actual_rtd.adc_code.value.unwrap();
+                }, *TempCtl::get_instance().algorithm_pairs.active_pair);
+                return ret;
+            }(),
+            .dac_front = static_cast<int16_t>(
                 actu::peltier::hbridge::front::get_state() == actu::peltier::hbridge::State::Off
                     ? 0
                     : (
@@ -55,7 +67,7 @@ namespace tasks {
                             : -static_cast<int16_t>(actu::peltier::current_source::front::get_code().unwrap())
                     )
             ),
-            .dac_rear = (
+            .dac_rear = static_cast<int16_t>(
                 actu::peltier::hbridge::rear::get_state() == actu::peltier::hbridge::State::Off
                     ? 0
                     : (
@@ -66,6 +78,48 @@ namespace tasks {
             ),
             .sht31_inside = SenserKiller::get_instance().temp_hum_inside.temp_raw,
             .sht31_outside = SenserKiller::get_instance().temp_hum_outside.temp_raw,
+            .p_front = []() {
+                int32_t ret { 0 };
+                std::visit([&ret](auto&& algo) {
+                    ret = algo->front.pid.p;
+                }, *TempCtl::get_instance().algorithm_pairs.active_pair);
+                return ret;
+            }(),
+            .i_front = []() {
+                int32_t ret { 0 };
+                std::visit([&ret](auto&& algo) {
+                    ret = algo->front.pid.i;
+                }, *TempCtl::get_instance().algorithm_pairs.active_pair);
+                return ret;
+            }(),
+            .d_front = []() {
+                int32_t ret { 0 };
+                std::visit([&ret](auto&& algo) {
+                    ret = algo->front.pid.d;
+                }, *TempCtl::get_instance().algorithm_pairs.active_pair);
+                return ret;
+            }(),
+            .p_rear = []() {
+                int32_t ret { 0 };
+                std::visit([&ret](auto&& algo) {
+                    ret = algo->rear.pid.p;
+                }, *TempCtl::get_instance().algorithm_pairs.active_pair);
+                return ret;
+            }(),
+            .i_rear = []() {
+                int32_t ret { 0 };
+                std::visit([&ret](auto&& algo) {
+                    ret = algo->rear.pid.i;
+                }, *TempCtl::get_instance().algorithm_pairs.active_pair);
+                return ret;
+            }(),
+            .d_rear = []() {
+                int32_t ret { 0 };
+                std::visit([&ret](auto&& algo) {
+                    ret = algo->rear.pid.d;
+                }, *TempCtl::get_instance().algorithm_pairs.active_pair);
+                return ret;
+            }(),
         });
     }
 
