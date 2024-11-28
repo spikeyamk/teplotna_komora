@@ -22,4 +22,19 @@ endif()
 
 add_library(${SUBDIRECTORY_NAME} ${SUBDIRECTORY_SOURCES})
 target_include_directories(${SUBDIRECTORY_NAME} PUBLIC "include")
-target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC serde)
+target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE stm32cubef2 trielo)
+target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
+    actu::fan_ctl
+    actu::fan_broiler
+    actu::pump
+    util
+    sml
+    magic
+    sens::max31865_driver
+    sens::sht31_driver
+    actu::peltier
+    panel::sevseg_common
+    panel::sevseg_green_yellow
+    panel::sevseg_white
+    comm::rs232_uart
+)

@@ -1,0 +1,42 @@
+#pragma once
+
+#include <boost/sml.hpp>
+
+#include "magic/commands/commands.hpp"
+#include "comm/rs232_uart/states.hpp"
+#include "comm/rs232_uart/guards.hpp"
+#include "comm/rs232_uart/actions.hpp"
+
+namespace comm {
+namespace rs232_uart {
+    /*
+     * @brief Represents the connection with states and transitions.
+     *
+     * This class implements a state machine for handling connections,
+     * including idle, connected, and disconnected states. Actions and guards are
+     * defined for transitions between these states.
+     * 
+    */
+    template<typename T>
+    class Connection {
+    public:
+        using Channel = T;
+
+        Connection() = default;
+        auto operator()() const {
+            using namespace boost::sml;
+            using namespace magic;
+            return make_transition_table(
+                *state<states::Idle> / actions::WaitUntilChannelNotEmpty<Channel>() = state<states::Disconnected>,
+
+                state<states::Disconnected> [guards::ChannelEmpty<Channel>()] = state<states::Idle>,
+                state<states::Disconnected> + event<commands::Connect> / actions::Connect() = state<states::Connected>,
+
+                state<states::Connected> + event<commands::Disconnect> / actions::Disconnect() = state<states::Disconnected>,
+                state<states::Connected> + event<commands::Nop> / actions::Nop() = state<states::Connected>,
+                state<states::Connected> + event<commands::ReadTempCtl> / actions::ReadTempCtl() = state<states::Connected>
+            );
+        }
+    };
+}
+}
