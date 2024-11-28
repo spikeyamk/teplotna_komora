@@ -1,33 +1,36 @@
 #pragma once
 
 #include "comm/rs232_uart/channel.hpp"
+#include "comm/rs232_uart/transmitter_base.hpp"
 
 namespace comm {
 namespace rs232_uart {
 namespace actions {
-    template<typename T>
+    template<typename T, typename U = void, typename V = void>
     struct WaitUntilChannelNotEmpty {
         void operator()(T& channel) const {
-            std::cout << "WaitUntilChannelNotEmpty started\n";
             channel.wait_until_not_empty();
-            std::cout << "WaitUntilChannelNotEmpty finished\n";
         }
     };
 
+    template<typename T>
     struct Connect {
-        void operator()() const;
+        void operator()(const TransmitterBase<T>& transmitter) const;
     };
 
+    template<typename T>
     struct Disconnect {
-        void operator()() const;
+        void operator()(const TransmitterBase<T>& transmitter) const;
     };
 
+    template<typename T>
     struct Nop {
-        void operator()() const;
+        void operator()(const TransmitterBase<T>& transmitter) const;
     };
 
+    template<typename T>
     struct ReadTempCtl {
-        void operator()() const;
+        void operator()(const TransmitterBase<T>& transmitter) const;
     };
 }
 }

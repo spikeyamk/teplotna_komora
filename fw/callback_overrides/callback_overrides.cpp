@@ -7,6 +7,7 @@
 #include "tasks/senser_killer.hpp"
 #include "tasks/rs232_uart.hpp"
 #include "panel/button/button.hpp"
+#include "magic/commands/serializer.hpp"
 
 extern "C" int __io_putchar(int ch) {
     return comm::RedirectStdout::get_instance().transmit(ch);

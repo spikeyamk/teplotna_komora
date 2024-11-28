@@ -10,4 +10,5 @@ target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
     panel::button
     comm::redirect_stdout
     tasks
+    magic
 )

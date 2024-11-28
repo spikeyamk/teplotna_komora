@@ -2,22 +2,11 @@
 
 namespace comm {
 namespace rs232_uart {
-namespace actions {
-    void Connect::operator()() const {
-
-    }
-
-    void Disconnect::operator()() const {
-
-    }
-
-    void Nop::operator()() const {
-
-    }
-
-    void ReadTempCtl::operator()() const {
-
-    }
-}
+    template<typename T>
+    struct WaitUntilChannelNotEmpty {
+        void operator()(T& channel) const {
+            channel.wait_until_not_empty();
+        }
+    };
 }
 }

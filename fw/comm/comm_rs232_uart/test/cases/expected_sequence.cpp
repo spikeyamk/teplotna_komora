@@ -2,5 +2,5 @@
 #include "comm/rs232_uart/test.hpp"
 
 int main() {
-    return Trielo::trielo<comm::rs232_uart::test::normal_sequence>();
+    return Trielo::trielo<comm::rs232_uart::test::expected_sequence>();
 }

@@ -3,12 +3,16 @@
 #include <boost/sml.hpp>
 
 #include "magic/commands/commands.hpp"
-#include "comm/rs232_uart/states.hpp"
 #include "comm/rs232_uart/guards.hpp"
 #include "comm/rs232_uart/actions.hpp"
 
 namespace comm {
 namespace rs232_uart {
+namespace states {
+    struct Idle {};
+    struct Disconnected {};
+    struct Connected {};
+}
     /*
      * @brief Represents the connection with states and transitions.
      *
@@ -17,10 +21,11 @@ namespace rs232_uart {
      * defined for transitions between these states.
      * 
     */
-    template<typename T>
+    template<typename T, typename U>
     class Connection {
     public:
         using Channel = T;
+        using Transmitter = U;
 
         Connection() = default;
         auto operator()() const {
@@ -30,11 +35,12 @@ namespace rs232_uart {
                 *state<states::Idle> / actions::WaitUntilChannelNotEmpty<Channel>() = state<states::Disconnected>,
 
                 state<states::Disconnected> [guards::ChannelEmpty<Channel>()] = state<states::Idle>,
-                state<states::Disconnected> + event<commands::Connect> / actions::Connect() = state<states::Connected>,
+                state<states::Disconnected> + event<commands::Connect> / actions::Connect<Transmitter>() = state<states::Connected>,
 
-                state<states::Connected> + event<commands::Disconnect> / actions::Disconnect() = state<states::Disconnected>,
-                state<states::Connected> + event<commands::Nop> / actions::Nop() = state<states::Connected>,
-                state<states::Connected> + event<commands::ReadTempCtl> / actions::ReadTempCtl() = state<states::Connected>
+                state<states::Connected> + event<commands::Disconnect> / actions::Disconnect<Transmitter>() = state<states::Disconnected>,
+                state<states::Connected> + event<commands::Connect> / actions::Disconnect<Transmitter>() = state<states::Disconnected>,
+                state<states::Connected> + event<commands::Nop> / actions::Nop<Transmitter>() = state<states::Connected>,
+                state<states::Connected> + event<commands::ReadTempCtl> / actions::ReadTempCtl<Transmitter>() = state<states::Connected>
             );
         }
     };

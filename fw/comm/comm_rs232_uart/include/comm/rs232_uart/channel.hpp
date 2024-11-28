@@ -2,28 +2,10 @@
 
 #include "util/tmp.hpp"
 #include "magic/commands/deserializer.hpp"
+#include "comm/rs232_uart/semaphore_base.hpp"
 
 namespace comm {
 namespace rs232_uart {
-    template<typename T>
-    class SemaphoreBase {
-    public:
-        using Derived = T;
-        using CRTP = SemaphoreBase<Derived>;
-    public:
-        void release() {
-            static_cast<Derived&>(*this).release();
-        }
-
-        void acquire() {
-            static_cast<Derived&>(*this).acquire();
-        }
-
-        bool try_acquire_for(const uint32_t timeout_ms) {
-            return static_cast<Derived&>(*this).try_acquire_for(timeout_ms);
-        }
-    };
-
     template<typename T>
     requires std::is_base_of_v<SemaphoreBase<typename T::Derived>, T>
     class Channel {
@@ -52,13 +34,11 @@ namespace rs232_uart {
         }
 
         std::optional<EventVariant> pop_for(const uint32_t timeout_ms) {
-            if((sem.try_acquire_for(timeout_ms) == false) || empty()) {
-                std::cout << "pop_for: channel is empty returning nullopt...\n";
+            if(empty() && (sem.try_acquire_for(timeout_ms) == false)) {
                 return std::nullopt;
             }
             const std::optional<EventVariant> ret = event_variant;
             event_variant = std::nullopt;
-            std::cout << "pop_for: emptying channel...\n";
             return ret;
         }
     };
