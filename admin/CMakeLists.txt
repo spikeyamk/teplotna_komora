@@ -3,8 +3,6 @@ project(admin CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-enable_testing()
-
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -21,10 +19,31 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/trielo trielo)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/bitint bitint)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/3rdparty/pfr pfr)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/serde serde)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../deps/3rdparty/sml sml)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../common common)
-add_subdirectory(deps)
-add_subdirectory(src)
+
+add_executable(${CMAKE_PROJECT_NAME}
+    main.cpp
+    to_json.cpp
+    main_window.cpp
+    console.cpp
+    control.cpp
+    charts.cpp
+    transceiver.cpp
+)
+
+target_link_libraries(${CMAKE_PROJECT_NAME}
+    magic
+    trielo
+    bitint
+    sens::max31865_regs
+    sens::sht31_regs
+
+    Qt6::Core
+    Qt6::Charts
+    Qt6::Gui
+    Qt6::SerialPort
+    Qt6::Widgets
+)
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -32,13 +51,4 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
     elseif(MSVC)
         target_compile_options(${PROJECT_NAME} PRIVATE /W4)
     endif()
-endif()
-
-find_package(Doxygen)
-
-if(DOXYGEN_FOUND)
-    include("cmake/enable_doxygen.cmake")
-    enable_doxygen()
-else()
-    message(WARNING "Doxygen not found. Documentation will not be generated.")
 endif()

@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <algorithm>
+#include <chrono>
 
 #include "magic/commands/commands.hpp"
 #include "magic/commands/serializer.hpp"
@@ -12,5 +13,5 @@
 
 namespace magic {
     static constexpr size_t MTU { std::max(commands::Pack::max_size(), results::Pack::max_size()) };
-    static constexpr uint32_t TIMEOUT_MS { 100 };
+    static constexpr std::chrono::milliseconds DISCONNECT_TIMEOUT { 500 };
 }

@@ -22,5 +22,4 @@ endif()
 
 add_library(${SUBDIRECTORY_NAME} ${SUBDIRECTORY_SOURCES})
 target_include_directories(${SUBDIRECTORY_NAME} PUBLIC "include")
-target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE trielo)
 target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC serde)

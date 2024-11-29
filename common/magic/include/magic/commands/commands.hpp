@@ -8,17 +8,12 @@ namespace commands {
     struct Disconnect {};
     struct Nop {};
 
-    struct WriteTemp {
-        float value;
-    };
-
     struct ReadTempCtl {};
 
     using Pack = Serde::pack_holder<
         Connect,
         Disconnect,
         Nop,
-        WriteTemp,
         ReadTempCtl
     >;
 }
