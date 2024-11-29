@@ -87,10 +87,10 @@ namespace tasks {
         TempCtl();
     public:
         Controller::Events::Configuration configuration {
-            .desired_rtd = 40.0f,
+            .desired_rtd = 50.0f,
             .broiler = false,
             .pump = false,
-            .fan_max_rpm = actu::fan::ctl::SpeedPercentage(20),
+            .fan_max_rpm = actu::fan::ctl::SpeedPercentage(30),
             .algorithm = Algorithm::P,
             .dac_front = 0,
             .dac_rear = 0,
@@ -199,12 +199,18 @@ namespace tasks {
                     using Base = AlgorithmFunctor;
                     void run() {
                         this->pid.p = this->err();
+
                         const ActionType action_type { get_action() };
                         if(action_type == ActionType::ShouldHeat) {
                             const float k_p_heat { 20.0f };
                             Control::run(
                                 actu::peltier::hbridge::State::Heat,
                                 static_cast<uint16_t>(std::min(std::max(k_p_heat * this->pid.p, 0.0f), 4095.0f))
+                            );
+                        } else {
+                            Control::run(
+                                actu::peltier::hbridge::State::Off,
+                                0
                             );
                         }
 
@@ -265,25 +271,22 @@ namespace tasks {
                         this->pid.i += this->err();
                         this->pid.p = this->err();
 
-                        switch(this->get_action()) {
-                            default:
-                                Control::run(
-                                    actu::peltier::hbridge::State::Off,
-                                    0
-                                );
-                                return;
-                            case Base::ActionType::ShouldHeat:
-                                Control::run(
-                                    actu::peltier::hbridge::State::Heat,
-                                    heat_proportional_transfer_function() + heat_integral_transfer_function()
-                                );
-                                return;
-                            case Base::ActionType::ShouldCool:
-                                Control::run(
-                                    actu::peltier::hbridge::State::Cool,
-                                    cool_proportional_transfer_function()
-                                );
-                                return;
+                        const ActionType action_type { get_action() };
+                        if(action_type == ActionType::ShouldHeat) {
+                            const float k_p_heat { 20.0f };
+                            const float k_i_heat { 0.000'5f };
+                            Control::run(
+                                actu::peltier::hbridge::State::Heat,
+                                static_cast<uint16_t>(std::min(std::max(
+                                    (k_p_heat * this->pid.p) + (k_i_heat * this->pid.i),
+                                    0.0f
+                                ), 4095.0f))
+                            );
+                        } else {
+                            Control::run(
+                                actu::peltier::hbridge::State::Off,
+                                0
+                            );
                         }
                     }
 
@@ -354,15 +357,53 @@ namespace tasks {
                 template<typename Control, const uint32_t k_p, const uint32_t k_i, const uint32_t k_d>
                 class PID_Algorithm : public AlgorithmFunctor {
                 public:
+                    std::array<float, 1'000> err_samples { 0.0f };
+                    decltype(err_samples.begin()) filler_it { err_samples.begin() };
+                    decltype(err_samples.begin()) old_it { err_samples.begin() };
+                public:
+                    void reset() {
+                        filler_it = err_samples.begin();
+                    }
+
                     void run() {
-                        this->pid.d = this->derr();
-                        this->pid.i = this->ierr();
+                        this->pid.i += this->err();
                         this->pid.p = this->err();
 
-                        Control::run(
-                            actu::peltier::hbridge::State::Off,
-                            0
-                        );
+                        if(filler_it != err_samples.end()) {
+                            *filler_it = this->pid.p;
+                            filler_it++;
+
+                            this->pid.d = this->pid.p - *old_it;
+                        } else {
+                            this->pid.d = this->pid.p - *old_it;
+                            *old_it = this->pid.p;
+                            old_it++;
+                            if(old_it == err_samples.end()) {
+                                old_it = err_samples.begin();
+                            }
+                        }
+
+                        const ActionType action_type { get_action() };
+                        if(action_type == ActionType::ShouldHeat) {
+                            const float k_p_heat { 15.0f };
+                            const float k_i_heat { 0.000'35f };
+                            const float k_d_heat { 12.0f }; // making this higher than this introduced SSE higher than desired RTD i.e. 0.9 °C with 20.0f
+
+                            Control::run(
+                                actu::peltier::hbridge::State::Heat,
+                                static_cast<uint16_t>(std::min(std::max(
+                                    (k_p_heat * this->pid.p)
+                                    + (k_i_heat * this->pid.i)
+                                    + (k_d_heat * this->pid.d)
+                                    ,0.0f
+                                ), 4095.0f))
+                            );
+                        } else {
+                            Control::run(
+                                actu::peltier::hbridge::State::Off,
+                                0
+                            );
+                        }
                     }
                 };
 

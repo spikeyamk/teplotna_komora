@@ -161,7 +161,7 @@ namespace admin {
     void Control::periodic() {
         one_shot_button->setEnabled(false);
         periodic_button->setEnabled(false);
-        periodic_timer->start(std::chrono::milliseconds(50));
+        periodic_timer->start(magic::DISCONNECT_TIMEOUT / 2);
     }
 
     void Control::update_serial_port_info_combo_box_enabled() {

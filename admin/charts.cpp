@@ -157,6 +157,10 @@ namespace admin {
     }
 
     void Charts::autoscale_axes(QChart* chart, QLineSeries* first_series, QLineSeries* second_series) {
+        if(first_series->points().isEmpty() || second_series->points().isEmpty()) {
+            return;
+        }
+
         QValueAxis* axis_x = dynamic_cast<QValueAxis*>(chart->axes(Qt::Horizontal).first());
         const qreal last_max_x { std::max(first_series->points().back().x(), second_series->points().back().x()) };
         if(last_max_x > axis_x->max()) {

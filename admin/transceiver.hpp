@@ -24,12 +24,15 @@ namespace admin {
     private:
         QSerialPort* serial_port;
         QTimer* nop_timer;
+        QTimer* periodic_timer;
         QMutex mutex;
     public:
         using CommandVariant = magic::commands::Deserializer::Variant;
         using ResultVariant = magic::results::Deserializer::Variant;
         using CommandResultPair = std::pair<CommandVariant, ResultVariant>;
-
+    private: 
+        std::optional<CommandResultPair> periodic_command_result_pair { std::nullopt };
+    public:
         enum class Error {
             ConnectIsConnected,
             ConnectSerialPortCantOpen,
@@ -42,6 +45,7 @@ namespace admin {
             NopTimerTrasmitFailed,
 
             CommandIsNotConnected,
+            PeriodicCommandResultIsEmpty,
             CommandTrasmitFailed,
 
             TransmitWriteWrongSize,
@@ -61,6 +65,7 @@ namespace admin {
         void connect(const QString port_name);
         void disconnect();
         void one_shot(const CommandResultPair& command_result);
+        void periodic_start(const CommandResultPair& command_result);
     signals:
         void error_occured(const Error error, const QString message = "");
         void connected_changed(bool connected);
