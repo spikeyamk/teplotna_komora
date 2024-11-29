@@ -1,0 +1,2 @@
+add_subdirectory(max31865)
+add_subdirectory(sht31)

@@ -1,0 +1,14 @@
+get_filename_component(SUBDIRECTORY_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+file(GLOB SUBDIRECTORY_SOURCES "*.cpp")
+add_library(${SUBDIRECTORY_NAME} OBJECT ${SUBDIRECTORY_SOURCES})
+target_include_directories(${SUBDIRECTORY_NAME} PUBLIC "include")
+target_link_libraries(${SUBDIRECTORY_NAME} PRIVATE stm32cubef2)
+target_link_libraries(${SUBDIRECTORY_NAME} PUBLIC
+    actu::fan_fb
+    bksram
+    panel::encoder
+    panel::button
+    comm::redirect_stdout
+    tasks
+    magic
+)
