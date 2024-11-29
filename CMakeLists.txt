@@ -2,13 +2,23 @@ cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/cmake/gcc-arm-none-eabi.cmake)
 
-option(ENABLE_TESTS "Enable building of tests" OFF)
+option(ENABLE_TESTS "Enable tests suite build" OFF)
 if(ENABLE_TESTS)
     include(ExternalProject)
 endif()
-option(ENABLE_DOCS "Enable building of docs" OFF)
+option(ENABLE_DOCS "Enable docs build" OFF)
 if(ENABLE_DOCS)
     include(ExternalProject)
+endif()
+option(ENABLE_ADMIN "Enable admin build" OFF)
+if(ENABLE_ADMIN)
+    include(ExternalProject)
+    ExternalProject_Add(admin
+        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/admin
+        CMAKE_GENERATOR Ninja
+        INSTALL_COMMAND ""
+        TEST_COMMAND ""
+    )
 endif()
 
 set(CMAKE_PROJECT_NAME peltia)

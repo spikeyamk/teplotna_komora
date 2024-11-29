@@ -1,6 +1,8 @@
 #pragma once
 
 #include <variant>
+#include <cmath>
+#include <utility>
 #include <boost/sml.hpp>
 
 #include "cmsis_os2.h"
@@ -88,7 +90,7 @@ namespace tasks {
             .desired_rtd = 40.0f,
             .broiler = false,
             .pump = false,
-            .fan_max_rpm = actu::fan::ctl::SpeedPercentage(0),
+            .fan_max_rpm = actu::fan::ctl::SpeedPercentage(20),
             .algorithm = Algorithm::P,
             .dac_front = 0,
             .dac_rear = 0,
@@ -117,14 +119,14 @@ namespace tasks {
         };
 
         struct PID {
-            int32_t p { 0 };
-            int32_t i { 0 };
-            int32_t d { 0 };
+            float p { static_cast<float>(0) };
+            float i { static_cast<float>(0) };
+            float d { static_cast<float>(0) };
 
             void reset() {
-                p = 0;
-                i = 0;
-                d = 0;
+                p = static_cast<float>(0);
+                i = static_cast<float>(0);
+                d = static_cast<float>(0);
             }
         };
     public:
@@ -153,17 +155,18 @@ namespace tasks {
                     const Controller::Events::Configuration& configuration;
                     PID pid {};
                 protected:
-                    inline int32_t err() const {
-                        return
+                    inline float err() const {
+                        return static_cast<float>(
                             static_cast<int32_t>(configuration.desired_rtd.adc_code.value.unwrap())
-                            - static_cast<int32_t>(actual_rtd.adc_code.value.unwrap());
+                            - static_cast<int32_t>(actual_rtd.adc_code.value.unwrap())
+                        );
                     }
 
-                    inline int32_t derr() const {
+                    inline float derr() const {
                         return err() - pid.p;
                     }
 
-                    inline int32_t ierr() const {
+                    inline float ierr() const {
                         return pid.i + err();
                     }
 
@@ -173,7 +176,7 @@ namespace tasks {
                         Forbidden,
                     };
 
-                    ActionType get_action() {
+                    ActionType get_action() const {
                         if(
                             (configuration.desired_rtd.adc_code.value >= HEAT_MIN_DESIRED_RTD.adc_code.value)
                             && (configuration.desired_rtd.adc_code.value <= HEAT_MAX_DESIRED_RTD.adc_code.value)
@@ -196,68 +199,47 @@ namespace tasks {
                     using Base = AlgorithmFunctor;
                     void run() {
                         this->pid.p = this->err();
-
-                        switch(this->get_action()) {
-                            default:
-                                Control::run(
-                                    actu::peltier::hbridge::State::Off,
-                                    0
-                                );
-                                return;
-                            case Base::ActionType::ShouldHeat:
-                                Control::run(
-                                    actu::peltier::hbridge::State::Heat,
-                                    heat_transfer_function()
-                                );
-                                return;
-                            case Base::ActionType::ShouldCool:
-                                Control::run(
-                                    actu::peltier::hbridge::State::Cool,
-                                    cool_transfer_function()
-                                );
-                                return;
-                        }
-                    }
-                private:
-                    actu::peltier::current_source::uint12_t heat_transfer_function() {
-                        static constexpr int32_t FACTOR { 20 * 10'000 };
-
-                        if(this->err() <= 0) {
-                            return 0;
-                        } else {
-                            const int32_t tmp_result {
-                                std::abs(
-                                    (
-                                        this->err()
-                                        * FACTOR
-                                    ) / 10'000
-                                )
-                            };
-
-                            if(tmp_result > 4095) {
-                                return static_cast<uint16_t>(4095);
-                            }
-                            
-                            return tmp_result;
-                        }
-                    }
-
-                    actu::peltier::current_source::uint12_t cool_transfer_function() {
-                        if(this->err() >= 0) {
-                            return 0;
-                        } else {
-                            return static_cast<uint16_t>(
-                                std::abs(
-                                    (
-                                        this->err()
-                                        * (
-                                            (static_cast<int32_t>(bitint::ubitint<12>::max) * 10'000)
-                                            / COOL_MIN_ERR
-                                        )
-                                    ) / 10'000
-                                )
+                        const ActionType action_type { get_action() };
+                        if(action_type == ActionType::ShouldHeat) {
+                            const float k_p_heat { 20.0f };
+                            Control::run(
+                                actu::peltier::hbridge::State::Heat,
+                                static_cast<uint16_t>(std::min(std::max(k_p_heat * this->pid.p, 0.0f), 4095.0f))
                             );
                         }
+
+                        /*
+                        if(rtd_diff >= 0.0f) {
+                            const float k_p_heat { 20.0f };
+                            Control::run(
+                                actu::peltier::hbridge::State::Heat,
+                                static_cast<uint16_t>(std::min(std::max(k_p_heat * rtd_diff, 0.0f), 4095.0f))
+                            );
+                        } else {
+                            constexpr float k_p_cool { -1.0f / 4.0f };
+                            Control::run(
+                                actu::peltier::hbridge::State::Cool,
+                                static_cast<uint16_t>(std::min(std::exp(k_p_cool * rtd_diff), 4095.0f))
+                            );
+
+                            constexpr float k_p_cool { -500.0f };
+                            Control::run(
+                                actu::peltier::hbridge::State::Cool,
+
+                                static_cast<uint16_t>(std::min(std::max(k_p_heat * rtd_diff, 0.0f), 4095.0f))
+
+                                static_cast<uint16_t>(std::min(k_p_cool*std::log(-rtd_diff), 4095.0f))
+                            );
+                        }
+                        */
+                    }
+                private:
+                    std::pair<actu::peltier::hbridge::State, actu::peltier::current_source::uint12_t> transfer_function() const {
+                        const float tmp_result { this->err() };
+                        return {
+                            tmp_result > 0.0f ? actu::peltier::hbridge::State::Heat : actu::peltier::hbridge::State::Cool,
+                            std::min(tmp_result, 4095.0f),
+                        };
                     }
                 };
 

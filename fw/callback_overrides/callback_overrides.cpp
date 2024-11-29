@@ -9,10 +9,6 @@
 #include "panel/button/button.hpp"
 #include "magic/commands/serializer.hpp"
 
-extern "C" int __io_putchar(int ch) {
-    return comm::RedirectStdout::get_instance().transmit(ch);
-}
-
 extern "C" int _write(int file, char *ptr, int len) {
     (void)file;
 
@@ -22,13 +18,20 @@ extern "C" int _write(int file, char *ptr, int len) {
 
     for(int i = 0; i < len; i++) {
         if(xPortIsInsideInterrupt()) {
-            const HAL_StatusTypeDef ret_err { comm::RedirectStdout::get_instance().transmit(*ptr++) };
-            if(ret_err != HAL_OK) {
-                return ret_err;
+            if(*ptr++ == '\n') {
+                comm::RedirectStdout::get_instance().transmit('\r');
+                comm::RedirectStdout::get_instance().transmit('\n');
             }
-        } else if(comm::RedirectStdout::get_instance().push(*ptr++) == false) {
-            comm::RedirectStdout::get_instance().flush();
-            comm::RedirectStdout::get_instance().push(*ptr++);
+        } else {
+            if(*ptr == '\n') {
+                if(comm::RedirectStdout::get_instance().push('\r') == false) {
+                    comm::RedirectStdout::get_instance().flush();
+                }
+            }
+
+            if(comm::RedirectStdout::get_instance().push(*ptr++) == false) {
+                comm::RedirectStdout::get_instance().flush();
+            }
         }
     }
 
@@ -88,6 +91,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
     if(huart->Instance == USART3) {
-        tasks::RS232_UART::get_instance().release_semaphore(Size);
+        tasks::RS232_UART::get_instance().receiver.push(Size);
     }
 }

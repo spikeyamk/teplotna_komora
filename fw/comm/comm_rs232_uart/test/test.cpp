@@ -7,7 +7,9 @@
 
 #include "magic/results/deserializer.hpp"
 #include "util/sml.hpp"
-#include "comm/rs232_uart/rs232_uart.hpp"
+#include "comm/rs232_uart/transmitter_base.hpp"
+#include "comm/rs232_uart/actions.hpp"
+#include "comm/rs232_uart/connection.hpp"
 
 namespace comm {
 namespace rs232_uart {
@@ -21,7 +23,7 @@ namespace rs232_uart {
         {}
     private:
         void operator()(const ResultVariant& result_variant) const {
-            output.push_back(result_variant);
+           output.push_back(result_variant);
         }
     };
 
@@ -46,11 +48,13 @@ namespace rs232_uart {
     }
 
     class TestSemaphore : public SemaphoreBase<TestSemaphore> {
+        friend CRTP;
     private:
         std::mutex mutex;
         std::condition_variable condition_variable;
     public:
         TestSemaphore() = default;
+    private:
         void release() {
             condition_variable.notify_one();
         }
@@ -60,29 +64,42 @@ namespace rs232_uart {
             condition_variable.wait(lock);
         }
 
-        bool try_acquire_for(const uint32_t timeout_ms) {
+        bool try_acquire_for(const std::chrono::milliseconds timeout) {
             std::unique_lock lock(mutex);
-            return condition_variable.wait_for(lock, std::chrono::milliseconds(timeout_ms)) == std::cv_status::no_timeout;
+            return condition_variable.wait_for(lock, timeout) == std::cv_status::no_timeout;
         }
     };
 namespace test {
-    //using ConnectionStateMachine = boost::sml::sm<Connection<Channel<TestSemaphore>, TestTransmitter>, boost::sml::testing, boost::sml::logger<util::sml::Logger>>;
-    using ConnectionStateMachine = boost::sml::sm<Connection<Channel<TestSemaphore>, TestTransmitter>, boost::sml::testing>;
+    //using ConnectionStateMachine = boost::sml::sm<Connection<Receiver<TestSemaphore>, TestTransmitter>, boost::sml::testing, boost::sml::logger<util::sml::Logger>>;
+    using ConnectionStateMachine = boost::sml::sm<Connection<TestSemaphore, TestTransmitter>, boost::sml::testing>;
 
-    void worker(std::stop_token st, Channel<TestSemaphore>& channel, TestTransmitter& transmitter, ConnectionStateMachine*& connection_ptr){
+    void pusher(std::stop_token st, Receiver<TestSemaphore>& reciever, std::optional<Receiver<TestSemaphore>::EventVariant>& event_variant) {
+        while(st.stop_requested() == false) {
+            if(event_variant.has_value()) {
+                std::visit([&](const auto& event) {
+                    const auto event_serialized { magic::commands::Serializer::run(event) };
+                    std::copy(event_serialized.begin(), event_serialized.end(), reciever.rx_buf.begin());
+                    reciever.push(static_cast<uint16_t>(event_serialized.size()));
+                }, event_variant.value());
+                event_variant = std::nullopt;
+            }
+        }
+    }
+
+    void worker(std::stop_token st, Receiver<TestSemaphore>& reciever, TestTransmitter& transmitter, ConnectionStateMachine*& connection_ptr){
         util::sml::Logger logger {};
-        ConnectionStateMachine connection { channel, static_cast<TestTransmitter::CRTP&>(transmitter), logger };
+        ConnectionStateMachine connection { reciever, static_cast<TestTransmitter::CRTP&>(transmitter), logger };
         connection_ptr = &connection;
         while(st.stop_requested() == false) {
             std::visit([&connection](const auto& event) {
                 connection.process_event(event);
-            }, channel.pop_for(10'000).value_or(magic::commands::Disconnect()));
+            }, reciever.pop_for(std::chrono::milliseconds(10'000)).value_or(magic::commands::Disconnect()));
         }
     }
 
-    bool is_channel_being_emptied(Channel<TestSemaphore>& channel) {
+    bool is_reciever_being_emptied(Receiver<TestSemaphore>& reciever) {
         for(size_t i = 0; i < 10; i++) {
-            if(channel.empty()) {
+            if(reciever.empty()) {
                 return true;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -92,15 +109,17 @@ namespace test {
 
     int expected_sequence() {
         using namespace boost::sml;
-        Channel<TestSemaphore> channel {};
+        Receiver<TestSemaphore> reciever {};
         std::vector<TestTransmitter::ResultVariant> output {};
         TestTransmitter transmitter { output };
         ConnectionStateMachine* connection_ptr { nullptr };
-        std::jthread worker_thread(worker, std::ref(channel), std::ref(transmitter), std::ref(connection_ptr));
+        std::jthread worker_thread(worker, std::ref(reciever), std::ref(transmitter), std::ref(connection_ptr));
+        std::optional<decltype(reciever)::EventVariant> event_variant;
+        std::jthread pusher_thread(pusher, std::ref(reciever), std::ref(event_variant));
 
         {
-            channel.push(magic::commands::Connect());
-            if(is_channel_being_emptied(channel) == false) {
+            event_variant = magic::commands::Connect();
+            if(is_reciever_being_emptied(reciever) == false) {
                 worker_thread.detach();
                 return 1;
             }
@@ -127,8 +146,8 @@ namespace test {
         }
 
         {
-            channel.push(magic::commands::Nop());
-            if(is_channel_being_emptied(channel) == false) {
+            event_variant = magic::commands::Nop();
+            if(is_reciever_being_emptied(reciever) == false) {
                 worker_thread.detach();
                 return 6;
             }
@@ -148,8 +167,8 @@ namespace test {
         }
 
         {
-            channel.push(magic::commands::ReadTempCtl());
-            if(is_channel_being_emptied(channel) == false) {
+            event_variant = magic::commands::ReadTempCtl();
+            if(is_reciever_being_emptied(reciever) == false) {
                 worker_thread.detach();
                 return 10;
             }
@@ -169,8 +188,8 @@ namespace test {
         }
 
         {
-            channel.push(magic::commands::Disconnect());
-            if(is_channel_being_emptied(channel) == false) {
+            event_variant = magic::commands::Disconnect();
+            if(is_reciever_being_emptied(reciever) == false) {
                 worker_thread.detach();
                 return 14;
             }
@@ -189,22 +208,25 @@ namespace test {
             }
         }
 
+        event_variant = magic::commands::Disconnect();
         worker_thread.request_stop();
-        channel.push(magic::commands::Disconnect());
+        pusher_thread.request_stop();
         return 0;
     }
 
     int unexpected_sequence() {
         using namespace boost::sml;
-        Channel<TestSemaphore> channel {};
+        Receiver<TestSemaphore> reciever {};
         std::vector<TestTransmitter::ResultVariant> output {};
         TestTransmitter transmitter { output };
         ConnectionStateMachine* connection_ptr { nullptr };
-        std::jthread worker_thread(worker, std::ref(channel), std::ref(transmitter), std::ref(connection_ptr));
+        std::jthread worker_thread(worker, std::ref(reciever), std::ref(transmitter), std::ref(connection_ptr));
+        std::optional<decltype(reciever)::EventVariant> event_variant;
+        std::jthread pusher_thread(pusher, std::ref(reciever), std::ref(event_variant));
 
         {
-            channel.push(magic::commands::Disconnect());
-            if(is_channel_being_emptied(channel) == false) {
+            event_variant = magic::commands::Disconnect();
+            if(is_reciever_being_emptied(reciever) == false) {
                 worker_thread.detach();
                 return 1;
             }
@@ -227,9 +249,9 @@ namespace test {
         }
 
         {
-            channel.push(magic::commands::Connect());
+            event_variant = magic::commands::Connect();
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-            if(is_channel_being_emptied(channel) == false) {
+            if(is_reciever_being_emptied(reciever) == false) {
                 worker_thread.detach();
                 return 5;
             }
@@ -249,8 +271,8 @@ namespace test {
         }
 
         {
-            channel.push(magic::commands::Connect());
-            if(is_channel_being_emptied(channel) == false) {
+            event_variant = magic::commands::Connect();
+            if(is_reciever_being_emptied(reciever) == false) {
                 worker_thread.detach();
                 return 9;
             }
@@ -270,8 +292,8 @@ namespace test {
         }
 
         {
-            channel.push(magic::commands::Connect());
-            if(is_channel_being_emptied(channel) == false) {
+            event_variant = magic::commands::Connect();
+            if(is_reciever_being_emptied(reciever) == false) {
                 worker_thread.detach();
                 return 13;
             }
@@ -291,8 +313,8 @@ namespace test {
         }
 
         {
-            channel.push(magic::commands::Nop());
-            if(is_channel_being_emptied(channel) == false) {
+            event_variant = magic::commands::Nop();
+            if(is_reciever_being_emptied(reciever) == false) {
                 worker_thread.detach();
                 return 17;
             }
@@ -312,8 +334,8 @@ namespace test {
         }
 
         {
-            channel.push(magic::commands::Disconnect());
-            if(is_channel_being_emptied(channel) == false) {
+            event_variant = magic::commands::Disconnect();
+            if(is_reciever_being_emptied(reciever) == false) {
                 worker_thread.detach();
                 return 21;
             }
@@ -332,8 +354,9 @@ namespace test {
             }
         }
 
+        event_variant = magic::commands::Disconnect();
         worker_thread.request_stop();
-        channel.push(magic::commands::Disconnect());
+        pusher_thread.request_stop();
         return 0;
     }
 }

@@ -6,7 +6,7 @@ OUTPUT_DIRECTORY       = @CMAKE_CURRENT_BINARY_DIR@/docs
 INPUT = @CMAKE_CURRENT_SOURCE_DIR@/README.md \
         @CMAKE_CURRENT_SOURCE_DIR@/admin \
         @CMAKE_CURRENT_SOURCE_DIR@/common \
-        @CMAKE_CURRENT_SOURCE_DIR@/src
+        @CMAKE_CURRENT_SOURCE_DIR@/fw
 RECURSIVE              = YES
 EXTRACT_ALL            = YES
 EXTRACT_PRIVATE        = YES
@@ -47,7 +47,7 @@ STRIP_FROM_PATH        = @CMAKE_CURRENT_SOURCE_DIR@
 
 # Diagrams (require Graphviz)
 HAVE_DOT               = YES
-DOT_NUM_THREADS        = 2
+DOT_NUM_THREADS        = 8
 CALL_GRAPH             = YES
 CALLER_GRAPH           = YES
 CLASS_DIAGRAMS         = YES

@@ -8,7 +8,7 @@ namespace rs232_uart {
     class Transmitter : public TransmitterBase<Transmitter> {
         friend CRTP;
     private:
-        UART_HandleTypeDef* huart { nullptr };
+        UART_HandleTypeDef* huart;
     public:
         Transmitter(UART_HandleTypeDef* huart);
     private:

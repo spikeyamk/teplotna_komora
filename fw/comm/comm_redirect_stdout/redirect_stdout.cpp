@@ -32,7 +32,7 @@ namespace comm {
         assert(mutex != nullptr);
     }
 
-    bool RedirectStdout::push(int ch) {
+    bool RedirectStdout::push(const int ch) {
         if(data_count == data_buffer.size()) {
             return false;
         }
@@ -54,28 +54,5 @@ namespace comm {
             HAL_MAX_DELAY
         );
         data_count = 0;
-    }
-
-    int __io_putchar(int ch) {
-        if(xPortIsInsideInterrupt()) {
-            RedirectStdout::transmit(ch);
-            return ch;
-        }
-
-        const osStatus acquire_mutex { RedirectStdout::get_instance().acquire_mutex() };
-        if(acquire_mutex != osOK) {
-            RedirectStdout::transmit(ch);
-            static constexpr std::string_view error_message { "\r\n__io_putchar: acquire_mutex != osOK\r\n" };
-            HAL_UART_Transmit(&huart1, reinterpret_cast<const uint8_t*>(error_message.data()), error_message.size(), HAL_MAX_DELAY);
-            Error_Handler();
-            return ch;
-        }
-
-        if(RedirectStdout::get_instance().push(ch) == false || ch == '\n') {
-            RedirectStdout::get_instance().flush();
-            RedirectStdout::get_instance().release_mutex();
-        }
-        
-        return ch;
     }
 }

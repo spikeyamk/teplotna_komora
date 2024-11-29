@@ -31,7 +31,5 @@ namespace max31865 {
         bool operator==(const RTD& other) const;
         bool operator!=(const RTD& other) const;
     };
-
-    static constexpr uint16_t blablabla { RTD(50.0f).adc_code.value.unwrap() };
 }
 }

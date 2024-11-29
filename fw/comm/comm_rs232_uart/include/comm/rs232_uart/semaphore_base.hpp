@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <chrono>
 
 #include "magic/results/deserializer.hpp"
 
@@ -20,8 +21,8 @@ namespace rs232_uart {
             static_cast<Derived&>(*this).acquire();
         }
 
-        bool try_acquire_for(const uint32_t timeout_ms) {
-            return static_cast<Derived&>(*this).try_acquire_for(timeout_ms);
+        bool try_acquire_for(const std::chrono::milliseconds timeout) {
+            return static_cast<Derived&>(*this).try_acquire_for(timeout);
         }
     };
 

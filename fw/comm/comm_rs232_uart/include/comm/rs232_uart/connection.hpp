@@ -24,7 +24,7 @@ namespace states {
     template<typename T, typename U>
     class Connection {
     public:
-        using Channel = T;
+        using Semaphore = T;
         using Transmitter = U;
 
         Connection() = default;
@@ -32,9 +32,9 @@ namespace states {
             using namespace boost::sml;
             using namespace magic;
             return make_transition_table(
-                *state<states::Idle> / actions::WaitUntilChannelNotEmpty<Channel>() = state<states::Disconnected>,
+                *state<states::Idle> / actions::WaitUntilReceiverNotEmpty<Semaphore>() = state<states::Disconnected>,
 
-                state<states::Disconnected> [guards::ChannelEmpty<Channel>()] = state<states::Idle>,
+                state<states::Disconnected> [guards::ReceiverEmpty<Semaphore>()] = state<states::Idle>,
                 state<states::Disconnected> + event<commands::Connect> / actions::Connect<Transmitter>() = state<states::Connected>,
 
                 state<states::Connected> + event<commands::Disconnect> / actions::Disconnect<Transmitter>() = state<states::Disconnected>,

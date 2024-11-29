@@ -18,8 +18,8 @@ namespace tasks {
         sens::max31865::RTD rtd_front { 0.0f };
         sens::max31865::RTD rtd_rear { 0.0f };
 
-        sens::sht31::TempHum temp_hum_inside { 0, 0 };
-        sens::sht31::TempHum temp_hum_outside { 0, 0 };
+        sens::sht31::TempHum sht31_inside { 0, 0 };
+        sens::sht31::TempHum sht31_outside { 0, 0 };
 
         const sens::max31865::FaultThreshold fault_threshold {
             sens::max31865::ADC_Code { sens::max31865::RTD(100.0f).adc_code },

@@ -191,8 +191,8 @@ namespace tasks {
             bksram::write_reset<bksram::ErrorCodes::SenserKiller::Init::SHT31::TempHum::OUTSIDE>();
         }
 
-        temp_hum_inside = ret_temp_hum_inside.value();
-        temp_hum_outside = ret_temp_hum_outside.value();
+        sht31_inside = ret_temp_hum_inside.value();
+        sht31_outside = ret_temp_hum_outside.value();
 
         Panel::Menu::Actions::save_sample<
             Panel::Menu::States::SHT31_Inside,
@@ -244,23 +244,23 @@ namespace tasks {
             self.rtd_rear = rtd_rear.value();
 
             if((max31865 % 10) == 0) {
-                const auto temp_hum_inside { self.sht31_extension_inside.read_temp_hum_periodic_mode() };
-                if(temp_hum_inside.has_value() == false) {
+                const auto sht31_inside { self.sht31_extension_inside.read_temp_hum_periodic_mode() };
+                if(sht31_inside.has_value() == false) {
                     bksram::write_reset<bksram::ErrorCodes::SenserKiller::Worker::SHT31::TempHum::INSIDE>();
                 }
 
-                const auto temp_hum_outside { self.sht31_extension_outside.read_temp_hum_periodic_mode() };
-                if(temp_hum_outside.has_value() == false) {
+                const auto sht31_outside { self.sht31_extension_outside.read_temp_hum_periodic_mode() };
+                if(sht31_outside.has_value() == false) {
                     bksram::write_reset<bksram::ErrorCodes::SenserKiller::Worker::SHT31::TempHum::OUTSIDE>();
                 }
 
-                self.temp_hum_inside = temp_hum_inside.value();
-                self.temp_hum_outside = temp_hum_outside.value();
+                self.sht31_inside  = sht31_inside.value();
+                self.sht31_outside = sht31_outside.value();
 
                 TempCtl::get_instance().push(
                     TempCtl::Controller::Events::SHT31_Sample {
-                        .inside = temp_hum_inside.value(),
-                        .outside = temp_hum_outside.value(),
+                        .inside = sht31_inside.value(),
+                        .outside = sht31_outside.value(),
                     }
                 );
 
@@ -269,11 +269,11 @@ namespace tasks {
                     sht31 = 0;
 
                     Panel::get_instance().push(
-                        Panel::Menu::Events::SHT31_InsideSample(temp_hum_inside.value()),
+                        Panel::Menu::Events::SHT31_InsideSample(sht31_inside.value()),
                         Panel::Timeout::NotIRQ
                     );
                     Panel::get_instance().push(
-                        Panel::Menu::Events::SHT31_OutsideSample(temp_hum_outside.value()),
+                        Panel::Menu::Events::SHT31_OutsideSample(sht31_outside.value()),
                         Panel::Timeout::NotIRQ
                     );
                 }

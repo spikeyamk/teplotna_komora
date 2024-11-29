@@ -19,14 +19,16 @@ namespace comm {
         osMutexId_t mutex { nullptr };
     public:
         static HAL_StatusTypeDef inline transmit(const int ch) {
-            return HAL_UART_Transmit(&huart1, reinterpret_cast<const uint8_t *>(&ch), 1, 1000);
+            if(ch == '\n') {
+                return HAL_UART_Transmit(&huart1, reinterpret_cast<const uint8_t *>("\r\n"), 2, 1000);
+            } else {
+                return HAL_UART_Transmit(&huart1, reinterpret_cast<const uint8_t *>(&ch), 1, 1000);
+            }
         }
         static RedirectStdout& get_instance();
         osStatus_t acquire_mutex();
-        bool push(int ch);
+        bool push(const int ch);
         void flush();
         osStatus_t release_mutex();
     };
-
-    int __io_putchar(int ch);
 }
