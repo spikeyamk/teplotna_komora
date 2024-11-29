@@ -1,6 +1,6 @@
-# Teplotná komora - Tímový projekt
+# Introduction
 
-Intro
+Project for controlling temperature in thermal chambers using STM32 microcontrollers. It includes tools and configurations for firmware development, debugging, and serial communication.
 
 ## Quickstart
 
