@@ -24,11 +24,6 @@ namespace admin {
         QChart* max31865_chart;
         QChartView* max31865_chart_view;
 
-        QLineSeries* dmax31865_front_series;
-        QLineSeries* dmax31865_rear_series;
-        QChart* dmax31865_chart;
-        QChartView* dmax31865_chart_view;
-
         QLineSeries* dac_front_series;
         QLineSeries* dac_rear_series;
         QChart* dac_chart;

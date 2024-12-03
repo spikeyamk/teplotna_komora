@@ -38,18 +38,6 @@ namespace admin {
         );
 
         setup_chart(
-            dmax31865_front_series,
-            dmax31865_rear_series,
-            dmax31865_chart,
-            dmax31865_chart_view,
-            "front",
-            "rear",
-            "dMAX31865",
-            "Time [s]",
-            "dTemperature [°C/s]"
-        );
-
-        setup_chart(
             dac_front_series,
             dac_rear_series,
             dac_chart,
@@ -245,19 +233,6 @@ namespace admin {
             sample.d_front,
             sample.d_rear
         );
-
-        static qreal max31865_front_before { max31865_front };
-        static qreal max31865_rear_before { max31865_rear };
-        push_to_chart(
-            dmax31865_front_series,
-            dmax31865_rear_series,
-            dmax31865_chart,
-            x_value,
-            max31865_front_before - max31865_front,
-            max31865_rear_before - max31865_rear
-        );
-        max31865_front_before = max31865_front;
-        max31865_rear_before = max31865_rear;
 
         push_to_chart(
             dac_front_series,

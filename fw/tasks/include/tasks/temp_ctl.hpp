@@ -360,43 +360,65 @@ namespace tasks {
                     std::array<float, 1'000> err_samples { 0.0f };
                     decltype(err_samples.begin()) filler_it { err_samples.begin() };
                     decltype(err_samples.begin()) old_it { err_samples.begin() };
+
+                    class KalmanFilter {
+                    public:
+                        float process_variance { 0.01 };
+                        float measurement_variance { 1 };
+                        float initial_state { 0 };
+                        float error { 0 };
+                        float estimate { 0 };
+
+                        float apply(const float sample) {
+                            error += process_variance;
+                            const float kalman_gain = error / (error + measurement_variance);
+                            estimate += kalman_gain * (sample - estimate);
+                            error *= (1 - kalman_gain);
+                            return estimate;
+                        }
+
+                        void reset() {
+                            *this = KalmanFilter {};
+                        }
+                    };
+                    
+                    KalmanFilter kalman_filter {};
                 public:
                     void reset() {
                         filler_it = err_samples.begin();
+                        kalman_filter.reset();
                     }
 
                     void run() {
-                        this->pid.p = this->err();
-
-                        if(filler_it != err_samples.end()) {
-                            *filler_it = this->pid.p;
-                            filler_it++;
-
-                            this->pid.d = this->pid.p - *old_it;
-                        } else {
-                            this->pid.d = this->pid.p - *old_it;
-                            *old_it = this->pid.p;
-                            old_it++;
-                            if(old_it == err_samples.end()) {
-                                old_it = err_samples.begin();
-                            }
-                        }
-
                         const ActionType action_type { get_action() };
                         if(action_type == ActionType::ShouldHeat) {
                             const float k_p_heat { 15.0f };
+                            this->pid.p = k_p_heat * this->err();
 
-                            const float k_i_heat { 0.000'25f };
+                            const float k_i_heat { 0.000'31f };
                             this->pid.i += k_i_heat * this->err();
 
-                            const float k_d_heat { 12.0f }; // making this higher than this introduced SSE higher than desired RTD i.e. 0.9 °C with 20.0f
+                            const float k_d_heat { 12.0f };
+                            if(filler_it != err_samples.end()) {
+                                *filler_it = this->err();
+                                filler_it++;
+
+                                this->pid.d = k_d_heat * kalman_filter.apply(this->err() - *old_it);
+                            } else {
+                                this->pid.d = k_d_heat * kalman_filter.apply(this->err() - *old_it);
+                                *old_it = this->err();
+                                old_it++;
+                                if(old_it == err_samples.end()) {
+                                    old_it = err_samples.begin();
+                                }
+                            }
 
                             Control::run(
                                 actu::peltier::hbridge::State::Heat,
                                 static_cast<uint16_t>(std::min(std::max(
-                                    (k_p_heat * this->pid.p)
+                                    this->pid.p
                                     + this->pid.i
-                                    + (k_d_heat * this->pid.d)
+                                    + this->pid.d
                                     ,0.0f
                                 ), 4095.0f))
                             );
@@ -538,10 +560,9 @@ namespace tasks {
     public:
         static TempCtl& get_instance();
         osStatus_t push(const Controller::Events::Variant& event);
-        Controller::Events::Variant pop();
     private:
+        Controller::Events::Variant pop();
         static void worker(void* arg);
         void apply_configuration();
-        int32_t err(const sens::max31865::RTD& rtd) const;
     };
 }

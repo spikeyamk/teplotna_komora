@@ -44,6 +44,46 @@ namespace tasks {
         sens::sht31::Transceiver sht31_transceiver_inside { &hi2c1, sens::sht31::SlaveAddress7bit::ADDR_PIN_LOW };
         sens::sht31::Extension sht31_extension_inside { sht31_transceiver_inside };
     private:
+        template<uint32_t ErrorCode, auto Functor>
+        class Test {
+        public:
+            static constexpr uint32_t error_code { ErrorCode };
+            static constexpr decltype(Functor) functor { Functor };
+
+            Test() = default;
+
+            void write_reset() const {
+
+            }
+
+            void run() const {
+                if(functor() == false) {
+                    write_reset();
+                }
+            }
+        };
+
+        template<typename... Tests>
+        class Tester {
+        private:
+            template<typename First, typename ... Rest>
+            struct has_unique_error_codes : std::conditional_t<
+                ((First::error_code != Rest::error_code) && ...),
+                has_unique_error_codes<Rest...>,
+                std::false_type
+            > {};
+
+            template<typename Last>
+            struct has_unique_error_codes<Last> : std::true_type {};
+            static_assert(has_unique_error_codes<Tests...>::value);
+        public:
+            Tester() = default;
+
+            void run() const {
+                ((Tests().run()), ...);
+            }
+        };
+    private:
         SenserKiller() = default;
     public:
         static SenserKiller& get_instance();
