@@ -436,6 +436,38 @@ namespace tasks {
                                     ,0.0f
                                 ), 4095.0f))
                             );
+                        } else if(action_type == ActionType::ShouldCool) {
+                            const float k_p_heat { 70.0f };
+                            this->pid.p = k_p_heat * this->err();
+
+                            const float k_i_heat_const { 0.000'25f };
+                            const float k_i_heat_dyn { 0.019'3f };
+                            const float k_i_heat {
+                                k_i_heat_const
+                                + (
+                                    k_i_heat_dyn
+                                    * (
+                                        1.0f
+                                        / (
+                                            1.0f + std::abs(this->err())
+                                        )
+                                    )
+                                )
+                            };
+
+                            this->pid.i += k_i_heat * this->err();
+
+                            Control::run(
+                                actu::peltier::hbridge::State::Cool,
+                                static_cast<uint16_t>(std::min(std::max(
+                                    std::abs(
+                                        this->pid.p
+                                        + this->pid.i
+                                        + this->pid.d
+                                    )
+                                    ,0.0f
+                                ), 4095.0f))
+                            );
                         } else {
                             Control::run(
                                 actu::peltier::hbridge::State::Off,
