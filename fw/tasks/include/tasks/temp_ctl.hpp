@@ -395,7 +395,21 @@ namespace tasks {
                             const float k_p_heat { 15.0f };
                             this->pid.p = k_p_heat * this->err();
 
-                            const float k_i_heat { 0.000'31f };
+                            const float k_i_heat_const { 0.000'25f };
+                            const float k_i_heat_dyn { 0.019'3f };
+                            const float k_i_heat {
+                                k_i_heat_const
+                                + (
+                                    k_i_heat_dyn
+                                    * (
+                                        1.0f
+                                        / (
+                                            1.0f + std::abs(this->err())
+                                        )
+                                    )
+                                )
+                            };
+
                             this->pid.i += k_i_heat * this->err();
 
                             const float k_d_heat { 12.0f };
