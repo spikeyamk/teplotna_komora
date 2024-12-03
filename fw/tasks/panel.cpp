@@ -13,6 +13,11 @@ namespace tasks {
 namespace tasks {
     void Panel::Menu::Actions::stop_blinking(Panel& self) {
         SevsegWhite::get_instance().blinking = false;
+
+        TempCtl::get_instance().push(
+            TempCtl::Controller::Events::TurnOn()
+        );
+
         TempCtl::get_instance().push(
             TempCtl::Controller::Events::Configuration {
                 .desired_rtd = self.menu_properties.desired_rtd.value,
@@ -29,10 +34,6 @@ namespace tasks {
 
         TempCtl::get_instance().push(
             TempCtl::Controller::Events::TurnOff()
-        );
-
-        TempCtl::get_instance().push(
-            TempCtl::Controller::Events::TurnOn()
         );
 
         TempCtl::get_instance().push(

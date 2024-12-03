@@ -193,7 +193,7 @@ namespace tasks {
                     }
                 };
 
-                template<typename Control, const uint32_t k_p>
+                template<typename Control>
                 class P_Algorithm : public AlgorithmFunctor {
                 public:
                     using Base = AlgorithmFunctor;
@@ -249,7 +249,7 @@ namespace tasks {
                     }
                 };
 
-                template<typename Control, const uint32_t k_p, const uint32_t k_d>
+                template<typename Control>
                 class PD_Algorithm : public AlgorithmFunctor {
                 public:
                     void run() {
@@ -263,7 +263,7 @@ namespace tasks {
                     }
                 };
 
-                template<typename Control, const uint32_t k_p, const uint32_t k_i>
+                template<typename Control>
                 class PI_Algorithm : public AlgorithmFunctor {
                 public:
                     using Base = AlgorithmFunctor;
@@ -354,7 +354,7 @@ namespace tasks {
                     }
                 };
 
-                template<typename Control, const uint32_t k_p, const uint32_t k_i, const uint32_t k_d>
+                template<typename Control>
                 class PID_Algorithm : public AlgorithmFunctor {
                 public:
                     std::array<float, 1'000> err_samples { 0.0f };
@@ -366,7 +366,6 @@ namespace tasks {
                     }
 
                     void run() {
-                        this->pid.i += this->err();
                         this->pid.p = this->err();
 
                         if(filler_it != err_samples.end()) {
@@ -386,14 +385,17 @@ namespace tasks {
                         const ActionType action_type { get_action() };
                         if(action_type == ActionType::ShouldHeat) {
                             const float k_p_heat { 15.0f };
-                            const float k_i_heat { 0.000'35f };
+
+                            const float k_i_heat { 0.000'25f };
+                            this->pid.i += k_i_heat * this->err();
+
                             const float k_d_heat { 12.0f }; // making this higher than this introduced SSE higher than desired RTD i.e. 0.9 °C with 20.0f
 
                             Control::run(
                                 actu::peltier::hbridge::State::Heat,
                                 static_cast<uint16_t>(std::min(std::max(
                                     (k_p_heat * this->pid.p)
-                                    + (k_i_heat * this->pid.i)
+                                    + this->pid.i
                                     + (k_d_heat * this->pid.d)
                                     ,0.0f
                                 ), 4095.0f))
@@ -429,7 +431,7 @@ namespace tasks {
                             ? this->configuration.hbridge_front
                             : this->configuration.hbridge_rear
                             ,
-                            std::is_same_v<Control, ControlRear>
+                            std::is_same_v<Control, ControlFront>
                             ? this->configuration.dac_front
                             : this->configuration.dac_rear
                         );
@@ -459,17 +461,17 @@ namespace tasks {
             };
 
             struct Usings {
-                using P_AlgorithmFront = Detail::P_Algorithm<Detail::ControlFront, 1>;
-                using P_AlgorithmRear = Detail::P_Algorithm<Detail::ControlRear, 1>;
+                using P_AlgorithmFront = Detail::P_Algorithm<Detail::ControlFront>;
+                using P_AlgorithmRear = Detail::P_Algorithm<Detail::ControlRear>;
 
-                using PI_AlgorithmFront = Detail::PI_Algorithm<Detail::ControlFront, 1, 1>;
-                using PI_AlgorithmRear = Detail::PI_Algorithm<Detail::ControlRear, 1, 1>;
+                using PI_AlgorithmFront = Detail::PI_Algorithm<Detail::ControlFront>;
+                using PI_AlgorithmRear = Detail::PI_Algorithm<Detail::ControlRear>;
 
-                using PD_AlgorithmFront = Detail::PD_Algorithm<Detail::ControlFront, 1, 1>;
-                using PD_AlgorithmRear = Detail::PD_Algorithm<Detail::ControlRear, 1, 1>;
+                using PD_AlgorithmFront = Detail::PD_Algorithm<Detail::ControlFront>;
+                using PD_AlgorithmRear = Detail::PD_Algorithm<Detail::ControlRear>;
 
-                using PID_AlgorithmFront = Detail::PID_Algorithm<Detail::ControlFront, 1, 1, 1>;
-                using PID_AlgorithmRear = Detail::PID_Algorithm<Detail::ControlRear, 1, 1, 1>;
+                using PID_AlgorithmFront = Detail::PID_Algorithm<Detail::ControlFront>;
+                using PID_AlgorithmRear = Detail::PID_Algorithm<Detail::ControlRear>;
 
                 using PBIN_AlgorithmFront = Detail::PBIN_Algorithm<Detail::ControlFront>;
                 using PBIN_AlgorithmRear = Detail::PBIN_Algorithm<Detail::ControlRear>;
