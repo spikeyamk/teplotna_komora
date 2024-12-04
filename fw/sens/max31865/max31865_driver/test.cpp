@@ -51,7 +51,7 @@ namespace max31865 {
             return 7;
         }
 
-        sens::max31865::Extension extension_front { SPI3_TEMP_NDRDY0_GPIO_Port, SPI3_TEMP_NDRDY0_Pin, transceiver_front };
+        sens::max31865::Extension extension_front { sens::max31865::Extension(SPI3_TEMP_NDRDY0_GPIO_Port, SPI3_TEMP_NDRDY0_Pin, transceiver_front) };
 
         if(extension_front.configure(Configuration()) != HAL_OK) {
             std::printf("sens::max31865::test: extension_front.configure(Configuration()) != HAL_OK\n");

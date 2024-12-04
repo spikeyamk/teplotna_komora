@@ -13,7 +13,6 @@ namespace sens {
 namespace max31865 {
     class Transceiver {
     private:
-        bool inited { false };
         class Selector {
             GPIO_TypeDef* nss_port;
             const uint16_t nss_pin;
@@ -44,7 +43,6 @@ namespace max31865 {
         {}
     public:
         HAL_StatusTypeDef init();
-        bool is_inited() const;
         HAL_StatusTypeDef write(const RegAddrs::RW address, const std::bitset<8>& value) const;
         std::expected<std::bitset<8>, HAL_StatusTypeDef> read(const RegAddrs::RO address) const;
         std::expected<std::array<std::bitset<8>, 8>, HAL_StatusTypeDef> read_all() const;

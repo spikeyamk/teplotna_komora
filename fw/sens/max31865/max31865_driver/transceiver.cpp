@@ -5,15 +5,7 @@
 
 namespace sens {
 namespace max31865 {
-    bool Transceiver::is_inited() const {
-        return inited;
-    }
-
     HAL_StatusTypeDef Transceiver::init() {
-        if(is_inited() == true) {
-            return HAL_OK;
-        }
-
         Selector selector { nss_port, nss_pin };
 
         HAL_Delay(10);
@@ -29,16 +21,11 @@ namespace max31865 {
                 500
             )
         };
-        inited = true;
 
         return ret;
     }
 
     HAL_StatusTypeDef Transceiver::write(const RegAddrs::RW address, const std::bitset<8>& value) const {
-        if(is_inited() == false) {
-            return HAL_ERROR;
-        }
-
         Selector selector { nss_port, nss_pin };
 
         const std::array<uint8_t, 2> buf {
@@ -51,10 +38,6 @@ namespace max31865 {
     }
     
     std::expected<std::bitset<8>, HAL_StatusTypeDef> Transceiver::read(const RegAddrs::RO address) const {
-        if(is_inited() == false) {
-            return std::unexpected(HAL_ERROR);
-        }
-
         Selector selector { nss_port, nss_pin };
 
         const uint8_t buf { static_cast<uint8_t>(address) }; 
@@ -74,10 +57,6 @@ namespace max31865 {
     }
 
     std::expected<std::array<std::bitset<8>, 8>, HAL_StatusTypeDef> Transceiver::read_all() const {
-        if(is_inited() == false) {
-            return std::unexpected(HAL_ERROR);
-        }
-
         Selector selector { nss_port, nss_pin };
 
         const uint8_t buf { static_cast<uint8_t>(RegAddrs::RO::CONFIGURATION) };

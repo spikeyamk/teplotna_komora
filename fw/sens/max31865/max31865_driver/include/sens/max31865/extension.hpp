@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+
 #include "cmsis_os.h"
 #include "cmsis_os2.h"
 #include "sens/max31865/configuration.hpp"
@@ -14,10 +16,10 @@ namespace max31865 {
     private:
         GPIO_TypeDef* ndrdy_port;
         const uint16_t ndrdy_pin;
-        StaticSemaphore_t semaphore_control_block {};
-        osSemaphoreId_t semaphore { nullptr };
+        StaticSemaphore_t sem_control_block {};
+        osSemaphoreId_t sem { nullptr };
     public:
-        static constexpr uint32_t semaphore_timeout { 2'000 };
+        static constexpr uint32_t sem_timeout { 2'000 };
         Transceiver& transceiver;
     public:
         Extension(GPIO_TypeDef* ndrdy_port, const uint16_t ndrdy_pin, Transceiver& transceiver) :
@@ -26,26 +28,18 @@ namespace max31865 {
             transceiver { transceiver }
         {}
     public:
-        template<const size_t N>
-        bool init(const char (&name)[N])
-        requires (N >= 0 && N <= 16) {
-            const osSemaphoreAttr_t sempahore_attr {
+        template<size_t N>
+        requires (N <= 16)
+        void init(const char (&name)[N]) {
+            const osSemaphoreAttr_t sem_attr {
                 .name = name,
                 .attr_bits = 0,
-                .cb_mem = &semaphore_control_block,
-                .cb_size = sizeof(semaphore_control_block),
+                .cb_mem = &sem_control_block,
+                .cb_size = sizeof(sem_control_block),
             };
             
-            const osSemaphoreId_t tmp_semaphore = osSemaphoreNew(1, 0, &sempahore_attr);
-            if(tmp_semaphore == nullptr) {
-                return false;
-            }
-
-            taskDISABLE_INTERRUPTS();
-            semaphore = tmp_semaphore;
-            taskENABLE_INTERRUPTS();
-
-            return true;
+            sem = osSemaphoreNew(1, 0, &sem_attr);
+            assert(sem != nullptr);
         }
 
         HAL_StatusTypeDef configure(const Configuration& configuration) const;
@@ -59,7 +53,7 @@ namespace max31865 {
 
         std::expected<RTD, HAL_StatusTypeDef> read_rtd_no_sem();
         std::expected<RTD, HAL_StatusTypeDef> read_rtd();
-        osStatus release_semaphore();
+        osStatus release_sem();
 
         std::expected<FaultStatus, HAL_StatusTypeDef> run_auto_fault_detection() const;
         std::expected<FaultStatus, HAL_StatusTypeDef> read_fault_status() const;

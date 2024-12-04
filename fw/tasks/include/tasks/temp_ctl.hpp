@@ -87,10 +87,10 @@ namespace tasks {
         TempCtl();
     public:
         Controller::Events::Configuration configuration {
-            .desired_rtd = 40.0f,
+            .desired_rtd = 50.0f,
             .broiler = false,
             .pump = false,
-            .fan_max_rpm = actu::fan::ctl::SpeedPercentage(20),
+            .fan_max_rpm = actu::fan::ctl::SpeedPercentage(30),
             .algorithm = Algorithm::P,
             .dac_front = 0,
             .dac_rear = 0,
@@ -193,18 +193,24 @@ namespace tasks {
                     }
                 };
 
-                template<typename Control, const uint32_t k_p>
+                template<typename Control>
                 class P_Algorithm : public AlgorithmFunctor {
                 public:
                     using Base = AlgorithmFunctor;
                     void run() {
                         this->pid.p = this->err();
+
                         const ActionType action_type { get_action() };
                         if(action_type == ActionType::ShouldHeat) {
                             const float k_p_heat { 20.0f };
                             Control::run(
                                 actu::peltier::hbridge::State::Heat,
                                 static_cast<uint16_t>(std::min(std::max(k_p_heat * this->pid.p, 0.0f), 4095.0f))
+                            );
+                        } else {
+                            Control::run(
+                                actu::peltier::hbridge::State::Off,
+                                0
                             );
                         }
 
@@ -243,7 +249,7 @@ namespace tasks {
                     }
                 };
 
-                template<typename Control, const uint32_t k_p, const uint32_t k_d>
+                template<typename Control>
                 class PD_Algorithm : public AlgorithmFunctor {
                 public:
                     void run() {
@@ -257,7 +263,7 @@ namespace tasks {
                     }
                 };
 
-                template<typename Control, const uint32_t k_p, const uint32_t k_i>
+                template<typename Control>
                 class PI_Algorithm : public AlgorithmFunctor {
                 public:
                     using Base = AlgorithmFunctor;
@@ -265,25 +271,22 @@ namespace tasks {
                         this->pid.i += this->err();
                         this->pid.p = this->err();
 
-                        switch(this->get_action()) {
-                            default:
-                                Control::run(
-                                    actu::peltier::hbridge::State::Off,
-                                    0
-                                );
-                                return;
-                            case Base::ActionType::ShouldHeat:
-                                Control::run(
-                                    actu::peltier::hbridge::State::Heat,
-                                    heat_proportional_transfer_function() + heat_integral_transfer_function()
-                                );
-                                return;
-                            case Base::ActionType::ShouldCool:
-                                Control::run(
-                                    actu::peltier::hbridge::State::Cool,
-                                    cool_proportional_transfer_function()
-                                );
-                                return;
+                        const ActionType action_type { get_action() };
+                        if(action_type == ActionType::ShouldHeat) {
+                            const float k_p_heat { 20.0f };
+                            const float k_i_heat { 0.000'5f };
+                            Control::run(
+                                actu::peltier::hbridge::State::Heat,
+                                static_cast<uint16_t>(std::min(std::max(
+                                    (k_p_heat * this->pid.p) + (k_i_heat * this->pid.i),
+                                    0.0f
+                                ), 4095.0f))
+                            );
+                        } else {
+                            Control::run(
+                                actu::peltier::hbridge::State::Off,
+                                0
+                            );
                         }
                     }
 
@@ -351,18 +354,126 @@ namespace tasks {
                     }
                 };
 
-                template<typename Control, const uint32_t k_p, const uint32_t k_i, const uint32_t k_d>
+                template<typename Control>
                 class PID_Algorithm : public AlgorithmFunctor {
                 public:
-                    void run() {
-                        this->pid.d = this->derr();
-                        this->pid.i = this->ierr();
-                        this->pid.p = this->err();
+                    std::array<float, 1'000> err_samples { 0.0f };
+                    decltype(err_samples.begin()) filler_it { err_samples.begin() };
+                    decltype(err_samples.begin()) old_it { err_samples.begin() };
 
-                        Control::run(
-                            actu::peltier::hbridge::State::Off,
-                            0
-                        );
+                    class KalmanFilter {
+                    public:
+                        float process_variance { 0.01 };
+                        float measurement_variance { 1 };
+                        float initial_state { 0 };
+                        float error { 0 };
+                        float estimate { 0 };
+
+                        float apply(const float sample) {
+                            error += process_variance;
+                            const float kalman_gain = error / (error + measurement_variance);
+                            estimate += kalman_gain * (sample - estimate);
+                            error *= (1 - kalman_gain);
+                            return estimate;
+                        }
+
+                        void reset() {
+                            *this = KalmanFilter {};
+                        }
+                    };
+                    
+                    KalmanFilter kalman_filter {};
+                public:
+                    void reset() {
+                        filler_it = err_samples.begin();
+                        kalman_filter.reset();
+                    }
+
+                    void run() {
+                        const ActionType action_type { get_action() };
+                        if(action_type == ActionType::ShouldHeat) {
+                            const float k_p_heat { 15.0f };
+                            this->pid.p = k_p_heat * this->err();
+
+                            const float k_i_heat_const { 0.000'25f };
+                            const float k_i_heat_dyn { 0.019'3f };
+                            const float k_i_heat {
+                                k_i_heat_const
+                                + (
+                                    k_i_heat_dyn
+                                    * (
+                                        1.0f
+                                        / (
+                                            1.0f + std::abs(this->err())
+                                        )
+                                    )
+                                )
+                            };
+
+                            this->pid.i += k_i_heat * this->err();
+
+                            const float k_d_heat { 12.0f };
+                            if(filler_it != err_samples.end()) {
+                                *filler_it = this->err();
+                                filler_it++;
+
+                                this->pid.d = k_d_heat * kalman_filter.apply(this->err() - *old_it);
+                            } else {
+                                this->pid.d = k_d_heat * kalman_filter.apply(this->err() - *old_it);
+                                *old_it = this->err();
+                                old_it++;
+                                if(old_it == err_samples.end()) {
+                                    old_it = err_samples.begin();
+                                }
+                            }
+
+                            Control::run(
+                                actu::peltier::hbridge::State::Heat,
+                                static_cast<uint16_t>(std::min(std::max(
+                                    this->pid.p
+                                    + this->pid.i
+                                    + this->pid.d
+                                    ,0.0f
+                                ), 4095.0f))
+                            );
+                        } else if(action_type == ActionType::ShouldCool) {
+                            const float k_p_heat { 70.0f };
+                            this->pid.p = k_p_heat * this->err();
+
+                            const float k_i_heat_const { 0.000'25f };
+                            const float k_i_heat_dyn { 0.019'3f };
+                            const float k_i_heat {
+                                k_i_heat_const
+                                + (
+                                    k_i_heat_dyn
+                                    * (
+                                        1.0f
+                                        / (
+                                            1.0f + std::abs(this->err())
+                                        )
+                                    )
+                                )
+                            };
+
+                            this->pid.i += k_i_heat * this->err();
+
+                            Control::run(
+                                actu::peltier::hbridge::State::Cool,
+                                static_cast<uint16_t>(std::min(std::max(
+                                    std::abs(
+                                        this->pid.p
+                                        + this->pid.i
+                                        + this->pid.d
+                                    )
+                                    ,0.0f
+                                ), 4095.0f))
+                            );
+                        } else {
+                            Control::run(
+                                actu::peltier::hbridge::State::Off,
+                                0
+                            );
+                        }
                     }
                 };
 
@@ -388,7 +499,7 @@ namespace tasks {
                             ? this->configuration.hbridge_front
                             : this->configuration.hbridge_rear
                             ,
-                            std::is_same_v<Control, ControlRear>
+                            std::is_same_v<Control, ControlFront>
                             ? this->configuration.dac_front
                             : this->configuration.dac_rear
                         );
@@ -418,17 +529,17 @@ namespace tasks {
             };
 
             struct Usings {
-                using P_AlgorithmFront = Detail::P_Algorithm<Detail::ControlFront, 1>;
-                using P_AlgorithmRear = Detail::P_Algorithm<Detail::ControlRear, 1>;
+                using P_AlgorithmFront = Detail::P_Algorithm<Detail::ControlFront>;
+                using P_AlgorithmRear = Detail::P_Algorithm<Detail::ControlRear>;
 
-                using PI_AlgorithmFront = Detail::PI_Algorithm<Detail::ControlFront, 1, 1>;
-                using PI_AlgorithmRear = Detail::PI_Algorithm<Detail::ControlRear, 1, 1>;
+                using PI_AlgorithmFront = Detail::PI_Algorithm<Detail::ControlFront>;
+                using PI_AlgorithmRear = Detail::PI_Algorithm<Detail::ControlRear>;
 
-                using PD_AlgorithmFront = Detail::PD_Algorithm<Detail::ControlFront, 1, 1>;
-                using PD_AlgorithmRear = Detail::PD_Algorithm<Detail::ControlRear, 1, 1>;
+                using PD_AlgorithmFront = Detail::PD_Algorithm<Detail::ControlFront>;
+                using PD_AlgorithmRear = Detail::PD_Algorithm<Detail::ControlRear>;
 
-                using PID_AlgorithmFront = Detail::PID_Algorithm<Detail::ControlFront, 1, 1, 1>;
-                using PID_AlgorithmRear = Detail::PID_Algorithm<Detail::ControlRear, 1, 1, 1>;
+                using PID_AlgorithmFront = Detail::PID_Algorithm<Detail::ControlFront>;
+                using PID_AlgorithmRear = Detail::PID_Algorithm<Detail::ControlRear>;
 
                 using PBIN_AlgorithmFront = Detail::PBIN_Algorithm<Detail::ControlFront>;
                 using PBIN_AlgorithmRear = Detail::PBIN_Algorithm<Detail::ControlRear>;
@@ -495,10 +606,9 @@ namespace tasks {
     public:
         static TempCtl& get_instance();
         osStatus_t push(const Controller::Events::Variant& event);
-        Controller::Events::Variant pop();
     private:
+        Controller::Events::Variant pop();
         static void worker(void* arg);
         void apply_configuration();
-        int32_t err(const sens::max31865::RTD& rtd) const;
     };
 }
