@@ -127,22 +127,22 @@ namespace max31865 {
     }
 
     std::expected<RTD, HAL_StatusTypeDef> Extension::read_rtd() {
-        if(semaphore == nullptr) {
+        if(sem == nullptr) {
             return std::unexpected(HAL_ERROR);
         }
 
-        if(osSemaphoreAcquire(semaphore, semaphore_timeout) != osOK) {
+        if(osSemaphoreAcquire(sem, sem_timeout) != osOK) {
             return std::unexpected(HAL_ERROR);
         }
         
         return read_rtd_no_sem();
     }
 
-    osStatus Extension::release_semaphore() {
-        if(semaphore == nullptr) {
+    osStatus Extension::release_sem() {
+        if(sem == nullptr) {
             return osError;
         }
-        return osSemaphoreRelease(semaphore);
+        return osSemaphoreRelease(sem);
     }
 
     std::expected<FaultStatus, HAL_StatusTypeDef> Extension::run_auto_fault_detection() const {

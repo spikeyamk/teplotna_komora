@@ -2,6 +2,7 @@
 #include <array>
 #include <functional>
 #include <cassert>
+#include <limits>
 #include <boost/sml.hpp>
 
 #include "usart.h"

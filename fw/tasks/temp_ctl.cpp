@@ -16,13 +16,18 @@ namespace tasks {
 
     void TempCtl::Controller::Actions::turn_off(TempCtl& self) {
         util::turn_every_annoying_peripheral_off();
-        std::visit([](auto&& algo) {
-            algo->front.pid.reset();
-            algo->rear.pid.reset();
+        std::visit([&](auto&& algo) {
+            //algo->front.pid.reset();
+            //algo->rear.pid.reset();
         }, *self.algorithm_pairs.active_pair);
     }
 
     void TempCtl::Controller::Actions::save_configuration(TempCtl& self, const Events::Configuration& event) {
+        if(event.algorithm == Algorithm::PID) {
+            //self.algorithm_pairs.pid_pair.front.reset();
+            //self.algorithm_pairs.pid_pair.rear.reset();
+        }
+
         self.configuration = event;
     }
 

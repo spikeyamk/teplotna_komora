@@ -13,10 +13,9 @@ namespace tasks {
 namespace tasks {
     void Panel::Menu::Actions::stop_blinking(Panel& self) {
         SevsegWhite::get_instance().blinking = false;
+
         TempCtl::get_instance().push(
-            self.menu_properties.running.value
-            ? TempCtl::Controller::Events::Variant(TempCtl::Controller::Events::TurnOn())
-            : TempCtl::Controller::Events::Variant(TempCtl::Controller::Events::TurnOff())
+            TempCtl::Controller::Events::TurnOn()
         );
 
         TempCtl::get_instance().push(
@@ -31,6 +30,16 @@ namespace tasks {
                 .hbridge_front = self.menu_properties.hbridge_front.value,
                 .hbridge_rear = self.menu_properties.hbridge_rear.value,
             }
+        );
+
+        TempCtl::get_instance().push(
+            TempCtl::Controller::Events::TurnOff()
+        );
+
+        TempCtl::get_instance().push(
+            self.menu_properties.running.value
+            ? TempCtl::Controller::Events::Variant(TempCtl::Controller::Events::TurnOn())
+            : TempCtl::Controller::Events::Variant(TempCtl::Controller::Events::TurnOff())
         );
     }
 

@@ -461,7 +461,7 @@ namespace tasks {
 
                     DisplaySevmaps to_display_state() const {
                         return {
-                            .white = panel::sevseg::common::to_sevmap<"maxfr">(),
+                            .white = panel::sevseg::common::to_sevmap<"rtdfr">(),
                             .yellow = panel::sevseg::common::to_sevmap(rtd_front.calculate_approx_temp().value()),
                             .green = panel::sevseg::common::to_sevmap(rtd_rear.calculate_approx_temp().value()),
                         };

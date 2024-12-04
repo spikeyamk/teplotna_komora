@@ -17,13 +17,8 @@ namespace tasks {
             bksram::write_reset<bksram::ErrorCodes::SenserKiller::Init::MAX31865::TransceiverInit::REAR>();
         }
 
-        const char extension_front_name[] { "temp_front" };
-        const char extension_rear_name[] { "temp_rear" };
-        if(max31865_extension_front.init(extension_front_name) == false) {
-            bksram::write_reset<bksram::ErrorCodes::SenserKiller::Init::MAX31865::Extension::Init::FRONT>();
-        } else if(max31865_extension_rear.init(extension_rear_name) == false) {
-            bksram::write_reset<bksram::ErrorCodes::SenserKiller::Init::MAX31865::Extension::Init::REAR>();
-        }
+        max31865_extension_front.init("max_front");
+        max31865_extension_rear.init("max_rear");
 
         if(max31865_extension_front.configure(sens::max31865::Configuration()) != HAL_OK) {
             bksram::write_reset<bksram::ErrorCodes::SenserKiller::Init::MAX31865::Extension::ClearConfigure::FRONT>();
@@ -301,10 +296,10 @@ namespace tasks {
     }
 
     osStatus SenserKiller::release_semaphore_front() {
-        return max31865_extension_front.release_semaphore();
+        return max31865_extension_front.release_sem();
     }
 
     osStatus SenserKiller::release_semaphore_rear() {
-        return max31865_extension_rear.release_semaphore();
+        return max31865_extension_rear.release_sem();
     }
 }

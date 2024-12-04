@@ -6,7 +6,8 @@ namespace admin {
     Transceiver::Transceiver(QObject* parent) :
         QObject(parent),
         serial_port { new QSerialPort(this) },
-        nop_timer { new QTimer(this) }
+        nop_timer { new QTimer(this) },
+        periodic_timer { new QTimer(this) }
     {
         serial_port->setBaudRate(BAUD_RATE, DIRECTION);
         serial_port->setDataBits(DATA_BITS);
@@ -18,6 +19,22 @@ namespace admin {
             if(transmit(CommandResultPair(magic::commands::Nop(), magic::results::Nop())).has_value() == false) {
                 disconnect();
             }
+        });
+
+        QObject::connect(periodic_timer, &QTimer::timeout, this, [this]() {
+            if(periodic_command_result_pair.has_value() == false) {
+                disconnect();
+                emit error_occured(Error::PeriodicCommandResultIsEmpty);
+                return;
+            }
+
+            const auto result { transmit(periodic_command_result_pair.value()) };
+            if(result.has_value() == false) {
+                emit error_occured(Error::CommandTrasmitFailed);
+                disconnect();
+                return;
+            }
+            emit result_arrived(result.value());
         });
     }
 
@@ -150,6 +167,8 @@ namespace admin {
         }
 
         nop_timer->stop();
+        periodic_timer->stop();
+        periodic_command_result_pair = std::nullopt;
         serial_port->close();
         emit connected_changed(nop_timer->isActive());
     }
@@ -167,5 +186,15 @@ namespace admin {
         }
 
         emit result_arrived(result.value());
+    }
+
+    void Transceiver::periodic_start(const CommandResultPair& command_result) {
+        if(is_connected() == false) {
+            emit error_occured(Error::CommandIsNotConnected);
+            return;
+        }
+        
+        periodic_command_result_pair = command_result;
+        periodic_timer->start(magic::DISCONNECT_TIMEOUT / 2);
     }
 }

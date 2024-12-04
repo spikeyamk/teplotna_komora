@@ -13,6 +13,7 @@ namespace states {
     struct Disconnected {};
     struct Connected {};
 }
+
     /*
      * @brief Represents the connection with states and transitions.
      *
